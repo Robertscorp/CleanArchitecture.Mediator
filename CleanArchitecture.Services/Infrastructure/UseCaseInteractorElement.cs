@@ -19,7 +19,7 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - IUseCaseInvoker Implementation - - - - - -
+        #region - - - - - - IUseCaseElement Implementation - - - - - -
 
         public async Task<bool> TryOutputResultAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
@@ -35,8 +35,7 @@ namespace CleanArchitecture.Services.Infrastructure
             return true;
         }
 
-        #endregion IUseCaseInvoker Implementation
-
+        #endregion IUseCaseElement Implementation
 
     }
 
