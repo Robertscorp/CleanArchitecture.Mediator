@@ -5,7 +5,7 @@ using CleanArchitecture.Services.Pipeline;
 namespace CleanArchitecture.Services.Extended.Infrastructure
 {
 
-    public class UseCaseInputPortValidatorElement<TValidationResult> : IUseCaseElement where TValidationResult : IValidationResult
+    public class InputPortValidatorUseCaseElement<TValidationResult> : IUseCaseElement where TValidationResult : IValidationResult
     {
 
         #region - - - - - - Fields - - - - - -
@@ -16,7 +16,7 @@ namespace CleanArchitecture.Services.Extended.Infrastructure
 
         #region - - - - - - Constructors - - - - - -
 
-        public UseCaseInputPortValidatorElement(IServiceProvider serviceProvider)
+        public InputPortValidatorUseCaseElement(IServiceProvider serviceProvider)
             => this.m_ServiceProvider = serviceProvider;
 
         #endregion Constructors

@@ -10,7 +10,7 @@ using Xunit;
 namespace CleanArchitecture.Services.Extended.Tests.Unit.Infrastructure
 {
 
-    public class UseCaseInputPortValidatorElementTests
+    public class InputPortValidatorUseCaseElementTests
     {
 
         #region - - - - - - Fields - - - - - -
@@ -19,7 +19,7 @@ namespace CleanArchitecture.Services.Extended.Tests.Unit.Infrastructure
         private readonly Mock<IValidationOutputPort<TestValidationResult>> m_MockValidationOutputPort = new();
         private readonly Mock<IUseCaseInputPortValidator<object, TestValidationResult>> m_MockValidator = new();
 
-        private readonly UseCaseInputPortValidatorElement<TestValidationResult> m_Element;
+        private readonly InputPortValidatorUseCaseElement<TestValidationResult> m_Element;
         private readonly object m_InputPort = new();
         private readonly TestValidationResult m_ValidationResult = new();
 
@@ -27,7 +27,7 @@ namespace CleanArchitecture.Services.Extended.Tests.Unit.Infrastructure
 
         #region - - - - - - Constructors - - - - - -
 
-        public UseCaseInputPortValidatorElementTests()
+        public InputPortValidatorUseCaseElementTests()
         {
             this.m_Element = new(this.m_MockServiceProvdider.Object);
 
