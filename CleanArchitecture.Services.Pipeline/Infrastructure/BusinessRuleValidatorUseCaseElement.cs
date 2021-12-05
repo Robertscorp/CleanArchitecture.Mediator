@@ -1,7 +1,6 @@
-﻿using CleanArchitecture.Services.Extended.Validation;
-using CleanArchitecture.Services.Pipeline;
+﻿using CleanArchitecture.Services.Pipeline.Validation;
 
-namespace CleanArchitecture.Services.Extended.Infrastructure
+namespace CleanArchitecture.Services.Pipeline.Infrastructure
 {
 
     public class BusinessRuleValidatorUseCaseElement<TValidationResult> : IUseCaseElement where TValidationResult : IValidationResult

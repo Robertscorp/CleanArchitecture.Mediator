@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Services", "CleanArchitecture.Services\CleanArchitecture.Services.csproj", "{67818317-620B-48DF-AA1C-6157FC328C29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.Services.Extended", "CleanArchitecture.Services.Extended\CleanArchitecture.Services.Extended.csproj", "{B70DE51B-B75D-4183-85E9-CB6871AAA57D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Services.Pipeline", "CleanArchitecture.Services.Pipeline\CleanArchitecture.Services.Pipeline.csproj", "{B70DE51B-B75D-4183-85E9-CB6871AAA57D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.Services.Extended.Tests", "CleanArchitecture.Services.Extended.Tests\CleanArchitecture.Services.Extended.Tests.csproj", "{2E8418AC-0D27-4DB7-AB09-A0E6BAABF4AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Services.Pipeline.Tests", "CleanArchitecture.Services.Pipeline.Tests\CleanArchitecture.Services.Pipeline.Tests.csproj", "{2E8418AC-0D27-4DB7-AB09-A0E6BAABF4AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,4 @@
-﻿namespace CleanArchitecture.Services.Extended.Validation
+﻿namespace CleanArchitecture.Services.Pipeline.Validation
 {
 
     public interface IUseCaseBusinessRuleValidator<TUseCaseInputPort, TValidationResult> where TValidationResult : IValidationResult

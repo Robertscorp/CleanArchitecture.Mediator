@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CleanArchitecture.Services.Extended\CleanArchitecture.Services.Extended.csproj" />
+    <ProjectReference Include="..\CleanArchitecture.Services.Pipeline\CleanArchitecture.Services.Pipeline.csproj" />
   </ItemGroup>
 
 </Project>

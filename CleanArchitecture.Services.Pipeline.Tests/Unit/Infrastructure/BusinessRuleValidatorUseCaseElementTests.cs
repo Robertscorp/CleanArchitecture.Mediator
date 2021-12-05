@@ -1,12 +1,12 @@
-﻿using CleanArchitecture.Services.Extended.Infrastructure;
-using CleanArchitecture.Services.Extended.Validation;
+﻿using CleanArchitecture.Services.Pipeline.Infrastructure;
+using CleanArchitecture.Services.Pipeline.Validation;
 using FluentAssertions;
 using Moq;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Services.Extended.Tests.Unit.Infrastructure
+namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 {
 
     public class BusinessRuleValidatorUseCaseElementTests
