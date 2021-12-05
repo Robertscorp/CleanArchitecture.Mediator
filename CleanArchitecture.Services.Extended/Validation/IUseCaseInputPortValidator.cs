@@ -1,6 +1,4 @@
-﻿using CleanArchitecture.Services.Extended.Validation;
-
-namespace CleanArchitecture.Services.Extended.Pipeline
+﻿namespace CleanArchitecture.Services.Extended.Validation
 {
 
     public interface IUseCaseInputPortValidator<TUseCaseInputPort, TValidationResult> where TValidationResult : IValidationResult

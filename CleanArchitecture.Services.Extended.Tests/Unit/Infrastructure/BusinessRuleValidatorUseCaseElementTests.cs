@@ -1,5 +1,4 @@
 ﻿using CleanArchitecture.Services.Extended.Infrastructure;
-using CleanArchitecture.Services.Extended.Pipeline;
 using CleanArchitecture.Services.Extended.Validation;
 using FluentAssertions;
 using Moq;
