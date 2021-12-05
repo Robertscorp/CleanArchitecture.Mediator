@@ -1,12 +1,12 @@
 ﻿namespace CleanArchitecture.Services.Pipeline.Validation
 {
 
-    public interface IValidationOutputPort<TValidationResult>
+    public interface IValidationOutputPort<TValidationFailure>
     {
 
         #region - - - - - - Methods - - - - - -
 
-        Task PresentValidationFailureAsync(TValidationResult validationResult, CancellationToken cancellationToken);
+        Task PresentValidationFailureAsync(TValidationFailure validationFailure, CancellationToken cancellationToken);
 
         #endregion Methods
 

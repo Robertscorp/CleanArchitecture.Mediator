@@ -1,12 +1,12 @@
 ﻿namespace CleanArchitecture.Services.Pipeline.Validation
 {
 
-    public interface IBusinessRuleValidationOutputPort<TValidationResult> where TValidationResult : IValidationResult
+    public interface IBusinessRuleValidationOutputPort<TValidationFailure>
     {
 
         #region - - - - - - Methods - - - - - -
 
-        Task PresentBusinessRuleValidationFailureAsync(TValidationResult validationResult, CancellationToken cancellationToken);
+        Task PresentBusinessRuleValidationFailureAsync(TValidationFailure validationFailure, CancellationToken cancellationToken);
 
         #endregion Methods
 
