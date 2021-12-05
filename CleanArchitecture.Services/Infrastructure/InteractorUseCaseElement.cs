@@ -3,7 +3,7 @@
 namespace CleanArchitecture.Services.Infrastructure
 {
 
-    public class UseCaseInteractorElement : IUseCaseElement
+    public class InteractorUseCaseElement : IUseCaseElement
     {
 
         #region - - - - - - Fields - - - - - -
@@ -14,7 +14,7 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Constructors - - - - - -
 
-        public UseCaseInteractorElement(IServiceProvider serviceProvider)
+        public InteractorUseCaseElement(IServiceProvider serviceProvider)
             => this.m_ServiceProvider = serviceProvider;
 
         #endregion Constructors
