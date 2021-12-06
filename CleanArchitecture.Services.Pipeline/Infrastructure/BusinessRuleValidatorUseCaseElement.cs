@@ -26,7 +26,7 @@ namespace CleanArchitecture.Services.Pipeline.Infrastructure
             TUseCaseOutputPort outputPort,
             CancellationToken cancellationToken)
         {
-            if (outputPort is not IValidationOutputPort<TValidationResult> _ValidationOutputPort)
+            if (outputPort is not IBusinessRuleValidationOutputPort<TValidationResult> _ValidationOutputPort)
                 return false;
 
             var _Validator = (IUseCaseBusinessRuleValidator<TUseCaseInputPort, TValidationResult>?)this.m_ServiceProvider.GetService(typeof(IUseCaseBusinessRuleValidator<TUseCaseInputPort, TValidationResult>));
@@ -37,7 +37,7 @@ namespace CleanArchitecture.Services.Pipeline.Infrastructure
             if (_ValidationResult.IsValid)
                 return false;
 
-            await _ValidationOutputPort.PresentValidationFailureAsync(_ValidationResult, cancellationToken).ConfigureAwait(false);
+            await _ValidationOutputPort.PresentBusinessRuleValidationFailureAsync(_ValidationResult, cancellationToken).ConfigureAwait(false);
 
             return true;
         }

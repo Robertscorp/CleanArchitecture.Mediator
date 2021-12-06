@@ -14,8 +14,8 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
+        private readonly Mock<IBusinessRuleValidationOutputPort<TestValidationResult>> m_MockOutputPort = new();
         private readonly Mock<IServiceProvider> m_MockServiceProvdider = new();
-        private readonly Mock<IValidationOutputPort<TestValidationResult>> m_MockValidationOutputPort = new();
         private readonly Mock<IUseCaseBusinessRuleValidator<object, TestValidationResult>> m_MockValidator = new();
 
         private readonly BusinessRuleValidatorUseCaseElement<TestValidationResult> m_Element;
@@ -63,12 +63,12 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
             this.m_MockServiceProvdider.Reset();
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockValidationOutputPort.Object, default);
+            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockOutputPort.Object, default);
 
             // Assert
             _ = _Actual.Should().BeFalse();
 
-            this.m_MockValidationOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
         }
 
         [Fact]
@@ -78,12 +78,12 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
             this.m_ValidationResult.IsValid = true;
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockValidationOutputPort.Object, default);
+            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockOutputPort.Object, default);
 
             // Assert
             _ = _Actual.Should().BeFalse();
 
-            this.m_MockValidationOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
         }
 
         [Fact]
@@ -92,12 +92,12 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
             // Arrange
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockValidationOutputPort.Object, default);
+            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockOutputPort.Object, default);
 
             // Assert
             _ = _Actual.Should().BeTrue();
 
-            this.m_MockValidationOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Once());
+            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Once());
         }
 
         #endregion TryOutputResultAsync Tests
