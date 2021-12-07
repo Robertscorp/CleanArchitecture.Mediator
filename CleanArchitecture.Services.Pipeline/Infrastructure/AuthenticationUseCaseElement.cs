@@ -21,22 +21,19 @@ namespace CleanArchitecture.Services.Pipeline.Infrastructure
 
         #region - - - - - - IUseCaseElement Implementation - - - - - -
 
-        public async Task<bool> TryOutputResultAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        public Task HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
+            UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken)
         {
             if (outputPort is not IAuthenticationOutputPort _OutputPort)
-                return false;
+                return nextUseCaseElementHandle();
 
             var _AuthenticatedClaimsPrincipalProvider = (IAuthenticatedClaimsPrincipalProvider?)this.m_ServiceProvider.GetService(typeof(IAuthenticatedClaimsPrincipalProvider));
-            var _AuthenticatedClaimsPrincipal = _AuthenticatedClaimsPrincipalProvider?.AuthenticatedClaimsPrincipal;
-            if (_AuthenticatedClaimsPrincipal != null)
-                return false;
-
-            await _OutputPort.PresentUnauthenticatedAsync(cancellationToken).ConfigureAwait(false);
-
-            return true;
+            return _AuthenticatedClaimsPrincipalProvider?.AuthenticatedClaimsPrincipal == null
+                ? _OutputPort.PresentUnauthenticatedAsync(cancellationToken)
+                : nextUseCaseElementHandle();
         }
 
         #endregion IUseCaseElement Implementation
