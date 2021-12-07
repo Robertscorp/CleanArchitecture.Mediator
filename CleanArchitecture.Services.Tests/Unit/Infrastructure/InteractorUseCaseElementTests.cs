@@ -14,8 +14,8 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<UseCaseElementHandleAsync> m_MockHandleDelegate = new();
         private readonly Mock<IUseCaseInteractor<object, object>> m_MockInteractor = new();
+        private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
         private readonly Mock<IServiceProvider> m_MockServiceProvider = new();
 
         private readonly InteractorUseCaseElement m_Element;
@@ -40,31 +40,31 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
         #region - - - - - - HandleAsync Tests - - - - - -
 
         [Fact]
-        public async Task HandleAsync_InteractorDoesNotExist_DoesNotFailOrInvokeNextElementHandleDelegate()
+        public async Task HandleAsync_InteractorDoesNotExist_DoesNothing()
         {
             // Arrange
             this.m_MockServiceProvider.Reset();
 
             // Act
-            var _Exception = await Record.ExceptionAsync(() => this.m_Element.HandleAsync(this.m_InputPort, this.m_OutputPort, this.m_MockHandleDelegate.Object, default));
+            var _Exception = await Record.ExceptionAsync(() => this.m_Element.HandleAsync(this.m_InputPort, this.m_OutputPort, this.m_MockNextHandleDelegate.Object, default));
 
             // Assert
             _ = _Exception.Should().BeNull();
 
-            this.m_MockHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
         }
 
         [Fact]
-        public async Task HandleAsync_InteractorExists_InvokesUseCaseAsyncAndDoesNotInvokeNextElementHandleDelegate()
+        public async Task HandleAsync_InteractorExists_InvokesUseCaseAsync()
         {
             // Arrange
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, this.m_OutputPort, this.m_MockHandleDelegate.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_OutputPort, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            this.m_MockHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
             this.m_MockInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_OutputPort, default), Times.Once());
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
         }
 
         #endregion HandleAsync Tests
