@@ -1,6 +1,5 @@
 ﻿using CleanArchitecture.Services.Pipeline.Infrastructure;
 using CleanArchitecture.Services.Pipeline.Validation;
-using FluentAssertions;
 using Moq;
 using System;
 using System.Threading.Tasks;
@@ -14,8 +13,9 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IServiceProvider> m_MockServiceProvdider = new();
-        private readonly Mock<IValidationOutputPort<TestValidationResult>> m_MockValidationOutputPort = new();
+        private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
+        private readonly Mock<IValidationOutputPort<TestValidationResult>> m_MockOutputPort = new();
+        private readonly Mock<IServiceProvider> m_MockServiceProvider = new();
         private readonly Mock<IUseCaseInputPortValidator<object, TestValidationResult>> m_MockValidator = new();
 
         private readonly InputPortValidatorUseCaseElement<TestValidationResult> m_Element;
@@ -28,9 +28,9 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         public InputPortValidatorUseCaseElementTests()
         {
-            this.m_Element = new(this.m_MockServiceProvdider.Object);
+            this.m_Element = new(this.m_MockServiceProvider.Object);
 
-            _ = this.m_MockServiceProvdider
+            _ = this.m_MockServiceProvider
                     .Setup(mock => mock.GetService(typeof(IUseCaseInputPortValidator<object, TestValidationResult>)))
                     .Returns(this.m_MockValidator.Object);
 
@@ -41,66 +41,63 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - TryOutputResultAsync Tests - - - - - -
+        #region - - - - - - HandleAsync Tests - - - - - -
 
         [Fact]
-        public async Task TryOutputResultAsync_OutputPortDoesNotSupportValidation_ReturnsFalse()
+        public async Task HandleAsync_OutputPortDoesNotSupportValidation_InvokesNextHandleDelegate()
         {
             // Arrange
             var _OutputPort = new object();
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, _OutputPort, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, _OutputPort, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeFalse();
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
         }
 
         [Fact]
-        public async Task TryOutputResultAsync_ValidatorHasNotBeenRegistered_ReturnsFalse()
+        public async Task HandleAsync_ValidatorHasNotBeenRegistered_InvokesNextHandleDelegate()
         {
             // Arrange
-            this.m_MockServiceProvdider.Reset();
+            this.m_MockServiceProvider.Reset();
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockValidationOutputPort.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeFalse();
-
-            this.m_MockValidationOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
+            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
         }
 
         [Fact]
-        public async Task TryOutputResultAsync_ValidationSuccessful_ReturnsFalse()
+        public async Task HandleAsync_ValidationSuccessful_InvokesNextHandleDelegate()
         {
             // Arrange
             this.m_ValidationResult.IsValid = true;
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockValidationOutputPort.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeFalse();
-
-            this.m_MockValidationOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
+            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
         }
 
         [Fact]
-        public async Task TryOutputResultAsync_ValidationFails_PresentsValidationFailureAsyncAndReturnsTrue()
+        public async Task HandleAsync_ValidationFails_PresentsValidationFailureAsync()
         {
             // Arrange
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockValidationOutputPort.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeTrue();
-
-            this.m_MockValidationOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Once());
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Once());
         }
 
-        #endregion TryOutputResultAsync Tests
+        #endregion HandleAsync Tests
 
         #region - - - - - - Nested Classes - - - - - -
 
