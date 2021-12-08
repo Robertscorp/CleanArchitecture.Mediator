@@ -8,14 +8,14 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly IServiceProvider m_ServiceProvider;
+        private readonly UseCaseServiceResolver m_ServiceResolver;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        public UseCaseInvoker(IServiceProvider serviceProvider)
-            => this.m_ServiceProvider = serviceProvider;
+        public UseCaseInvoker(UseCaseServiceResolver serviceResolver)
+            => this.m_ServiceResolver = serviceResolver;
 
         #endregion Constructors
 
@@ -25,14 +25,11 @@ namespace CleanArchitecture.Services.Infrastructure
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
             CancellationToken cancellationToken)
-        {
-            var _UseCaseElements = (IEnumerable<IUseCaseElement>)this.m_ServiceProvider.GetService(typeof(IEnumerable<IUseCaseElement>))!;
-            return _UseCaseElements
+            => this.m_ServiceResolver.GetService<IEnumerable<IUseCaseElement>>()!
                 .Reverse()
                 .Aggregate(
                     new UseCaseElementHandleAsync(() => Task.CompletedTask),
                     (nextElementHandleDelegate, useCaseElement) => new UseCaseElementHandleAsync(() => useCaseElement.HandleAsync(inputPort, outputPort, nextElementHandleDelegate, cancellationToken)))();
-        }
 
         #endregion IUseCaseInvoker Implementation
 

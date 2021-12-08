@@ -2,7 +2,6 @@
 using CleanArchitecture.Services.Pipeline;
 using FluentAssertions;
 using Moq;
-using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -16,7 +15,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         private readonly Mock<IUseCaseInteractor<object, object>> m_MockInteractor = new();
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
-        private readonly Mock<IServiceProvider> m_MockServiceProvider = new();
+        private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
 
         private readonly InteractorUseCaseElement m_Element;
         private readonly object m_InputPort = new();
@@ -28,10 +27,10 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         public InteractorUseCaseElementTests()
         {
-            this.m_Element = new(this.m_MockServiceProvider.Object);
+            this.m_Element = new(this.m_MockServiceResolver.Object);
 
-            _ = this.m_MockServiceProvider
-                    .Setup(mock => mock.GetService(typeof(IUseCaseInteractor<object, object>)))
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<object, object>)))
                     .Returns(this.m_MockInteractor.Object);
         }
 
@@ -43,7 +42,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
         public async Task HandleAsync_InteractorDoesNotExist_DoesNothing()
         {
             // Arrange
-            this.m_MockServiceProvider.Reset();
+            this.m_MockServiceResolver.Reset();
 
             // Act
             var _Exception = await Record.ExceptionAsync(() => this.m_Element.HandleAsync(this.m_InputPort, this.m_OutputPort, this.m_MockNextHandleDelegate.Object, default));

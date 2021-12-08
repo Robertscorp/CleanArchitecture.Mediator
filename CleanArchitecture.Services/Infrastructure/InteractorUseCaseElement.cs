@@ -8,14 +8,14 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly IServiceProvider m_ServiceProvider;
+        private readonly UseCaseServiceResolver m_ServiceResolver;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        public InteractorUseCaseElement(IServiceProvider serviceProvider)
-            => this.m_ServiceProvider = serviceProvider;
+        public InteractorUseCaseElement(UseCaseServiceResolver serviceResolver)
+            => this.m_ServiceResolver = serviceResolver;
 
         #endregion Constructors
 
@@ -26,10 +26,8 @@ namespace CleanArchitecture.Services.Infrastructure
             TUseCaseOutputPort outputPort,
             UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken)
-        {
-            var _Interactor = (IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>?)this.m_ServiceProvider.GetService(typeof(IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>));
-            return _Interactor?.HandleAsync(inputPort, outputPort, cancellationToken) ?? Task.CompletedTask;
-        }
+            => this.m_ServiceResolver.GetService<IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>>()?
+                .HandleAsync(inputPort, outputPort, cancellationToken) ?? Task.CompletedTask;
 
         #endregion IUseCaseElement Implementation
 

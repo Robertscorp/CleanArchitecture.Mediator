@@ -8,14 +8,14 @@ namespace CleanArchitecture.Services.Pipeline.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly IServiceProvider m_ServiceProvider;
+        private readonly UseCaseServiceResolver m_ServiceResolver;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        public AuthorisationUseCaseElement(IServiceProvider serviceProvider)
-            => this.m_ServiceProvider = serviceProvider;
+        public AuthorisationUseCaseElement(UseCaseServiceResolver serviceResolver)
+            => this.m_ServiceResolver = serviceResolver;
 
         #endregion Constructors
 
@@ -27,26 +27,29 @@ namespace CleanArchitecture.Services.Pipeline.Infrastructure
             UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken)
         {
-            if (outputPort is not IAuthorisationOutputPort<TAuthorisationResult> _OutputPort)
+            if (outputPort is IAuthorisationOutputPort<TAuthorisationResult> _OutputPort)
             {
-                await nextUseCaseElementHandle().ConfigureAwait(false);
-                return;
+                var _AuthorisationResultAsync = this.GetAuthorisationResultAsync(inputPort, cancellationToken);
+                if (_AuthorisationResultAsync != null && !(await _AuthorisationResultAsync).IsAuthorised)
+                {
+                    await _OutputPort.PresentUnauthorisedAsync(await _AuthorisationResultAsync, cancellationToken).ConfigureAwait(false);
+                    return;
+                }
             }
 
-            var _Enforcer = (IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>?)this.m_ServiceProvider.GetService(typeof(IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>));
-            if (_Enforcer == null)
-            {
-                await nextUseCaseElementHandle().ConfigureAwait(false);
-                return;
-            }
-
-            var _AuthorisationResult = await _Enforcer.CheckAuthorisationAsync(inputPort, cancellationToken).ConfigureAwait(false);
-            await (_AuthorisationResult.IsAuthorised
-                    ? nextUseCaseElementHandle().ConfigureAwait(false)
-                    : _OutputPort.PresentUnauthorisedAsync(_AuthorisationResult, cancellationToken).ConfigureAwait(false));
+            await nextUseCaseElementHandle().ConfigureAwait(false);
         }
 
         #endregion IUseCaseElement Implementation
+
+        #region - - - - - - Methods - - - - - -
+
+        private Task<TAuthorisationResult>? GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
+            => this.m_ServiceResolver
+                .GetService<IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>>()?
+                .CheckAuthorisationAsync(inputPort, cancellationToken);
+
+        #endregion Methods
 
     }
 

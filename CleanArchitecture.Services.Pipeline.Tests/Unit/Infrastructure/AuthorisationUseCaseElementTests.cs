@@ -1,7 +1,6 @@
 ﻿using CleanArchitecture.Services.Pipeline.Authorisation;
 using CleanArchitecture.Services.Pipeline.Infrastructure;
 using Moq;
-using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -16,7 +15,7 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         private readonly Mock<IUseCaseAuthorisationEnforcer<object, TestAuthorisationResult>> m_MockEnforcer = new();
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
         private readonly Mock<IAuthorisationOutputPort<TestAuthorisationResult>> m_MockOutputPort = new();
-        private readonly Mock<IServiceProvider> m_MockServiceProvider = new();
+        private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
 
         private readonly TestAuthorisationResult m_AuthorisationResult = new();
         private readonly AuthorisationUseCaseElement<TestAuthorisationResult> m_Element;
@@ -28,10 +27,10 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         public AuthorisationUseCaseElementTests()
         {
-            this.m_Element = new(this.m_MockServiceProvider.Object);
+            this.m_Element = new(this.m_MockServiceResolver.Object);
 
-            _ = this.m_MockServiceProvider
-                    .Setup(mock => mock.GetService(typeof(IUseCaseAuthorisationEnforcer<object, TestAuthorisationResult>)))
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseAuthorisationEnforcer<object, TestAuthorisationResult>)))
                     .Returns(this.m_MockEnforcer.Object);
 
             _ = this.m_MockEnforcer
@@ -60,7 +59,7 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         public async Task HandleAsync_EnforcerHasNotBeenRegistered_InvokesNextHandleDelegate()
         {
             // Arrange
-            this.m_MockServiceProvider.Reset();
+            this.m_MockServiceResolver.Reset();
 
             // Act
             await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);

@@ -1,4 +1,5 @@
 ﻿using CleanArchitecture.Services.Pipeline.Authentication;
+using System.Security.Claims;
 
 namespace CleanArchitecture.Services.Pipeline.Infrastructure
 {
@@ -8,14 +9,14 @@ namespace CleanArchitecture.Services.Pipeline.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly IServiceProvider m_ServiceProvider;
+        private readonly UseCaseServiceResolver m_ServiceResolver;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        public AuthenticationUseCaseElement(IServiceProvider serviceProvider)
-            => this.m_ServiceProvider = serviceProvider;
+        public AuthenticationUseCaseElement(UseCaseServiceResolver serviceResolver)
+            => this.m_ServiceResolver = serviceResolver;
 
         #endregion Constructors
 
@@ -26,17 +27,18 @@ namespace CleanArchitecture.Services.Pipeline.Infrastructure
             TUseCaseOutputPort outputPort,
             UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken)
-        {
-            if (outputPort is not IAuthenticationOutputPort _OutputPort)
-                return nextUseCaseElementHandle();
-
-            var _AuthenticatedClaimsPrincipalProvider = (IAuthenticatedClaimsPrincipalProvider?)this.m_ServiceProvider.GetService(typeof(IAuthenticatedClaimsPrincipalProvider));
-            return _AuthenticatedClaimsPrincipalProvider?.AuthenticatedClaimsPrincipal == null
+            => outputPort is IAuthenticationOutputPort _OutputPort && this.GetAuthenticatedClaimsPrincipal() == null
                 ? _OutputPort.PresentUnauthenticatedAsync(cancellationToken)
                 : nextUseCaseElementHandle();
-        }
 
         #endregion IUseCaseElement Implementation
+
+        #region - - - - - - Methods - - - - - -
+
+        private ClaimsPrincipal? GetAuthenticatedClaimsPrincipal()
+            => this.m_ServiceResolver.GetService<IAuthenticatedClaimsPrincipalProvider>()?.AuthenticatedClaimsPrincipal;
+
+        #endregion Methods
 
     }
 
