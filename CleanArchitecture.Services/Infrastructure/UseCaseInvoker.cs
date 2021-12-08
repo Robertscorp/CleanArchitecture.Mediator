@@ -21,16 +21,17 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - IUseCaseInvoker Implementation - - - - - -
 
-        public async Task InvokeUseCaseAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        public Task InvokeUseCaseAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
             CancellationToken cancellationToken)
         {
             var _UseCaseElements = (IEnumerable<IUseCaseElement>)this.m_ServiceProvider.GetService(typeof(IEnumerable<IUseCaseElement>))!;
-
-            foreach (var _UseCaseElement in _UseCaseElements)
-                if (await _UseCaseElement.TryOutputResultAsync(inputPort, outputPort, cancellationToken).ConfigureAwait(false))
-                    return;
+            return _UseCaseElements
+                .Reverse()
+                .Aggregate(
+                    new UseCaseElementHandleAsync(() => Task.CompletedTask),
+                    (nextElementHandleDelegate, useCaseElement) => new UseCaseElementHandleAsync(() => useCaseElement.HandleAsync(inputPort, outputPort, nextElementHandleDelegate, cancellationToken)))();
         }
 
         #endregion IUseCaseInvoker Implementation
