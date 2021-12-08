@@ -1,6 +1,5 @@
 ﻿using CleanArchitecture.Services.Pipeline.Authentication;
 using CleanArchitecture.Services.Pipeline.Infrastructure;
-using FluentAssertions;
 using Moq;
 using System;
 using System.Security.Claims;
@@ -16,7 +15,8 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         #region - - - - - - Fields - - - - - -
 
         private readonly Mock<IAuthenticatedClaimsPrincipalProvider> m_MockClaimsPrincipalProvider = new();
-        private readonly Mock<IServiceProvider> m_MockServiceProvdider = new();
+        private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
+        private readonly Mock<IServiceProvider> m_MockServiceProvider = new();
         private readonly Mock<IAuthenticationOutputPort> m_MockOutputPort = new();
 
         private readonly AuthenticationUseCaseElement m_Element;
@@ -28,9 +28,9 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         public AuthenticationUseCaseElementTests()
         {
-            this.m_Element = new(this.m_MockServiceProvdider.Object);
+            this.m_Element = new(this.m_MockServiceProvider.Object);
 
-            _ = this.m_MockServiceProvdider
+            _ = this.m_MockServiceProvider
                     .Setup(mock => mock.GetService(typeof(IAuthenticatedClaimsPrincipalProvider)))
                     .Returns(this.m_MockClaimsPrincipalProvider.Object);
 
@@ -41,66 +41,63 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - TryOutputResultAsync Tests - - - - - -
+        #region - - - - - - HandleAsync Tests - - - - - -
 
         [Fact]
-        public async Task TryOutputResultAsync_OutputPortDoesNotSupportAuthentication_ReturnsFalse()
+        public async Task HandleAsync_OutputPortDoesNotSupportAuthentication_InvokesNextHandleDelegate()
         {
             // Arrange
             var _OutputPort = new object();
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, _OutputPort, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, _OutputPort, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeFalse();
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
         }
 
         [Fact]
-        public async Task TryOutputResultAsync_ClaimsPrincipalProviderHasNotBeenRegistered_PresentsAuthenticationFailureAsyncAndReturnsTrue()
+        public async Task HandleAsync_ClaimsPrincipalProviderHasNotBeenRegistered_PresentsAuthenticationFailureAsync()
         {
             // Arrange
-            this.m_MockServiceProvdider.Reset();
+            this.m_MockServiceProvider.Reset();
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockOutputPort.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeTrue();
-
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
             this.m_MockOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
         }
 
         [Fact]
-        public async Task TryOutputResultAsync_ClaimsPrincipalIsAuthenticated_ReturnsFalse()
+        public async Task HandleAsync_ClaimsPrincipalIsAuthenticated_InvokesNextHandleDelegate()
         {
             // Arrange
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockOutputPort.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeFalse();
-
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
             this.m_MockOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Never());
         }
 
         [Fact]
-        public async Task TryOutputResultAsync_NoAuthenticatedClaimsPrincipal_PresentsAuthenticationFailureAsyncAndReturnsTrue()
+        public async Task HandleAsync_NoAuthenticatedClaimsPrincipal_PresentsAuthenticationFailureAsync()
         {
             // Arrange
             this.m_MockClaimsPrincipalProvider.Reset();
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockOutputPort.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeTrue();
-
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
             this.m_MockOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
         }
 
-        #endregion TryOutputResultAsync Tests
+        #endregion HandleAsync Tests
 
     }
 

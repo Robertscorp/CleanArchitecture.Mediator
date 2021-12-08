@@ -6,9 +6,10 @@
 
         #region - - - - - - Methods - - - - - -
 
-        Task<bool> TryOutputResultAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        Task HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
+            UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken);
 
         #endregion Methods

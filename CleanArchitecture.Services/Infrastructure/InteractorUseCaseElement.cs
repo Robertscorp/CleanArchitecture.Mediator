@@ -21,18 +21,14 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - IUseCaseElement Implementation - - - - - -
 
-        public async Task<bool> TryOutputResultAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        public Task HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
+            UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken)
         {
             var _Interactor = (IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>?)this.m_ServiceProvider.GetService(typeof(IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>));
-            if (_Interactor == null)
-                return false;
-
-            await _Interactor.HandleAsync(inputPort, outputPort, cancellationToken).ConfigureAwait(false);
-
-            return true;
+            return _Interactor?.HandleAsync(inputPort, outputPort, cancellationToken) ?? Task.CompletedTask;
         }
 
         #endregion IUseCaseElement Implementation

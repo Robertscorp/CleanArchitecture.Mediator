@@ -1,6 +1,5 @@
 ﻿using CleanArchitecture.Services.Pipeline.Authorisation;
 using CleanArchitecture.Services.Pipeline.Infrastructure;
-using FluentAssertions;
 using Moq;
 using System;
 using System.Threading.Tasks;
@@ -15,8 +14,9 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         #region - - - - - - Fields - - - - - -
 
         private readonly Mock<IUseCaseAuthorisationEnforcer<object, TestAuthorisationResult>> m_MockEnforcer = new();
+        private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
         private readonly Mock<IAuthorisationOutputPort<TestAuthorisationResult>> m_MockOutputPort = new();
-        private readonly Mock<IServiceProvider> m_MockServiceProvdider = new();
+        private readonly Mock<IServiceProvider> m_MockServiceProvider = new();
 
         private readonly TestAuthorisationResult m_AuthorisationResult = new();
         private readonly AuthorisationUseCaseElement<TestAuthorisationResult> m_Element;
@@ -28,9 +28,9 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         public AuthorisationUseCaseElementTests()
         {
-            this.m_Element = new(this.m_MockServiceProvdider.Object);
+            this.m_Element = new(this.m_MockServiceProvider.Object);
 
-            _ = this.m_MockServiceProvdider
+            _ = this.m_MockServiceProvider
                     .Setup(mock => mock.GetService(typeof(IUseCaseAuthorisationEnforcer<object, TestAuthorisationResult>)))
                     .Returns(this.m_MockEnforcer.Object);
 
@@ -41,66 +41,63 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - TryOutputResultAsync Tests - - - - - -
+        #region - - - - - - HandleAsync Tests - - - - - -
 
         [Fact]
-        public async Task TryOutputResultAsync_OutputPortDoesNotSupportAuthorisation_ReturnsFalse()
+        public async Task HandleAsync_OutputPortDoesNotSupportAuthorisation_InvokesNextHandleDelegate()
         {
             // Arrange
             var _OutputPort = new object();
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, _OutputPort, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, _OutputPort, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeFalse();
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
         }
 
         [Fact]
-        public async Task TryOutputResultAsync_EnforcerHasNotBeenRegistered_ReturnsFalse()
+        public async Task HandleAsync_EnforcerHasNotBeenRegistered_InvokesNextHandleDelegate()
         {
             // Arrange
-            this.m_MockServiceProvdider.Reset();
+            this.m_MockServiceProvider.Reset();
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockOutputPort.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeFalse();
-
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
             this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<TestAuthorisationResult>(), default), Times.Never());
         }
 
         [Fact]
-        public async Task TryOutputResultAsync_AuthorisationSuccessful_ReturnsFalse()
+        public async Task HandleAsync_AuthorisationSuccessful_InvokesNextHandleDelegate()
         {
             // Arrange
             this.m_AuthorisationResult.IsAuthorised = true;
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockOutputPort.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeFalse();
-
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
             this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<TestAuthorisationResult>(), default), Times.Never());
         }
 
         [Fact]
-        public async Task TryOutputResultAsync_AuthorisationFails_PresentsUnauthorisedAsyncAndReturnsTrue()
+        public async Task HandleAsync_AuthorisationFails_PresentsUnauthorisedAsync()
         {
             // Arrange
 
             // Act
-            var _Actual = await this.m_Element.TryOutputResultAsync(this.m_InputPort, this.m_MockOutputPort.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            _ = _Actual.Should().BeTrue();
-
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
             this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<TestAuthorisationResult>(), default), Times.Once());
         }
 
-        #endregion TryOutputResultAsync Tests
+        #endregion HandleAsync Tests
 
         #region - - - - - - Nested Classes - - - - - -
 
