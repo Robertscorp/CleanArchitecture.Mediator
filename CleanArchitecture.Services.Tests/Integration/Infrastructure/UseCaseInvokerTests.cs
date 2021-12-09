@@ -5,7 +5,6 @@ using CleanArchitecture.Services.Pipeline.Authorisation;
 using CleanArchitecture.Services.Pipeline.Infrastructure;
 using CleanArchitecture.Services.Pipeline.Validation;
 using Moq;
-using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -26,7 +25,7 @@ namespace CleanArchitecture.Services.Tests.Integration.Infrastructure
         private readonly Mock<IUseCaseInteractor<InputPort, IEmptyOutputPort>> m_MockEmptyOutputPortInteractor = new();
         private readonly Mock<IEverythingOutputPort> m_MockEverythingOutputPort = new();
         private readonly Mock<IUseCaseInputPortValidator<InputPort, ValidationResult>> m_MockInputPortValidator = new();
-        private readonly Mock<IServiceProvider> m_MockServiceProvider = new();
+        private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
 
         private readonly AuthorisationResult m_AuthResult = new() { IsAuthorised = true };
         private readonly ValidationResult m_BusinessRuleValidationResult = new() { IsValid = true };
@@ -40,7 +39,7 @@ namespace CleanArchitecture.Services.Tests.Integration.Infrastructure
 
         public UseCaseInvokerTests()
         {
-            this.m_UseCaseInvoker = new(this.m_MockServiceProvider.Object);
+            this.m_UseCaseInvoker = new(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockAuthEnforcer
                     .Setup(mock => mock.CheckAuthorisationAsync(this.m_InputPort, default))
@@ -58,35 +57,35 @@ namespace CleanArchitecture.Services.Tests.Integration.Infrastructure
                     .Setup(mock => mock.ValidateAsync(this.m_InputPort, default))
                     .Returns(Task.FromResult(this.m_InputPortValidationResult));
 
-            _ = this.m_MockServiceProvider
-                    .Setup(mock => mock.GetService(typeof(IEnumerable<IUseCaseElement>)))
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IEnumerable<IUseCaseElement>)))
                     .Returns(new List<IUseCaseElement>()
                     {
-                        new AuthenticationUseCaseElement(this.m_MockServiceProvider.Object),
-                        new AuthorisationUseCaseElement<AuthorisationResult>(this.m_MockServiceProvider.Object),
-                        new InputPortValidatorUseCaseElement<ValidationResult>(this.m_MockServiceProvider.Object),
-                        new BusinessRuleValidatorUseCaseElement<ValidationResult>(this.m_MockServiceProvider.Object),
-                        new InteractorUseCaseElement(this.m_MockServiceProvider.Object)
+                        new AuthenticationUseCaseElement(this.m_MockServiceResolver.Object),
+                        new AuthorisationUseCaseElement<AuthorisationResult>(this.m_MockServiceResolver.Object),
+                        new InputPortValidatorUseCaseElement<ValidationResult>(this.m_MockServiceResolver.Object),
+                        new BusinessRuleValidatorUseCaseElement<ValidationResult>(this.m_MockServiceResolver.Object),
+                        new InteractorUseCaseElement(this.m_MockServiceResolver.Object)
                     });
 
-            _ = this.m_MockServiceProvider
-                    .Setup(mock => mock.GetService(typeof(IUseCaseAuthorisationEnforcer<InputPort, AuthorisationResult>)))
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseAuthorisationEnforcer<InputPort, AuthorisationResult>)))
                     .Returns(this.m_MockAuthEnforcer.Object);
 
-            _ = this.m_MockServiceProvider
-                    .Setup(mock => mock.GetService(typeof(IUseCaseBusinessRuleValidator<InputPort, ValidationResult>)))
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseBusinessRuleValidator<InputPort, ValidationResult>)))
                     .Returns(this.m_MockBusinessRuleValidator.Object);
 
-            _ = this.m_MockServiceProvider
-                    .Setup(mock => mock.GetService(typeof(IAuthenticatedClaimsPrincipalProvider)))
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IAuthenticatedClaimsPrincipalProvider)))
                     .Returns(this.m_MockClaimsPrincipalProvider.Object);
 
-            _ = this.m_MockServiceProvider
-                    .Setup(mock => mock.GetService(typeof(IUseCaseInteractor<InputPort, IEmptyOutputPort>)))
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<InputPort, IEmptyOutputPort>)))
                     .Returns(this.m_MockEmptyOutputPortInteractor.Object);
 
-            _ = this.m_MockServiceProvider
-                    .Setup(mock => mock.GetService(typeof(IUseCaseInputPortValidator<InputPort, ValidationResult>)))
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseInputPortValidator<InputPort, ValidationResult>)))
                     .Returns(this.m_MockInputPortValidator.Object);
 
         }

@@ -1,7 +1,6 @@
 ﻿using CleanArchitecture.Services.Pipeline.Authentication;
 using CleanArchitecture.Services.Pipeline.Infrastructure;
 using Moq;
-using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
@@ -16,7 +15,7 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         private readonly Mock<IAuthenticatedClaimsPrincipalProvider> m_MockClaimsPrincipalProvider = new();
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
-        private readonly Mock<IServiceProvider> m_MockServiceProvider = new();
+        private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
         private readonly Mock<IAuthenticationOutputPort> m_MockOutputPort = new();
 
         private readonly AuthenticationUseCaseElement m_Element;
@@ -28,10 +27,10 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         public AuthenticationUseCaseElementTests()
         {
-            this.m_Element = new(this.m_MockServiceProvider.Object);
+            this.m_Element = new(this.m_MockServiceResolver.Object);
 
-            _ = this.m_MockServiceProvider
-                    .Setup(mock => mock.GetService(typeof(IAuthenticatedClaimsPrincipalProvider)))
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IAuthenticatedClaimsPrincipalProvider)))
                     .Returns(this.m_MockClaimsPrincipalProvider.Object);
 
             _ = this.m_MockClaimsPrincipalProvider
@@ -60,7 +59,7 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         public async Task HandleAsync_ClaimsPrincipalProviderHasNotBeenRegistered_PresentsAuthenticationFailureAsync()
         {
             // Arrange
-            this.m_MockServiceProvider.Reset();
+            this.m_MockServiceResolver.Reset();
 
             // Act
             await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);

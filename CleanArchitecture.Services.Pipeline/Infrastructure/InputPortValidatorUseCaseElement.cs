@@ -8,14 +8,14 @@ namespace CleanArchitecture.Services.Pipeline.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly IServiceProvider m_ServiceProvider;
+        private readonly UseCaseServiceResolver m_ServiceResolver;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        public InputPortValidatorUseCaseElement(IServiceProvider serviceProvider)
-            => this.m_ServiceProvider = serviceProvider;
+        public InputPortValidatorUseCaseElement(UseCaseServiceResolver serviceResolver)
+            => this.m_ServiceResolver = serviceResolver;
 
         #endregion Constructors
 
@@ -27,26 +27,29 @@ namespace CleanArchitecture.Services.Pipeline.Infrastructure
             UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken)
         {
-            if (outputPort is not IValidationOutputPort<TValidationResult> _ValidationOutputPort)
+            if (outputPort is IValidationOutputPort<TValidationResult> _OutputPort)
             {
-                await nextUseCaseElementHandle().ConfigureAwait(false);
-                return;
+                var _ValidationResultAsync = this.GetValidationResultAsync(inputPort, cancellationToken);
+                if (_ValidationResultAsync != null && !(await _ValidationResultAsync).IsValid)
+                {
+                    await _OutputPort.PresentValidationFailureAsync(await _ValidationResultAsync, cancellationToken).ConfigureAwait(false);
+                    return;
+                }
             }
 
-            var _Validator = (IUseCaseInputPortValidator<TUseCaseInputPort, TValidationResult>?)this.m_ServiceProvider.GetService(typeof(IUseCaseInputPortValidator<TUseCaseInputPort, TValidationResult>));
-            if (_Validator == null)
-            {
-                await nextUseCaseElementHandle().ConfigureAwait(false);
-                return;
-            }
-
-            var _ValidationResult = await _Validator.ValidateAsync(inputPort, cancellationToken).ConfigureAwait(false);
-            await (_ValidationResult.IsValid
-                    ? nextUseCaseElementHandle().ConfigureAwait(false)
-                    : _ValidationOutputPort.PresentValidationFailureAsync(_ValidationResult, cancellationToken).ConfigureAwait(false));
+            await nextUseCaseElementHandle().ConfigureAwait(false);
         }
 
         #endregion IUseCaseElement Implementation
+
+        #region - - - - - - Methods - - - - - -
+
+        private Task<TValidationResult>? GetValidationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
+            => this.m_ServiceResolver
+                .GetService<IUseCaseInputPortValidator<TUseCaseInputPort, TValidationResult>>()?
+                .ValidateAsync(inputPort, cancellationToken);
+
+        #endregion Methods
 
     }
 
