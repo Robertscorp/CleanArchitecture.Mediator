@@ -2,12 +2,13 @@
 
 ### What are Clean Architecture Services?
 
-Clean Architecture Services are designed to be the right tools for building Clean Architecture Use Cases. There are other, more generic, tools out there to help build use cases - but their limitations become apparent. These are great tools, but they aren't designed to handle output ports and flow of control.
+Clean Architecture Services are designed to be the right tools for building Clean Architecture Use Cases. There are other, more generic, tools out there to help build use cases - but their limitations become apparent. The generic tools are great, but they aren't designed to handle output ports and flow of control.
 
 ### Why are Output Ports and Flow of Control important?
+Great question.
 
 #### Setting the Stage
-Great question. Let's say we're building a system, and we know the use cases in our system are going to have potentially common behaviour - authorisation, input port validation, and an interactor. Our use cases will have some combination of those 3 behaviours, but which combination?
+Let's say we're building a system, and we know the use cases in our system are going to have potentially common behaviour - authorisation, input port validation, and an interactor. Our use cases will have some combination of those 3 behaviours, but which combination?
 
 #### Well, what are people doing with the generic tools?
 More generic tools simply have an input and an output. Examples around tend to have the response as the use cases's "success" response, and any other outputs are implemented as exceptions to that pipeline. The user was unauthorised? That's an authorisation exception. The input was invalid? That's a validation exception. While this may functionally solve the problem, it's impractical _for the consumers of the use case_. Does this specific use case have validation? Does it have authorisation? Is there any way to know other than looking over the use case code? Are we going to add those outputs to the use case in the future? That one's not ideal - if we implement them and don't catch every exception we've got an application failure on our hands, and our Users are the ones who are going to feel it.
