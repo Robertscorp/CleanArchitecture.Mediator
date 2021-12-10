@@ -4,6 +4,23 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Robertscorp</Authors>
+    <Description>Clean Architecture Services are designed to be the right tools for building Clean Architecture Use Cases.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/Robertscorp/clean-architecture-services</PackageProjectUrl>
+    <Copyright>Robertscorp 2021</Copyright>
+    <RepositoryUrl>https://github.com/Robertscorp/clean-architecture-services</RepositoryUrl>
+    <PackageTags>clean architecture; mediator; use case; ddd; domain driven</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
