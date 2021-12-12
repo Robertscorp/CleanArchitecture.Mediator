@@ -10,7 +10,6 @@ namespace CleanArchitecture.Sample.Pipeline
 
         public bool IsValid { get; set; }
 
-
         #endregion IValidationResult Implementation
 
     }
