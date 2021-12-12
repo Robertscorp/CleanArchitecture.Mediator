@@ -8,7 +8,7 @@ namespace CleanArchitecture.Services.Pipeline.Authentication
 
         #region - - - - - - Properties - - - - - -
 
-        ClaimsPrincipal AuthenticatedClaimsPrincipal { get; }
+        ClaimsPrincipal? AuthenticatedClaimsPrincipal { get; }
 
         #endregion Properties
 
