@@ -214,7 +214,10 @@ namespace CleanArchitecture.Services.Tests.Integration.Infrastructure
             IBusinessRuleValidationOutputPort<ValidationResult>
         { }
 
-        public class InputPort { }
+        public class InputPort :
+            IUseCaseInputPort<IEmptyOutputPort>,
+            IUseCaseInputPort<IEverythingOutputPort>
+        { }
 
         public class ValidationResult : IValidationResult
         {

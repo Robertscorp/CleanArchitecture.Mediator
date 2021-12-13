@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using CleanArchitecture.Sample.Infrastructure;
+﻿using CleanArchitecture.Sample.Infrastructure;
 using CleanArchitecture.Sample.Pipeline;
 using CleanArchitecture.Sample.Presenters;
 using CleanArchitecture.Sample.UseCases.CreateProduct;
