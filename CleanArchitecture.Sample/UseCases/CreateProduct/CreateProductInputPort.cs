@@ -1,7 +1,9 @@
-﻿namespace CleanArchitecture.Sample.UseCases.CreateProduct
+﻿using CleanArchitecture.Services.Pipeline;
+
+namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {
 
-    public class CreateProductInputPort
+    public class CreateProductInputPort : IUseCaseInputPort<ICreateProductOutputPort>
     {
 
         #region - - - - - - Properties - - - - - -
