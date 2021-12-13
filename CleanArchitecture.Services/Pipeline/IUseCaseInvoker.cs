@@ -6,8 +6,8 @@
 
         #region - - - - - - Methods - - - - - -
 
-        Task InvokeUseCaseAsync<TUseCaseInputPort, TUseCaseOutputPort>(
-            TUseCaseInputPort inputPort,
+        Task InvokeUseCaseAsync<TUseCaseOutputPort>(
+            IUseCaseInputPort<TUseCaseOutputPort> inputPort,
             TUseCaseOutputPort outputPort,
             CancellationToken cancellationToken);
 
