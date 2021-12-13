@@ -43,8 +43,6 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Nested Classes - - - - - -
 
-        #endregion Nested Classes
-
         private abstract class Invoker
         {
 
@@ -91,6 +89,8 @@ namespace CleanArchitecture.Services.Infrastructure
             #endregion Methods
 
         }
+
+        #endregion Nested Classes
 
     }
 
