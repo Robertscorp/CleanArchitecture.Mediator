@@ -1,7 +1,6 @@
-﻿using CleanArchitecture.Services.Infrastructure;
-using CleanArchitecture.Services.Pipeline.Authorisation;
+﻿using CleanArchitecture.Services.Pipeline;
 
-namespace CleanArchitecture.Services.Pipeline.Infrastructure
+namespace CleanArchitecture.Services.Infrastructure
 {
 
     public class AuthorisationUseCaseElement<TAuthorisationResult> : IUseCaseElement where TAuthorisationResult : IAuthorisationResult

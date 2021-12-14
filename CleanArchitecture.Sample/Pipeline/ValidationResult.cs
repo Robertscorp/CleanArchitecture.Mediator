@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Services.Pipeline.Validation;
+﻿using CleanArchitecture.Services;
 
 namespace CleanArchitecture.Sample.Pipeline
 {

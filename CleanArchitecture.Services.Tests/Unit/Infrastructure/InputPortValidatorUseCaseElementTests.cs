@@ -1,24 +1,23 @@
 ﻿using CleanArchitecture.Services.Infrastructure;
-using CleanArchitecture.Services.Pipeline.Infrastructure;
-using CleanArchitecture.Services.Pipeline.Validation;
+using CleanArchitecture.Services.Pipeline;
 using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
+namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 {
 
-    public class BusinessRuleValidatorUseCaseElementTests
+    public class InputPortValidatorUseCaseElementTests
     {
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IBusinessRuleValidationOutputPort<TestValidationResult>> m_MockOutputPort = new();
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
+        private readonly Mock<IValidationOutputPort<TestValidationResult>> m_MockOutputPort = new();
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
-        private readonly Mock<IUseCaseBusinessRuleValidator<TestInputPort, TestValidationResult>> m_MockValidator = new();
+        private readonly Mock<IUseCaseInputPortValidator<TestInputPort, TestValidationResult>> m_MockValidator = new();
 
-        private readonly BusinessRuleValidatorUseCaseElement<TestValidationResult> m_Element;
+        private readonly InputPortValidatorUseCaseElement<TestValidationResult> m_Element;
         private readonly TestInputPort m_InputPort = new();
         private readonly TestValidationResult m_ValidationResult = new();
 
@@ -26,12 +25,12 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         #region - - - - - - Constructors - - - - - -
 
-        public BusinessRuleValidatorUseCaseElementTests()
+        public InputPortValidatorUseCaseElementTests()
         {
             this.m_Element = new(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseBusinessRuleValidator<TestInputPort, TestValidationResult>)))
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseInputPortValidator<TestInputPort, TestValidationResult>)))
                     .Returns(this.m_MockValidator.Object);
 
             _ = this.m_MockValidator
@@ -80,7 +79,7 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
-            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
         }
 
         [Fact]
@@ -94,7 +93,7 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
-            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
         }
 
         [Fact]
@@ -107,14 +106,14 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
-            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Once());
+            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Once());
         }
 
         #endregion HandleAsync Tests
 
         #region - - - - - - Nested Classes - - - - - -
 
-        public class TestInputPort : IUseCaseInputPort<IBusinessRuleValidationOutputPort<TestValidationResult>> { }
+        public class TestInputPort : IUseCaseInputPort<IValidationOutputPort<TestValidationResult>> { }
 
         public class TestValidationResult : IValidationResult
         {

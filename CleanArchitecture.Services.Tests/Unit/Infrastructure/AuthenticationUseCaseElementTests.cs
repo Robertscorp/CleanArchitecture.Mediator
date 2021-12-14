@@ -1,12 +1,12 @@
-﻿using CleanArchitecture.Services.Infrastructure;
-using CleanArchitecture.Services.Pipeline.Authentication;
-using CleanArchitecture.Services.Pipeline.Infrastructure;
+﻿using CleanArchitecture.Services.Authentication;
+using CleanArchitecture.Services.Infrastructure;
+using CleanArchitecture.Services.Pipeline;
 using Moq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
+namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 {
 
     public class AuthenticationUseCaseElementTests

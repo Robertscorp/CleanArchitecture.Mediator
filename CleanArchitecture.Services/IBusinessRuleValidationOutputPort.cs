@@ -1,4 +1,4 @@
-﻿namespace CleanArchitecture.Services.Pipeline.Validation
+﻿namespace CleanArchitecture.Services
 {
 
     public interface IBusinessRuleValidationOutputPort<TValidationFailure>

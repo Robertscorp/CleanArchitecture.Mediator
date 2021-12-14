@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CleanArchitecture.Services.Pipeline\CleanArchitecture.Services.Pipeline.csproj" />
     <ProjectReference Include="..\CleanArchitecture.Services\CleanArchitecture.Services.csproj" />
   </ItemGroup>
 

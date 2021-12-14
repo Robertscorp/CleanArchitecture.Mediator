@@ -1,4 +1,4 @@
-﻿namespace CleanArchitecture.Services.Pipeline.Authentication
+﻿namespace CleanArchitecture.Services
 {
 
     public interface IAuthenticationOutputPort

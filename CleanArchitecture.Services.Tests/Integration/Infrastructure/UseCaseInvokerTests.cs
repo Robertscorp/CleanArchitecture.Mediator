@@ -1,9 +1,6 @@
-﻿using CleanArchitecture.Services.Infrastructure;
+﻿using CleanArchitecture.Services.Authentication;
+using CleanArchitecture.Services.Infrastructure;
 using CleanArchitecture.Services.Pipeline;
-using CleanArchitecture.Services.Pipeline.Authentication;
-using CleanArchitecture.Services.Pipeline.Authorisation;
-using CleanArchitecture.Services.Pipeline.Infrastructure;
-using CleanArchitecture.Services.Pipeline.Validation;
 using Moq;
 using System.Collections.Generic;
 using System.Security.Claims;

@@ -1,8 +1,8 @@
-﻿namespace CleanArchitecture.Services.Pipeline.Validation
+﻿namespace CleanArchitecture.Services
 {
 
-    public interface IUseCaseBusinessRuleValidator<TUseCaseInputPort, TValidationResult>
-        where TUseCaseInputPort : IUseCaseInputPort<IBusinessRuleValidationOutputPort<TValidationResult>>
+    public interface IUseCaseInputPortValidator<TUseCaseInputPort, TValidationResult>
+        where TUseCaseInputPort : IUseCaseInputPort<IValidationOutputPort<TValidationResult>>
         where TValidationResult : IValidationResult
     {
 
