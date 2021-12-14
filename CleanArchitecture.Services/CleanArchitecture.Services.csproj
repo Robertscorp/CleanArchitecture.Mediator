@@ -9,11 +9,14 @@
     <Description>Clean Architecture Services are designed to be the right tools for building Clean Architecture Use Cases.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/Robertscorp/clean-architecture-services</PackageProjectUrl>
-    <Copyright>Robertscorp 2021</Copyright>
+    <Copyright>Copyright Robertscorp</Copyright>
     <RepositoryUrl>https://github.com/Robertscorp/clean-architecture-services</RepositoryUrl>
     <PackageTags>clean architecture; mediator; use case; ddd; domain driven</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <VersionPrefix>1.0.1</VersionPrefix>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
