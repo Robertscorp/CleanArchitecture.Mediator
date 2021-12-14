@@ -3,6 +3,7 @@ using CleanArchitecture.Sample.Pipeline;
 using CleanArchitecture.Sample.Presenters;
 using CleanArchitecture.Sample.UseCases.CreateProduct;
 using CleanArchitecture.Sample.UseCases.GetProduct;
+using CleanArchitecture.Services;
 using CleanArchitecture.Services.Infrastructure;
 using CleanArchitecture.Services.Pipeline;
 using CleanArchitecture.Services.Pipeline.Authentication;

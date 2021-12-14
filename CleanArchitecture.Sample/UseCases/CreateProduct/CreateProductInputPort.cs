@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Services.Pipeline;
+﻿using CleanArchitecture.Services;
 
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {

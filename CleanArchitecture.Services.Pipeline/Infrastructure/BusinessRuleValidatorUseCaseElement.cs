@@ -1,4 +1,5 @@
-﻿using CleanArchitecture.Services.Pipeline.Validation;
+﻿using CleanArchitecture.Services.Infrastructure;
+using CleanArchitecture.Services.Pipeline.Validation;
 
 namespace CleanArchitecture.Services.Pipeline.Infrastructure
 {

@@ -1,4 +1,5 @@
-﻿using CleanArchitecture.Services.Pipeline.Infrastructure;
+﻿using CleanArchitecture.Services.Infrastructure;
+using CleanArchitecture.Services.Pipeline.Infrastructure;
 using CleanArchitecture.Services.Pipeline.Validation;
 using Moq;
 using System.Threading.Tasks;

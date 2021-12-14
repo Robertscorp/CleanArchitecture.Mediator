@@ -1,4 +1,5 @@
-﻿using CleanArchitecture.Services.Pipeline.Authorisation;
+﻿using CleanArchitecture.Services.Infrastructure;
+using CleanArchitecture.Services.Pipeline.Authorisation;
 
 namespace CleanArchitecture.Services.Pipeline.Infrastructure
 {

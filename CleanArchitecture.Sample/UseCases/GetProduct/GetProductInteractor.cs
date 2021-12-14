@@ -1,5 +1,5 @@
 ﻿using CleanArchitecture.Sample.Dtos;
-using CleanArchitecture.Services.Pipeline;
+using CleanArchitecture.Services;
 
 namespace CleanArchitecture.Sample.UseCases.GetProduct
 {

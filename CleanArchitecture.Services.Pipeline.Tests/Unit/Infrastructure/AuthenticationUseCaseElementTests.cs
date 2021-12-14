@@ -1,4 +1,5 @@
-﻿using CleanArchitecture.Services.Pipeline.Authentication;
+﻿using CleanArchitecture.Services.Infrastructure;
+using CleanArchitecture.Services.Pipeline.Authentication;
 using CleanArchitecture.Services.Pipeline.Infrastructure;
 using Moq;
 using System.Security.Claims;
