@@ -47,10 +47,9 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         {
             // Arrange
             var _InputPort = new object();
-            var _OutputPort = new object();
 
             // Act
-            await this.m_Element.HandleAsync(_InputPort, _OutputPort, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Element.HandleAsync(_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
