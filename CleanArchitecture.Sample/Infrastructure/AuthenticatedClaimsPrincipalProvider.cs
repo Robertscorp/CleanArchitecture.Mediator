@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Services.Pipeline.Authentication;
+﻿using CleanArchitecture.Services.Authentication;
 using System.Security.Claims;
 
 namespace CleanArchitecture.Sample.Infrastructure

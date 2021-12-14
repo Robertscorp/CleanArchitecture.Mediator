@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Services.Pipeline.Authorisation;
+﻿using CleanArchitecture.Services;
 
 namespace CleanArchitecture.Sample.Pipeline
 {

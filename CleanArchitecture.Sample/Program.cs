@@ -3,12 +3,10 @@ using CleanArchitecture.Sample.Pipeline;
 using CleanArchitecture.Sample.Presenters;
 using CleanArchitecture.Sample.UseCases.CreateProduct;
 using CleanArchitecture.Sample.UseCases.GetProduct;
+using CleanArchitecture.Services;
+using CleanArchitecture.Services.Authentication;
 using CleanArchitecture.Services.Infrastructure;
 using CleanArchitecture.Services.Pipeline;
-using CleanArchitecture.Services.Pipeline.Authentication;
-using CleanArchitecture.Services.Pipeline.Authorisation;
-using CleanArchitecture.Services.Pipeline.Infrastructure;
-using CleanArchitecture.Services.Pipeline.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 

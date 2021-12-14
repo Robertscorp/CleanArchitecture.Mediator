@@ -1,4 +1,4 @@
-﻿namespace CleanArchitecture.Services.Pipeline
+﻿namespace CleanArchitecture.Services
 {
 
     public interface IUseCaseInputPort<out TOutputPort> { }

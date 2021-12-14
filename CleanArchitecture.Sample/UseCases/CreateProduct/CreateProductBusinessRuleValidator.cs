@@ -1,5 +1,5 @@
 ﻿using CleanArchitecture.Sample.Pipeline;
-using CleanArchitecture.Services.Pipeline.Validation;
+using CleanArchitecture.Services;
 
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {

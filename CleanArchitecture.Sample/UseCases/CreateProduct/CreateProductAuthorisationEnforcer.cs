@@ -1,5 +1,5 @@
 ﻿using CleanArchitecture.Sample.Pipeline;
-using CleanArchitecture.Services.Pipeline.Authorisation;
+using CleanArchitecture.Services;
 
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {

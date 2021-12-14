@@ -1,6 +1,6 @@
-﻿using CleanArchitecture.Services.Pipeline.Validation;
+﻿using CleanArchitecture.Services.Pipeline;
 
-namespace CleanArchitecture.Services.Pipeline.Infrastructure
+namespace CleanArchitecture.Services.Infrastructure
 {
 
     public class InputPortValidatorUseCaseElement<TValidationResult> : IUseCaseElement where TValidationResult : IValidationResult

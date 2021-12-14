@@ -1,7 +1,8 @@
-﻿using CleanArchitecture.Services.Pipeline.Authentication;
+﻿using CleanArchitecture.Services.Authentication;
+using CleanArchitecture.Services.Pipeline;
 using System.Security.Claims;
 
-namespace CleanArchitecture.Services.Pipeline.Infrastructure
+namespace CleanArchitecture.Services.Infrastructure
 {
 
     public class AuthenticationUseCaseElement : IUseCaseElement

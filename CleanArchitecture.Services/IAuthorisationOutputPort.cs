@@ -1,4 +1,4 @@
-﻿namespace CleanArchitecture.Services.Pipeline.Authorisation
+﻿namespace CleanArchitecture.Services
 {
 
     public interface IAuthorisationOutputPort<TAuthorisationFailure>
