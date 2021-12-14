@@ -1,7 +1,7 @@
-﻿namespace CleanArchitecture.Services.Pipeline
+﻿namespace CleanArchitecture.Services
 {
 
-    public interface IUseCaseInteractor<in TUseCaseInputPort, in TUseCaseOutputPort>
+    public interface IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>
     {
 
         #region - - - - - - Methods - - - - - -

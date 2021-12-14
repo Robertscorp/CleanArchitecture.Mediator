@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace CleanArchitecture.Services.Pipeline.Authentication
+namespace CleanArchitecture.Services.Authentication
 {
 
     public interface IAuthenticatedClaimsPrincipalProvider

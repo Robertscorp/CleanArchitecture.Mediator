@@ -1,4 +1,4 @@
-﻿namespace CleanArchitecture.Services.Pipeline
+﻿namespace CleanArchitecture.Services
 {
 
     public interface IUseCaseInvoker
@@ -6,8 +6,8 @@
 
         #region - - - - - - Methods - - - - - -
 
-        Task InvokeUseCaseAsync<TUseCaseInputPort, TUseCaseOutputPort>(
-            TUseCaseInputPort inputPort,
+        Task InvokeUseCaseAsync<TUseCaseOutputPort>(
+            IUseCaseInputPort<TUseCaseOutputPort> inputPort,
             TUseCaseOutputPort outputPort,
             CancellationToken cancellationToken);
 

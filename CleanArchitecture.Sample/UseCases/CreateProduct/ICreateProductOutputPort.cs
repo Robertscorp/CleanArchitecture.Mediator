@@ -1,8 +1,6 @@
 ﻿using CleanArchitecture.Sample.Dtos;
 using CleanArchitecture.Sample.Pipeline;
-using CleanArchitecture.Services.Pipeline.Authentication;
-using CleanArchitecture.Services.Pipeline.Authorisation;
-using CleanArchitecture.Services.Pipeline.Validation;
+using CleanArchitecture.Services;
 
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {

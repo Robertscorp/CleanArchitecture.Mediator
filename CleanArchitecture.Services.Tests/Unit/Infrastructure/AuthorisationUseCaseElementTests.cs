@@ -1,10 +1,10 @@
-﻿using CleanArchitecture.Services.Pipeline.Authorisation;
-using CleanArchitecture.Services.Pipeline.Infrastructure;
+﻿using CleanArchitecture.Services.Infrastructure;
+using CleanArchitecture.Services.Pipeline;
 using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
+namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 {
 
     public class AuthorisationUseCaseElementTests
@@ -12,14 +12,14 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IUseCaseAuthorisationEnforcer<object, TestAuthorisationResult>> m_MockEnforcer = new();
+        private readonly Mock<IUseCaseAuthorisationEnforcer<TestInputPort, TestAuthorisationResult>> m_MockEnforcer = new();
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
         private readonly Mock<IAuthorisationOutputPort<TestAuthorisationResult>> m_MockOutputPort = new();
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
 
         private readonly TestAuthorisationResult m_AuthorisationResult = new();
         private readonly AuthorisationUseCaseElement<TestAuthorisationResult> m_Element;
-        private readonly object m_InputPort = new();
+        private readonly TestInputPort m_InputPort = new();
 
         #endregion Fields
 
@@ -30,7 +30,7 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
             this.m_Element = new(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseAuthorisationEnforcer<object, TestAuthorisationResult>)))
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseAuthorisationEnforcer<TestInputPort, TestAuthorisationResult>)))
                     .Returns(this.m_MockEnforcer.Object);
 
             _ = this.m_MockEnforcer
@@ -41,6 +41,19 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         #endregion Constructors
 
         #region - - - - - - HandleAsync Tests - - - - - -
+
+        [Fact]
+        public async Task HandleAsync_InputPortDoesNotSupportAuthorisation_InvokesNextHandleDelegate()
+        {
+            // Arrange
+            var _InputPort = new object();
+
+            // Act
+            await this.m_Element.HandleAsync(_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+
+            // Assert
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
+        }
 
         [Fact]
         public async Task HandleAsync_OutputPortDoesNotSupportAuthorisation_InvokesNextHandleDelegate()
@@ -110,6 +123,8 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
             #endregion IAuthorisationResult Implementation
 
         }
+
+        public class TestInputPort : IUseCaseInputPort<IAuthorisationOutputPort<TestAuthorisationResult>> { }
 
         #endregion Nested Classes
 

@@ -19,7 +19,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         private readonly InteractorUseCaseElement m_Element;
         private readonly object m_InputPort = new();
-        private readonly Presenter m_Presenter = new();
+        private readonly IOutputPort m_OutputPort = new Mock<IOutputPort>().Object;
 
         #endregion Fields
 
@@ -28,6 +28,11 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
         public InteractorUseCaseElementTests()
         {
             this.m_Element = new(this.m_MockServiceResolver.Object);
+
+            _ = this.m_MockServiceResolver
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<object, IOutputPort>)))
+                    .Returns(this.m_MockInteractor.Object);
+
         }
 
         #endregion Constructors
@@ -38,9 +43,10 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
         public async Task HandleAsync_InteractorDoesNotExist_DoesNothing()
         {
             // Arrange
+            this.m_MockServiceResolver.Reset();
 
             // Act
-            var _Exception = await Record.ExceptionAsync(() => this.m_Element.HandleAsync(this.m_InputPort, this.m_Presenter, this.m_MockNextHandleDelegate.Object, default));
+            var _Exception = await Record.ExceptionAsync(() => this.m_Element.HandleAsync(this.m_InputPort, this.m_OutputPort, this.m_MockNextHandleDelegate.Object, default));
 
             // Assert
             _ = _Exception.Should().BeNull();
@@ -49,34 +55,15 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
         }
 
         [Fact]
-        public async Task HandleAsync_InteractorRegisteredAsPresenterType_InvokesUseCaseAsync()
+        public async Task HandleAsync_InteractorExists_InvokesUseCaseAsync()
         {
             // Arrange
-            _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<object, Presenter>)))
-                    .Returns(this.m_MockInteractor.Object);
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, this.m_Presenter, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Element.HandleAsync(this.m_InputPort, this.m_OutputPort, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
-            this.m_MockInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_Presenter, default), Times.Once());
-            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
-        }
-
-        [Fact]
-        public async Task HandleAsync_InteractorRegisteredAsOutputPortType_InvokesUseCaseAsync()
-        {
-            // Arrange
-            _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<object, IOutputPort>)))
-                    .Returns(this.m_MockInteractor.Object);
-
-            // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, this.m_Presenter, this.m_MockNextHandleDelegate.Object, default);
-
-            // Assert
-            this.m_MockInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_Presenter, default), Times.Once());
+            this.m_MockInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_OutputPort, default), Times.Once());
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
         }
 
@@ -85,8 +72,6 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
         #region - - - - - - Nested Classes - - - - - -
 
         public interface IOutputPort { }
-
-        public class Presenter : IOutputPort { }
 
         #endregion Nested Classes
 

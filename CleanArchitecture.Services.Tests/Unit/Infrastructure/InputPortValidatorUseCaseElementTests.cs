@@ -1,10 +1,10 @@
-﻿using CleanArchitecture.Services.Pipeline.Infrastructure;
-using CleanArchitecture.Services.Pipeline.Validation;
+﻿using CleanArchitecture.Services.Infrastructure;
+using CleanArchitecture.Services.Pipeline;
 using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
+namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 {
 
     public class InputPortValidatorUseCaseElementTests
@@ -15,10 +15,10 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
         private readonly Mock<IValidationOutputPort<TestValidationResult>> m_MockOutputPort = new();
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
-        private readonly Mock<IUseCaseInputPortValidator<object, TestValidationResult>> m_MockValidator = new();
+        private readonly Mock<IUseCaseInputPortValidator<TestInputPort, TestValidationResult>> m_MockValidator = new();
 
         private readonly InputPortValidatorUseCaseElement<TestValidationResult> m_Element;
-        private readonly object m_InputPort = new();
+        private readonly TestInputPort m_InputPort = new();
         private readonly TestValidationResult m_ValidationResult = new();
 
         #endregion Fields
@@ -30,7 +30,7 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
             this.m_Element = new(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseInputPortValidator<object, TestValidationResult>)))
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseInputPortValidator<TestInputPort, TestValidationResult>)))
                     .Returns(this.m_MockValidator.Object);
 
             _ = this.m_MockValidator
@@ -41,6 +41,19 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         #endregion Constructors
 
         #region - - - - - - HandleAsync Tests - - - - - -
+
+        [Fact]
+        public async Task HandleAsync_InputPortDoesNotSupportValidation_InvokesNextHandleDelegate()
+        {
+            // Arrange
+            var _InputPort = new object();
+
+            // Act
+            await this.m_Element.HandleAsync(_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+
+            // Assert
+            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
+        }
 
         [Fact]
         public async Task HandleAsync_OutputPortDoesNotSupportValidation_InvokesNextHandleDelegate()
@@ -99,6 +112,8 @@ namespace CleanArchitecture.Services.Pipeline.Tests.Unit.Infrastructure
         #endregion HandleAsync Tests
 
         #region - - - - - - Nested Classes - - - - - -
+
+        public class TestInputPort : IUseCaseInputPort<IValidationOutputPort<TestValidationResult>> { }
 
         public class TestValidationResult : IValidationResult
         {
