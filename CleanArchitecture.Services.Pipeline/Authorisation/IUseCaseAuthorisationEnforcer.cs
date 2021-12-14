@@ -1,7 +1,9 @@
 ﻿namespace CleanArchitecture.Services.Pipeline.Authorisation
 {
 
-    public interface IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult> where TAuthorisationResult : IAuthorisationResult
+    public interface IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>
+        where TUseCaseInputPort : IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
+        where TAuthorisationResult : IAuthorisationResult
     {
 
         #region - - - - - - Methods - - - - - -
