@@ -5,40 +5,33 @@ using CleanArchitecture.Sample.UseCases.CreateProduct;
 using CleanArchitecture.Sample.UseCases.GetProduct;
 using CleanArchitecture.Services;
 using CleanArchitecture.Services.Authentication;
+using CleanArchitecture.Services.DependencyInjection;
 using CleanArchitecture.Services.Infrastructure;
-using CleanArchitecture.Services.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 
-var _ClaimsPrincipalProvider = new AuthenticatedClaimsPrincipalProvider(); // Currently Unauthenticated.
+var _ServiceCollection = new ServiceCollection();
+_ServiceCollection.AddScoped<UseCaseServiceResolver>(serviceProvider => serviceProvider.GetService);
 
-using var _ServiceProvider = new ServiceCollection()
-                                    // Register the DI Service
-                                    .AddScoped<UseCaseServiceResolver>(serviceProvider => serviceProvider.GetService)
+CleanArchitectureServices.Register(opts =>
+    _ = opts.ConfigurePipeline(pipeline =>
+                _ = pipeline.AddAuthentication()
+                        .AddAuthorisation<AuthorisationResult>()
+                        .AddBusinessRuleValidation<ValidationResult>()
+                        .AddInputPortValidation<ValidationResult>()
+                        .AddInteractorInvocation())
+            .ScanAssemblies(typeof(Program).Assembly)
+            .SetRegistrationAction((serviceType, implementationType) =>
+                _ = _ServiceCollection.AddScoped(serviceType, implementationType)));
 
-                                    // Register the Pipeline
-                                    .AddScoped<IUseCaseInvoker, UseCaseInvoker>()
-                                    .AddScoped<IUseCaseElement, AuthenticationUseCaseElement>()
-                                    .AddScoped<IUseCaseElement, AuthorisationUseCaseElement<AuthorisationResult>>()
-                                    .AddScoped<IUseCaseElement, InputPortValidatorUseCaseElement<ValidationResult>>()
-                                    .AddScoped<IUseCaseElement, BusinessRuleValidatorUseCaseElement<ValidationResult>>()
-                                    .AddScoped<IUseCaseElement, InteractorUseCaseElement>()
-
-                                    // Register the Infrastructure
-                                    .AddSingleton<IAuthenticatedClaimsPrincipalProvider>(_ClaimsPrincipalProvider)
-
-                                    // Register the Use Cases
-                                    .AddScoped<IUseCaseAuthorisationEnforcer<CreateProductInputPort, AuthorisationResult>, CreateProductAuthorisationEnforcer>()
-                                    .AddScoped<IUseCaseInputPortValidator<CreateProductInputPort, ValidationResult>, CreateProductInputPortValidator>()
-                                    .AddScoped<IUseCaseBusinessRuleValidator<CreateProductInputPort, ValidationResult>, CreateProductBusinessRuleValidator>()
-                                    .AddScoped<IUseCaseInteractor<CreateProductInputPort, ICreateProductOutputPort>, CreateProductInteractor>()
-                                    .AddScoped<IUseCaseInteractor<GetProductInputPort, IGetProductOutputPort>, GetProductInteractor>()
-                                    .BuildServiceProvider();
-
+using var _ServiceProvider = _ServiceCollection.BuildServiceProvider();
 using var _Scope = _ServiceProvider.CreateScope();
 var _ScopedProvider = _Scope.ServiceProvider;
 
-var _UseCaseInvoker = _ServiceProvider.GetService<IUseCaseInvoker>()!;
+// Currently Unauthenticated.
+var _ClaimsPrincipalProvider = (AuthenticatedClaimsPrincipalProvider)_ScopedProvider.GetService<IAuthenticatedClaimsPrincipalProvider>()!;
+
+var _UseCaseInvoker = _ScopedProvider.GetService<IUseCaseInvoker>()!;
 
 // Get Product - Not Authenticated. Output Port doesn't support Authentication, so we expect to invoke the Interactor.
 await _UseCaseInvoker.InvokeUseCaseAsync(new GetProductInputPort(), new GetProductPresenter(), default);
