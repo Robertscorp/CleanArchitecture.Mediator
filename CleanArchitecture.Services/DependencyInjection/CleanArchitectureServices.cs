@@ -9,6 +9,10 @@ namespace CleanArchitecture.Services.DependencyInjection
 
         #region - - - - - - Methods - - - - - -
 
+        /// <summary>
+        /// Registers the Use Case Pipeline and supporting services.
+        /// </summary>
+        /// <param name="configurationAction">The action to configure the registration process.</param>
         public static void Register(Action<ConfigurationOptions> configurationAction)
         {
             var _ConfigurationOptions = new ConfigurationOptions();
