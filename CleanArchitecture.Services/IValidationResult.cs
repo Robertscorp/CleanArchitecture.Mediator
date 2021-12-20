@@ -2,7 +2,7 @@
 {
 
     /// <summary>
-    /// A Validation Result from a Validator.
+    /// A validation result from a validator.
     /// </summary>
     public interface IValidationResult
     {
