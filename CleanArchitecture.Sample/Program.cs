@@ -15,11 +15,11 @@ _ServiceCollection.AddScoped<UseCaseServiceResolver>(serviceProvider => serviceP
 
 CleanArchitectureServices.Register(opts =>
     _ = opts.ConfigurePipeline(pipeline =>
-                _ = pipeline.AddAuthentication()
-                        .AddAuthorisation<AuthorisationResult>()
-                        .AddBusinessRuleValidation<ValidationResult>()
-                        .AddInputPortValidation<ValidationResult>()
-                        .AddInteractorInvocation())
+                pipeline.AddAuthentication()
+                    .AddAuthorisation<AuthorisationResult>()
+                    .AddBusinessRuleValidation<ValidationResult>()
+                    .AddInputPortValidation<ValidationResult>()
+                    .AddInteractorInvocation())
             .ScanAssemblies(typeof(Program).Assembly)
             .SetRegistrationAction((serviceType, implementationType) =>
                 _ = _ServiceCollection.AddScoped(serviceType, implementationType)));
