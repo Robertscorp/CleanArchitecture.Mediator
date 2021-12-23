@@ -1,4 +1,5 @@
-﻿using CleanArchitecture.Services.Infrastructure;
+﻿using CleanArchitecture.Services.DependencyInjection.Validation;
+using CleanArchitecture.Services.Infrastructure;
 using CleanArchitecture.Services.Pipeline;
 
 namespace CleanArchitecture.Services.DependencyInjection
@@ -8,6 +9,9 @@ namespace CleanArchitecture.Services.DependencyInjection
     {
 
         #region - - - - - - Methods - - - - - -
+
+        private static Type GetGenericTypeDefinition(Type type)
+            => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
         /// <summary>
         /// Registers the Use Case Pipeline and supporting services.
@@ -20,18 +24,44 @@ namespace CleanArchitecture.Services.DependencyInjection
 
             _ConfigurationOptions.RegistrationAction?.Invoke(typeof(IUseCaseInvoker), typeof(UseCaseInvoker));
 
-            var _ServiceTypes = _ConfigurationOptions.PipelineOptions.ElementOptions.SelectMany(e => e.Services);
-            var _ServiceTypeLookup = new HashSet<Type>(_ServiceTypes.Select(s => s.IsGenericType ? s.GetGenericTypeDefinition() : s));
+            var _ServiceTypes = _ConfigurationOptions
+                                    .PipelineOptions
+                                    .ElementOptions
+                                    .SelectMany(e => e.Services)
+                                    .Select(s => GetGenericTypeDefinition(s))
+                                    .ToHashSet();
 
-            foreach (var _Type in _ConfigurationOptions.AssembliesToScan.SelectMany(a => a.GetTypes()))
+            // Scan all specified Assemblies for classes that implement the Use Case Element Services.
+            foreach (var _Type in _ConfigurationOptions.GetAssemblyTypes())
                 foreach (var _InterfaceType in _Type.GetInterfaces())
-                    if (_ServiceTypeLookup.Contains(_InterfaceType.IsGenericType
-                            ? _InterfaceType.GetGenericTypeDefinition()
-                            : _InterfaceType))
+                    if (_ServiceTypes.Contains(GetGenericTypeDefinition(_InterfaceType)))
                         _ConfigurationOptions.RegistrationAction?.Invoke(_InterfaceType, _Type);
 
             foreach (var _Type in _ConfigurationOptions.PipelineOptions.ElementOptions.Select(e => e.ElementType))
                 _ConfigurationOptions.RegistrationAction?.Invoke(typeof(IUseCaseElement), _Type);
+
+            if (_ConfigurationOptions.ShouldValidate)
+                Validate(_ConfigurationOptions);
+        }
+
+        private static void Validate(ConfigurationOptions options)
+        {
+            var _Context = new ValidationContext();
+
+            foreach (var _ValidationOptions in options.PipelineOptions.ElementOptions.Select(e => e.ValidationOptions).Where(v => v != null))
+                _Context.RegisterUseCaseServiceResolver(_ValidationOptions!.OutputPort, _ValidationOptions.GetRequiredServiceTypes);
+
+            foreach (var _Type in options.GetAssemblyTypes())
+                _Context.RegisterAssemblyType(_Type);
+
+            var _ExceptionBuilder = new ValidationExceptionBuilder();
+
+            foreach (var (_InputPort, _MissingServices) in _Context.GetMissingServices())
+                _ExceptionBuilder.AddMissingServices(_InputPort, _MissingServices);
+
+            var _Exception = _ExceptionBuilder.ToValidationException();
+            if (_Exception != null)
+                throw _Exception;
         }
 
         #endregion Methods

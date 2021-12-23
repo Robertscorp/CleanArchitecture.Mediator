@@ -22,7 +22,8 @@ CleanArchitectureServices.Register(opts =>
                     .AddInteractorInvocation())
             .ScanAssemblies(typeof(Program).Assembly)
             .SetRegistrationAction((serviceType, implementationType) =>
-                _ = _ServiceCollection.AddScoped(serviceType, implementationType)));
+                _ = _ServiceCollection.AddScoped(serviceType, implementationType))
+            .Validate());
 
 using var _ServiceProvider = _ServiceCollection.BuildServiceProvider();
 using var _Scope = _ServiceProvider.CreateScope();
