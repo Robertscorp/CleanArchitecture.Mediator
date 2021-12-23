@@ -9,11 +9,12 @@ using CleanArchitecture.Services.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 
-var _ServiceCollection = new ServiceCollection();
-_ServiceCollection.AddScoped<UseCaseServiceResolver>(serviceProvider => serviceProvider.GetService);
-_ServiceCollection.AddCleanArchitectureServices();
+using var _ServiceProvider
+    = new ServiceCollection()
+            .AddScoped<UseCaseServiceResolver>(serviceProvider => serviceProvider.GetService)
+            .AddCleanArchitectureServices()
+            .BuildServiceProvider();
 
-using var _ServiceProvider = _ServiceCollection.BuildServiceProvider();
 using var _Scope = _ServiceProvider.CreateScope();
 var _ScopedProvider = _Scope.ServiceProvider;
 
