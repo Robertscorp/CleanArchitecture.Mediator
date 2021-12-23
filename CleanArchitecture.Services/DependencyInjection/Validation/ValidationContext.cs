@@ -14,16 +14,13 @@
 
         #region - - - - - - Methods - - - - - -
 
-        private static Type GetGenericTypeDefinition(Type type)
-            => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
-
         private static Type GetUseCaseOutputPort(Type inputPortType)
             => inputPortType.GenericTypeArguments.Single();
 
         public void RegisterAssemblyType(Type type)
         {
             foreach (var _Interface in type.GetInterfaces())
-                if (Equals(typeof(IUseCaseInputPort<>), GetGenericTypeDefinition(_Interface)))
+                if (Equals(typeof(IUseCaseInputPort<>), _Interface.GetTypeDefinition()))
                     this.m_RegisteredInputPorts.Add((type, _Interface));
                 else
                     _ = this.m_RegisteredServices.Add(_Interface);
@@ -31,7 +28,7 @@
 
         public void RegisterUseCaseServiceResolver(Type outputPortType, Func<Type, Type, Type[]> serviceResolver)
             => this.m_UseCaseServiceResolverByOutputPort
-                .Add(GetGenericTypeDefinition(outputPortType), serviceResolver);
+                .Add(outputPortType.GetTypeDefinition(), serviceResolver);
 
         public (Type OutputPort, Type[] MissingServices)[] GetMissingServices()
         {
@@ -41,9 +38,9 @@
                                         .GetInterfaces()
                                         .Select(op => (InputPort: ip, OutputPort: op)))
                     .Where(ipop => this.m_UseCaseServiceResolverByOutputPort
-                                    .ContainsKey(GetGenericTypeDefinition(ipop.OutputPort)))
+                                    .ContainsKey(ipop.OutputPort.GetTypeDefinition()))
                     .Select(ipop => (ipop.InputPort,
-                                    RequiredServices: this.m_UseCaseServiceResolverByOutputPort[GetGenericTypeDefinition(ipop.OutputPort)]
+                                    RequiredServices: this.m_UseCaseServiceResolverByOutputPort[ipop.OutputPort.GetTypeDefinition()]
                                                         .Invoke(ipop.InputPort.Implementation, ipop.OutputPort)))
                     .SelectMany(iprs => iprs.RequiredServices
                                             .Select(rs => (iprs.InputPort, RequiredService: rs)))

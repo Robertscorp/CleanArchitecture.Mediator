@@ -10,9 +10,6 @@ namespace CleanArchitecture.Services.DependencyInjection
 
         #region - - - - - - Methods - - - - - -
 
-        private static Type GetGenericTypeDefinition(Type type)
-            => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
-
         /// <summary>
         /// Registers the Use Case Pipeline and supporting services.
         /// </summary>
@@ -28,13 +25,13 @@ namespace CleanArchitecture.Services.DependencyInjection
                                     .PipelineOptions
                                     .ElementOptions
                                     .SelectMany(e => e.Services)
-                                    .Select(s => GetGenericTypeDefinition(s))
+                                    .Select(s => s.GetTypeDefinition())
                                     .ToHashSet();
 
             // Scan all specified Assemblies for classes that implement the Use Case Element Services.
             foreach (var _Type in _ConfigurationOptions.GetAssemblyTypes())
                 foreach (var _InterfaceType in _Type.GetInterfaces())
-                    if (_ServiceTypes.Contains(GetGenericTypeDefinition(_InterfaceType)))
+                    if (_ServiceTypes.Contains(_InterfaceType.GetTypeDefinition()))
                         _ConfigurationOptions.RegistrationAction?.Invoke(_InterfaceType, _Type);
 
             foreach (var _Type in _ConfigurationOptions.PipelineOptions.ElementOptions.Select(e => e.ElementType))
