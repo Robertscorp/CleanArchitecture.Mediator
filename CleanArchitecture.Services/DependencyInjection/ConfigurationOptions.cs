@@ -17,15 +17,22 @@ namespace CleanArchitecture.Services.DependencyInjection
 
         #region - - - - - - Properties - - - - - -
 
-        internal List<Assembly> AssembliesToScan { get; } = new();
+        private List<Assembly> AssembliesToScan { get; } = new();
 
         internal PipelineOptions PipelineOptions { get; } = new();
 
         internal Action<Type, Type>? RegistrationAction { get; private set; }
 
+        private Type[]? ScannedTypes { get; set; }
+
+        internal bool ShouldValidate { get; private set; }
+
         #endregion Properties
 
         #region - - - - - - Methods - - - - - -
+
+        internal Type[] GetAssemblyTypes()
+            => this.ScannedTypes ??= this.AssembliesToScan.SelectMany(a => a.GetTypes()).ToArray();
 
         /// <summary>
         /// Configures the Use Case Pipeline.
@@ -59,6 +66,16 @@ namespace CleanArchitecture.Services.DependencyInjection
         public ConfigurationOptions SetRegistrationAction(Action<Type, Type> registrationAction)
         {
             this.RegistrationAction = registrationAction;
+            return this;
+        }
+
+        /// <summary>
+        /// Validates after registration, which will throw a <see cref="Validation.ValidationException"/> if any issues were found.
+        /// </summary>
+        /// <returns>Itself.</returns>
+        public ConfigurationOptions Validate()
+        {
+            this.ShouldValidate = true;
             return this;
         }
 
