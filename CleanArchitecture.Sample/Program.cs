@@ -1,31 +1,20 @@
-﻿using CleanArchitecture.Sample.Infrastructure;
-using CleanArchitecture.Sample.Pipeline;
+﻿using CleanArchitecture.Sample;
+using CleanArchitecture.Sample.Infrastructure;
 using CleanArchitecture.Sample.Presenters;
 using CleanArchitecture.Sample.UseCases.CreateProduct;
 using CleanArchitecture.Sample.UseCases.GetProduct;
 using CleanArchitecture.Services;
 using CleanArchitecture.Services.Authentication;
-using CleanArchitecture.Services.DependencyInjection;
 using CleanArchitecture.Services.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 
-var _ServiceCollection = new ServiceCollection();
-_ServiceCollection.AddScoped<UseCaseServiceResolver>(serviceProvider => serviceProvider.GetService);
+using var _ServiceProvider
+    = new ServiceCollection()
+            .AddScoped<UseCaseServiceResolver>(serviceProvider => serviceProvider.GetService)
+            .AddCleanArchitectureServices()
+            .BuildServiceProvider();
 
-CleanArchitectureServices.Register(opts =>
-    _ = opts.ConfigurePipeline(pipeline =>
-                pipeline.AddAuthentication()
-                    .AddAuthorisation<AuthorisationResult>()
-                    .AddBusinessRuleValidation<ValidationResult>()
-                    .AddInputPortValidation<ValidationResult>()
-                    .AddInteractorInvocation())
-            .ScanAssemblies(typeof(Program).Assembly)
-            .SetRegistrationAction((serviceType, implementationType) =>
-                _ = _ServiceCollection.AddScoped(serviceType, implementationType))
-            .Validate());
-
-using var _ServiceProvider = _ServiceCollection.BuildServiceProvider();
 using var _Scope = _ServiceProvider.CreateScope();
 var _ScopedProvider = _Scope.ServiceProvider;
 
