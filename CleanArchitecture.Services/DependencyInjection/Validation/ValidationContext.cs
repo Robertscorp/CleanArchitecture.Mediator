@@ -14,22 +14,6 @@
 
         #region - - - - - - Methods - - - - - -
 
-        private static Type GetUseCaseOutputPort(Type inputPortType)
-            => inputPortType.GenericTypeArguments.Single();
-
-        public void RegisterAssemblyType(Type type)
-        {
-            foreach (var _Interface in type.GetInterfaces())
-                if (Equals(typeof(IUseCaseInputPort<>), _Interface.GetTypeDefinition()))
-                    this.m_RegisteredInputPorts.Add((type, _Interface));
-                else
-                    _ = this.m_RegisteredServices.Add(_Interface);
-        }
-
-        public void RegisterUseCaseServiceResolver(Type outputPortType, Func<Type, Type, Type[]> serviceResolver)
-            => this.m_UseCaseServiceResolverByOutputPort
-                .Add(outputPortType.GetTypeDefinition(), serviceResolver);
-
         public (Type OutputPort, Type[] MissingServices)[] GetMissingServices()
         {
             var _UseCaseRequiredServices
@@ -56,6 +40,22 @@
 
             return _MissingServices;
         }
+
+        private static Type GetUseCaseOutputPort(Type inputPortType)
+            => inputPortType.GenericTypeArguments.Single();
+
+        public void RegisterAssemblyType(Type type)
+        {
+            foreach (var _Interface in type.GetInterfaces())
+                if (Equals(typeof(IUseCaseInputPort<>), _Interface.GetTypeDefinition()))
+                    this.m_RegisteredInputPorts.Add((type, _Interface));
+                else
+                    _ = this.m_RegisteredServices.Add(_Interface);
+        }
+
+        public void RegisterUseCaseServiceResolver(Type outputPortType, Func<Type, Type, Type[]> serviceResolver)
+            => this.m_UseCaseServiceResolverByOutputPort
+                .Add(outputPortType.GetTypeDefinition(), serviceResolver);
 
         #endregion Methods
 
