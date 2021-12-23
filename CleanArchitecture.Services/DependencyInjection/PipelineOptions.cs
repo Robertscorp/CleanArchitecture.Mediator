@@ -19,7 +19,7 @@ namespace CleanArchitecture.Services.DependencyInjection
 
         #region - - - - - - Properties - - - - - -
 
-        internal List<UseCaseElementOptions> ElementOptions { get; } = new();
+        internal List<ElementOptions> ElementOptions { get; } = new();
 
         #endregion Properties
 
@@ -31,7 +31,9 @@ namespace CleanArchitecture.Services.DependencyInjection
         /// <returns>Itself.</returns>
         public PipelineOptions AddAuthentication()
             => this.AddUseCaseElement<AuthenticationUseCaseElement>(opts
-                => _ = opts.AddUseCaseService<IAuthenticatedClaimsPrincipalProvider>());
+                => opts
+                    .AddService<IAuthenticatedClaimsPrincipalProvider>()
+                    .WithValidation<IAuthenticationOutputPort>(() => new[] { typeof(IAuthenticatedClaimsPrincipalProvider) }));
 
         /// <summary>
         /// Registers authorisation as the next pipe in the Use Case Pipeline.
@@ -40,7 +42,10 @@ namespace CleanArchitecture.Services.DependencyInjection
         /// <returns>Itself.</returns>
         public PipelineOptions AddAuthorisation<TAuthorisationResult>() where TAuthorisationResult : IAuthorisationResult
             => this.AddUseCaseElement<AuthorisationUseCaseElement<TAuthorisationResult>>(opts
-                => _ = opts.AddUseCaseService(typeof(IUseCaseAuthorisationEnforcer<,>)));
+                => opts
+                    .AddService(typeof(IUseCaseAuthorisationEnforcer<,>))
+                    .WithValidation(typeof(IAuthorisationOutputPort<>), (inputPort, outputPort)
+                        => new[] { typeof(IUseCaseAuthorisationEnforcer<,>).MakeGenericType(inputPort, typeof(TAuthorisationResult)) }));
 
         /// <summary>
         /// Registers business rule validation as the next pipe in the Use Case Pipeline.
@@ -49,7 +54,10 @@ namespace CleanArchitecture.Services.DependencyInjection
         /// <returns>Itself.</returns>
         public PipelineOptions AddBusinessRuleValidation<TValidationResult>() where TValidationResult : IValidationResult
             => this.AddUseCaseElement<BusinessRuleValidatorUseCaseElement<TValidationResult>>(opts
-                => _ = opts.AddUseCaseService(typeof(IUseCaseBusinessRuleValidator<,>)));
+                => opts
+                    .AddService(typeof(IUseCaseBusinessRuleValidator<,>))
+                    .WithValidation(typeof(IBusinessRuleValidationOutputPort<>), (inputPort, outputPort)
+                        => new[] { typeof(IUseCaseBusinessRuleValidator<,>).MakeGenericType(inputPort, typeof(TValidationResult)) }));
 
         /// <summary>
         /// Registers Input Port validation as the next pipe in the Use Case Pipeline.
@@ -58,7 +66,10 @@ namespace CleanArchitecture.Services.DependencyInjection
         /// <returns>Itself.</returns>
         public PipelineOptions AddInputPortValidation<TValidationResult>() where TValidationResult : IValidationResult
             => this.AddUseCaseElement<InputPortValidatorUseCaseElement<TValidationResult>>(opts
-                => _ = opts.AddUseCaseService(typeof(IUseCaseInputPortValidator<,>)));
+                => opts
+                    .AddService(typeof(IUseCaseInputPortValidator<,>))
+                    .WithValidation(typeof(IValidationOutputPort<>), (inputPort, outputPort)
+                        => new[] { typeof(IUseCaseInputPortValidator<,>).MakeGenericType(inputPort, typeof(TValidationResult)) }));
 
         /// <summary>
         /// Registers interactor invocation as the final pipe in the Use Case Pipeline.
@@ -69,7 +80,7 @@ namespace CleanArchitecture.Services.DependencyInjection
         /// </remarks>
         public void AddInteractorInvocation()
             => this.AddUseCaseElement<InteractorUseCaseElement>(opts
-                => _ = opts.AddUseCaseService(typeof(IUseCaseInteractor<,>)));
+                => _ = opts.AddService(typeof(IUseCaseInteractor<,>)));
 
         /// <summary>
         /// Registers custom behaviour as the next pipe in the Use Case Pipeline.
@@ -77,9 +88,9 @@ namespace CleanArchitecture.Services.DependencyInjection
         /// <typeparam name="TUseCaseElement">The type of pipe to register.</typeparam>
         /// <param name="configurationAction">The action to configure the pipe.</param>
         /// <returns>Itself.</returns>
-        public PipelineOptions AddUseCaseElement<TUseCaseElement>(Action<UseCaseElementOptions> configurationAction) where TUseCaseElement : IUseCaseElement
+        public PipelineOptions AddUseCaseElement<TUseCaseElement>(Action<ElementOptions> configurationAction) where TUseCaseElement : IUseCaseElement
         {
-            var _Options = new UseCaseElementOptions(typeof(TUseCaseElement));
+            var _Options = new ElementOptions(typeof(TUseCaseElement));
             configurationAction(_Options);
             this.ElementOptions.Add(_Options);
             return this;
