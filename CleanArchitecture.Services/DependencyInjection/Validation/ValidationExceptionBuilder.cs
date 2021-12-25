@@ -9,13 +9,15 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
         #region - - - - - - Fields - - - - - -
 
         private readonly List<(Type InputPort, Type[] MissingServices)> m_MissingServices = new();
+        private readonly List<(Type PipeOutputPort, Type[] AffectedUseCaseOutputPorts)> m_UnregisteredOutputPorts = new();
 
         #endregion Fields
 
         #region - - - - - - Properties - - - - - -
 
         private bool HasValidationFailure
-            => this.m_MissingServices.Any();
+            => this.m_MissingServices.Any() ||
+                this.m_UnregisteredOutputPorts.Any();
 
         #endregion Properties
 
@@ -23,6 +25,9 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
 
         public void AddMissingServices(Type inputPort, Type[] missingServices)
             => this.m_MissingServices.Add((inputPort, missingServices));
+
+        public void AddUnregisteredOutputPort(Type pipeOutputPort, Type[] affectedUseCaseOutputPorts)
+            => this.m_UnregisteredOutputPorts.Add((pipeOutputPort, affectedUseCaseOutputPorts));
 
         private string GetMessage()
         {
@@ -35,6 +40,19 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
 
                 foreach (var _MissingService in _MissingServices.OrderBy(s => s.Name))
                     _ = _StringBuilder.Append(" - ").AppendLine(_MissingService.GetFriendlyName());
+
+                _ = _StringBuilder.AppendLine();
+            }
+
+            foreach (var (_PipeOutputPort, _AffectedUseCaseOutputPorts) in this.m_UnregisteredOutputPorts.OrderBy(op => op.PipeOutputPort.Name))
+            {
+                _ = _StringBuilder
+                        .Append(_PipeOutputPort.GetFriendlyName())
+                        .AppendLine(" is not registered with the Use Case Pipeline. This affects:");
+
+                foreach (var _AffectedUseCaseOutputPort in _AffectedUseCaseOutputPorts.OrderBy(op => op.GetFriendlyName()))
+                    _ = _StringBuilder.Append(" - ").AppendLine(_AffectedUseCaseOutputPort.GetFriendlyName());
+
                 _ = _StringBuilder.AppendLine();
             }
 
