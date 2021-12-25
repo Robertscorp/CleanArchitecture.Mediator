@@ -14,7 +14,7 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
                 : type.Name;
 
         private static string GetGenericArguments(Type type)
-            => type.GenericTypeArguments.Select(t => t.GetFriendlyName()).Aggregate((agg, inc) => $"{agg}, {inc}");
+            => type.GetGenericArguments().Select(t => t.GetFriendlyName()).Aggregate((agg, inc) => $"{agg}, {inc}");
 
         public static Type GetTypeDefinition(this Type type)
             => type.IsGenericType ? type.GetGenericTypeDefinition() : type;
