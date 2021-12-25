@@ -44,7 +44,7 @@ namespace CleanArchitecture.Services.DependencyInjection
             => this.AddUseCaseElement<AuthorisationUseCaseElement<TAuthorisationResult>>(opts
                 => opts
                     .AddService(typeof(IUseCaseAuthorisationEnforcer<,>))
-                    .WithValidation(typeof(IAuthorisationOutputPort<>), (inputPort, outputPort)
+                    .WithValidation(typeof(IAuthorisationOutputPort<TAuthorisationResult>), (inputPort, outputPort)
                         => new[] { typeof(IUseCaseAuthorisationEnforcer<,>).MakeGenericType(inputPort, typeof(TAuthorisationResult)) }));
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace CleanArchitecture.Services.DependencyInjection
             => this.AddUseCaseElement<BusinessRuleValidatorUseCaseElement<TValidationResult>>(opts
                 => opts
                     .AddService(typeof(IUseCaseBusinessRuleValidator<,>))
-                    .WithValidation(typeof(IBusinessRuleValidationOutputPort<>), (inputPort, outputPort)
+                    .WithValidation(typeof(IBusinessRuleValidationOutputPort<TValidationResult>), (inputPort, outputPort)
                         => new[] { typeof(IUseCaseBusinessRuleValidator<,>).MakeGenericType(inputPort, typeof(TValidationResult)) }));
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace CleanArchitecture.Services.DependencyInjection
             => this.AddUseCaseElement<InputPortValidatorUseCaseElement<TValidationResult>>(opts
                 => opts
                     .AddService(typeof(IUseCaseInputPortValidator<,>))
-                    .WithValidation(typeof(IValidationOutputPort<>), (inputPort, outputPort)
+                    .WithValidation(typeof(IValidationOutputPort<TValidationResult>), (inputPort, outputPort)
                         => new[] { typeof(IUseCaseInputPortValidator<,>).MakeGenericType(inputPort, typeof(TValidationResult)) }));
 
         /// <summary>

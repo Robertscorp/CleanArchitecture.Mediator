@@ -6,6 +6,7 @@
 
         #region - - - - - - Fields - - - - - -
 
+        private readonly HashSet<Type> m_PipeOutputPorts = new();
         private readonly List<(Type Implementation, Type Interface)> m_RegisteredInputPorts = new();
         private readonly HashSet<Type> m_RegisteredServices = new();
         private readonly Dictionary<Type, Func<Type, Type, Type[]>> m_UseCaseServiceResolverByOutputPort = new();
@@ -41,6 +42,15 @@
             return _MissingServices;
         }
 
+        public (Type PipeOutputPort, Type[] AffectedUseCaseOutputPorts)[] GetUnregisteredOutputPorts()
+            => this.m_RegisteredInputPorts
+                .Select(ip => ip.Interface.GenericTypeArguments.Single())
+                .SelectMany(ucop => ucop.GetInterfaces().Select(pop => (PipeOutputPort: pop, UseCaseOutputPort: ucop)))
+                .Where(pucops => !this.m_PipeOutputPorts.Contains(pucops.PipeOutputPort))
+                .GroupBy(pucops => pucops.PipeOutputPort)
+                .Select(gpucops => (gpucops.Key, gpucops.Select(pucops => pucops.UseCaseOutputPort).ToArray()))
+                .ToArray();
+
         private static Type GetUseCaseOutputPort(Type inputPortType)
             => inputPortType.GenericTypeArguments.Single();
 
@@ -52,6 +62,9 @@
                 else
                     _ = this.m_RegisteredServices.Add(_Interface);
         }
+
+        public void RegisterPipeOutputPort(Type pipeOutputPort)
+            => this.m_PipeOutputPorts.Add(pipeOutputPort);
 
         public void RegisterUseCaseServiceResolver(Type outputPortType, Func<Type, Type, Type[]> serviceResolver)
             => this.m_UseCaseServiceResolverByOutputPort
