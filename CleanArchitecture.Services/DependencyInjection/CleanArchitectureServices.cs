@@ -45,16 +45,22 @@ namespace CleanArchitecture.Services.DependencyInjection
         {
             var _Context = new ValidationContext();
 
-            foreach (var _ValidationOptions in options.PipelineOptions.ElementOptions.Select(e => e.ValidationOptions).Where(v => v != null))
-                _Context.RegisterUseCaseServiceResolver(_ValidationOptions!.OutputPort, _ValidationOptions.GetRequiredServiceTypes);
-
             foreach (var _Type in options.GetAssemblyTypes())
                 _Context.RegisterAssemblyType(_Type);
+
+            foreach (var _ValidationOptions in options.PipelineOptions.ElementOptions.Select(e => e.ValidationOptions).Where(v => v != null))
+            {
+                _Context.RegisterPipeOutputPort(_ValidationOptions!.OutputPort);
+                _Context.RegisterUseCaseServiceResolver(_ValidationOptions!.OutputPort, _ValidationOptions.GetRequiredServiceTypes);
+            }
 
             var _ExceptionBuilder = new ValidationExceptionBuilder();
 
             foreach (var (_InputPort, _MissingServices) in _Context.GetMissingServices())
                 _ExceptionBuilder.AddMissingServices(_InputPort, _MissingServices);
+
+            foreach (var (_PipeOutputPort, _AffectedUseCaseOutputPorts) in _Context.GetUnregisteredOutputPorts())
+                _ExceptionBuilder.AddUnregisteredOutputPort(_PipeOutputPort, _AffectedUseCaseOutputPorts);
 
             var _Exception = _ExceptionBuilder.ToValidationException();
             if (_Exception != null)
