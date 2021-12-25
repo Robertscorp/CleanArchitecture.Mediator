@@ -45,10 +45,10 @@
         public (Type PipeOutputPort, Type[] AffectedUseCaseOutputPorts)[] GetUnregisteredOutputPorts()
             => this.m_RegisteredInputPorts
                 .Select(ip => ip.Interface.GenericTypeArguments.Single())
-                .SelectMany(op => op.GetInterfaces().Select(i => (PipeOutputPort: i, UseCaseOutputPort: op)))
-                .Where(bop => !this.m_PipeOutputPorts.Contains(bop.PipeOutputPort))
-                .GroupBy(bop => bop.PipeOutputPort)
-                .Select(gbop => (gbop.Key, gbop.Select(bop => bop.UseCaseOutputPort).ToArray()))
+                .SelectMany(ucop => ucop.GetInterfaces().Select(pop => (PipeOutputPort: pop, UseCaseOutputPort: ucop)))
+                .Where(pucops => !this.m_PipeOutputPorts.Contains(pucops.PipeOutputPort))
+                .GroupBy(pucops => pucops.PipeOutputPort)
+                .Select(gpucops => (gpucops.Key, gpucops.Select(pucops => pucops.UseCaseOutputPort).ToArray()))
                 .ToArray();
 
         private static Type GetUseCaseOutputPort(Type inputPortType)
