@@ -38,7 +38,7 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
             {
                 _ = _StringBuilder.Append(_InputPort.GetFriendlyName()).AppendLine(" is missing implementations for:");
 
-                foreach (var _MissingService in _MissingServices.OrderBy(s => s.Name))
+                foreach (var _MissingService in _MissingServices.OrderBy(s => s.GetFriendlyName()))
                     _ = _StringBuilder.Append(" - ").AppendLine(_MissingService.GetFriendlyName());
 
                 _ = _StringBuilder.AppendLine();
