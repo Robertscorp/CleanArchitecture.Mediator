@@ -51,29 +51,20 @@ namespace CleanArchitecture.Services.DependencyInjection
             foreach (var _PipeOptions in options.PipelineOptions.ElementOptions)
                 if (_PipeOptions.PipeOutputPort != null)
                 {
+                    var _PipeServiceOptions = _PipeOptions.PipeServiceOptions;
+
                     _Context.RegisterPipeOutputPort(_PipeOptions.PipeOutputPort);
 
-                    var _SingleImplementationServiceOptions
-                        = _PipeOptions
-                            .PipeServiceOptions
-                            .Where(pso => pso.UseCaseServiceResolver == null)
-                            .ToArray();
-
-                    foreach (var _SingleImplementationServiceOption in _SingleImplementationServiceOptions)
+                    foreach (var _PipeServiceOption in _PipeServiceOptions.Where(pso => pso.UseCaseServiceResolver == null))
                         _Context.RegisterSingleImplementationService(
                             _PipeOptions.PipeOutputPort,
-                            _SingleImplementationServiceOption.PipeService);
+                            _PipeServiceOption.PipeService);
 
-                    var _PerUseCaseServiceOptions
-                        = _PipeOptions
-                            .PipeServiceOptions
-                            .Where(pso => pso.UseCaseServiceResolver != null);
-
-                    foreach (var _PerUseCaseServiceOption in _PerUseCaseServiceOptions)
+                    foreach (var _PipeServiceOption in _PipeServiceOptions.Where(pso => pso.UseCaseServiceResolver != null))
                         _Context.RegisterUseCaseService(
                             _PipeOptions.PipeOutputPort,
-                            _PerUseCaseServiceOption.PipeService,
-                            _PerUseCaseServiceOption.UseCaseServiceResolver!);
+                            _PipeServiceOption.PipeService,
+                            _PipeServiceOption.UseCaseServiceResolver!);
                 }
 
             var _ExceptionBuilder = new ValidationExceptionBuilder();
