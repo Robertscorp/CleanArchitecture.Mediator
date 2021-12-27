@@ -7,16 +7,16 @@
         #region - - - - - - Fields - - - - - -
 
         private readonly ElementOptions m_PipeOptions;
-        private readonly PipeServiceOptions m_ServiceOptions;
+        private readonly PipeServiceOptions m_PipeServiceOptions;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        public PipeAndServiceOptions(ElementOptions pipeOptions, PipeServiceOptions serviceOptions)
+        public PipeAndServiceOptions(ElementOptions pipeOptions, PipeServiceOptions pipeServiceOptions)
         {
             this.m_PipeOptions = pipeOptions;
-            this.m_ServiceOptions = serviceOptions;
+            this.m_PipeServiceOptions = pipeServiceOptions;
         }
 
         #endregion Constructors
@@ -65,7 +65,7 @@
         /// <remarks>If not specified, the validation process will assume there is only a single implementation for the service.</remarks>
         public ElementOptions WithUseCaseServiceResolver(Func<Type, Type, Type, Type> useCaseServiceResolver)
         {
-            this.m_ServiceOptions.WithUseCaseServiceResolver(useCaseServiceResolver);
+            this.m_PipeServiceOptions.WithUseCaseServiceResolver(useCaseServiceResolver);
             return this.m_PipeOptions;
         }
 
