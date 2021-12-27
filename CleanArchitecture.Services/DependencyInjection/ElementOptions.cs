@@ -24,15 +24,15 @@
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Registers the Output Port for the pipe.
+        /// Registers the Output Port for the pipe. Used for Validation.
         /// </summary>
-        /// <param name="pipeOutputPort">The type of the Pipe's Output Port.</param>
+        /// <typeparam name="TPipeOutputPort">The type of the Pipe's Output Port.</typeparam>
         /// <returns>Itself.</returns>
         public ElementOptions WithPipeOutputPort<TPipeOutputPort>()
             => this.WithPipeOutputPort(typeof(TPipeOutputPort));
 
         /// <summary>
-        /// Registers the Output Port for the pipe.
+        /// Registers the Output Port for the pipe. Used for Validation.
         /// </summary>
         /// <param name="pipeOutputPort">The type of the Pipe's Output Port.</param>
         /// <returns>Itself.</returns>
@@ -45,16 +45,16 @@
         /// <summary>
         /// Registers a service as being required by the pipe.
         /// </summary>
-        /// <typeparam name="TService">The type of service required by the pipe.</typeparam>
-        /// <returns>Itself.</returns>
-        public PipeAndServiceOptions AddPipeService<TService>()
-            => this.AddPipeService(typeof(TService));
+        /// <typeparam name="TPipeService">The type of service required by the pipe.</typeparam>
+        /// <returns>PipeAndServiceOptions.</returns>
+        public PipeAndServiceOptions AddPipeService<TPipeService>()
+            => this.AddPipeService(typeof(TPipeService));
 
         /// <summary>
         /// Registers a service as being required by the pipe.
         /// </summary>
         /// <param name="pipeService">The type of service required by the pipe.</param>
-        /// <returns>Itself.</returns>
+        /// <returns>PipeAndServiceOptions.</returns>
         public PipeAndServiceOptions AddPipeService(Type pipeService)
         {
             var _PipeServiceOptions = new PipeServiceOptions(pipeService);

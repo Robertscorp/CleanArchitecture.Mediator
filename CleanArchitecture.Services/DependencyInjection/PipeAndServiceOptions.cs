@@ -26,10 +26,10 @@
         /// <summary>
         /// Registers a service as being required by the pipe.
         /// </summary>
-        /// <typeparam name="TService">The type of service required by the pipe.</typeparam>
+        /// <typeparam name="TPipeService">The type of service required by the pipe.</typeparam>
         /// <returns>PipeAndServiceOptions.</returns>
-        public PipeAndServiceOptions AddPipeService<TService>()
-            => this.AddPipeService(typeof(TService));
+        public PipeAndServiceOptions AddPipeService<TPipeService>()
+            => this.AddPipeService(typeof(TPipeService));
 
         /// <summary>
         /// Registers a service as being required by the pipe.
@@ -40,7 +40,7 @@
             => this.m_PipeOptions.AddPipeService(pipeService);
 
         /// <summary>
-        /// Registers the Output Port for the pipe.
+        /// Registers the Output Port for the pipe. Used for Validation.
         /// </summary>
         /// <typeparam name="TPipeOutputPort">The type of the Pipe's Output Port.</typeparam>
         /// <returns>ElementOptions.</returns>
@@ -48,7 +48,7 @@
             => this.WithPipeOutputPort(typeof(TPipeOutputPort));
 
         /// <summary>
-        /// Registers the Output Port for the pipe.
+        /// Registers the Output Port for the pipe. Used for Validation.
         /// </summary>
         /// <param name="pipeOutputPort">The type of the Pipe's Output Port.</param>
         /// <returns>ElementOptions.</returns>
