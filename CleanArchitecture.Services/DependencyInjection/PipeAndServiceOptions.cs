@@ -13,7 +13,7 @@
 
         #region - - - - - - Constructors - - - - - -
 
-        public PipeAndServiceOptions(ElementOptions pipeOptions, PipeServiceOptions pipeServiceOptions)
+        internal PipeAndServiceOptions(ElementOptions pipeOptions, PipeServiceOptions pipeServiceOptions)
         {
             this.m_PipeOptions = pipeOptions;
             this.m_PipeServiceOptions = pipeServiceOptions;

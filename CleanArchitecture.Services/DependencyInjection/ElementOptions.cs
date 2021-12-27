@@ -6,7 +6,7 @@
 
         #region - - - - - - Constructors - - - - - -
 
-        public ElementOptions(Type elementType)
+        internal ElementOptions(Type elementType)
             => this.ElementType = elementType;
 
         #endregion Constructors
