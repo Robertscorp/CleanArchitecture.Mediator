@@ -70,8 +70,7 @@ namespace CleanArchitecture.Services.DependencyInjection
             var _ExceptionBuilder = new ValidationExceptionBuilder();
 
             foreach (var (_, _MissingSingleImplementationServices) in _Context.GetMissingSingleImplementationServices())
-                foreach (var _MissingSingleImplementationService in _MissingSingleImplementationServices)
-                    _ExceptionBuilder.AddMissingSingleImplementationService(_MissingSingleImplementationService);
+                _ExceptionBuilder.AddMissingSingleImplementationServices(_MissingSingleImplementationServices);
 
             foreach (var (_InputPort, _MissingUseCaseServices) in _Context.GetMissingUseCaseServices())
                 _ExceptionBuilder.AddMissingUseCaseServices(_InputPort, _MissingUseCaseServices);

@@ -25,8 +25,8 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
 
         #region - - - - - - Methods - - - - - -
 
-        public void AddMissingSingleImplementationService(Type missingSingleImplementationService)
-            => this.m_MissingSingleImplementationServices.Add(missingSingleImplementationService);
+        public void AddMissingSingleImplementationServices(Type[] missingSingleImplementationServices)
+            => this.m_MissingSingleImplementationServices.AddRange(missingSingleImplementationServices);
 
         public void AddMissingUseCaseServices(Type inputPort, Type[] missingUseCaseServices)
             => this.m_MissingUseCaseServices.Add((inputPort, missingUseCaseServices));
