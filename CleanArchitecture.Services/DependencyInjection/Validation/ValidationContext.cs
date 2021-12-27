@@ -44,7 +44,7 @@
         public (Type PipeOutputPort, Type[] AffectedUseCaseOutputPorts)[] GetUnregisteredOutputPorts()
             => this.m_RegisteredInputPorts
                 .Select(ip => GetUseCaseOutputPort(ip.Interface))
-                .SelectMany(ucop => ucop.GetInterfaces().Select(pop => (PipeOutputPort: pop, UseCaseOutputPort: ucop)))
+                .SelectMany(ucop => GetPipeOutputPorts(ucop).Select(pop => (PipeOutputPort: pop, UseCaseOutputPort: ucop)))
                 .Where(pucops => !this.m_PipeOutputPorts.Contains(pucops.PipeOutputPort))
                 .GroupBy(pucops => pucops.PipeOutputPort)
                 .Select(gpucops => (gpucops.Key, gpucops.Select(pucops => pucops.UseCaseOutputPort).ToArray()))
