@@ -1,6 +1,4 @@
-﻿using CleanArchitecture.Services.DependencyInjection.Validation;
-
-namespace CleanArchitecture.Services.DependencyInjection
+﻿namespace CleanArchitecture.Services.DependencyInjection
 {
 
     public class ElementOptions
@@ -8,7 +6,7 @@ namespace CleanArchitecture.Services.DependencyInjection
 
         #region - - - - - - Constructors - - - - - -
 
-        public ElementOptions(Type elementType)
+        internal ElementOptions(Type elementType)
             => this.ElementType = elementType;
 
         #endregion Constructors
@@ -17,64 +15,52 @@ namespace CleanArchitecture.Services.DependencyInjection
 
         internal Type ElementType { get; }
 
-        internal List<Type> Services { get; } = new();
+        internal Type? PipeOutputPort { get; private set; }
 
-        internal ElementValidationOptions? ValidationOptions { get; private set; }
+        internal List<PipeServiceOptions> PipeServiceOptions { get; } = new();
 
         #endregion Properties
 
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Registers a service as being required by the pipe.
+        /// Registers the Output Port for the pipe. Used for Validation.
         /// </summary>
-        /// <typeparam name="TService">The type of service required by the pipe.</typeparam>
+        /// <typeparam name="TPipeOutputPort">The type of the Pipe's Output Port.</typeparam>
         /// <returns>Itself.</returns>
-        public ElementOptions AddService<TService>()
-            => this.AddService(typeof(TService));
+        public ElementOptions WithPipeOutputPort<TPipeOutputPort>()
+            => this.WithPipeOutputPort(typeof(TPipeOutputPort));
 
         /// <summary>
-        /// Registers a service as being required by the pipe.
+        /// Registers the Output Port for the pipe. Used for Validation.
         /// </summary>
-        /// <param name="service">The type of service required by the pipe.</param>
+        /// <param name="pipeOutputPort">The type of the Pipe's Output Port.</param>
         /// <returns>Itself.</returns>
-        public ElementOptions AddService(Type service)
+        public ElementOptions WithPipeOutputPort(Type pipeOutputPort)
         {
-            this.Services.Add(service);
+            this.PipeOutputPort = pipeOutputPort;
             return this;
         }
 
         /// <summary>
-        /// Allows this pipe to be validated for missing service implementations.
+        /// Registers a service as being required by the pipe.
         /// </summary>
-        /// <typeparam name="TOutputPort">The type of the Use Case's Output Port.</typeparam>
-        /// <param name="requiredServiceTypesResolver">A function to return all services required by the pipe.</param>
-        public void WithValidation<TOutputPort>(Func<Type[]> requiredServiceTypesResolver)
-            => this.WithValidation(typeof(TOutputPort), requiredServiceTypesResolver);
+        /// <typeparam name="TPipeService">The type of service required by the pipe.</typeparam>
+        /// <returns>PipeAndServiceOptions.</returns>
+        public PipeAndServiceOptions AddPipeService<TPipeService>()
+            => this.AddPipeService(typeof(TPipeService));
 
         /// <summary>
-        /// Allows this pipe to be validated for missing service implementations.
+        /// Registers a service as being required by the pipe.
         /// </summary>
-        /// <param name="outputPort">The type of the Use Case's Output Port.</param>
-        /// <param name="requiredServiceTypesResolver">A function to return all services required by the pipe.</param>
-        public void WithValidation(Type outputPort, Func<Type[]> requiredServiceTypesResolver)
-            => this.ValidationOptions = ElementValidationOptions.FromServiceResolver(outputPort, requiredServiceTypesResolver);
-
-        /// <summary>
-        /// Allows this pipe to be validated for missing service implementations.
-        /// </summary>
-        /// <typeparam name="TOutputPort">The type of the Use Case's Output Port.</typeparam>
-        /// <param name="requiredServiceTypesResolver">A function to return all services required by the pipe for the specified Input Port and Output Port.</param>
-        public void WithValidation<TOutputPort>(Func<Type, Type, Type[]> requiredServiceTypesResolver)
-            => this.WithValidation(typeof(TOutputPort), requiredServiceTypesResolver);
-
-        /// <summary>
-        /// Allows this pipe to be validated for missing service implementations.
-        /// </summary>
-        /// <param name="outputPort">The type of the Use Case's Output Port.</param>
-        /// <param name="requiredServiceTypesResolver">A function to return all services required by the pipe for the specified Input Port and Output Port.</param>
-        public void WithValidation(Type outputPort, Func<Type, Type, Type[]> requiredServiceTypesResolver)
-            => this.ValidationOptions = ElementValidationOptions.FromServiceResolver(outputPort, requiredServiceTypesResolver);
+        /// <param name="pipeService">The type of service required by the pipe.</param>
+        /// <returns>PipeAndServiceOptions.</returns>
+        public PipeAndServiceOptions AddPipeService(Type pipeService)
+        {
+            var _PipeServiceOptions = new PipeServiceOptions(pipeService);
+            this.PipeServiceOptions.Add(_PipeServiceOptions);
+            return new PipeAndServiceOptions(this, _PipeServiceOptions);
+        }
 
         #endregion Methods
 
