@@ -24,8 +24,8 @@ namespace CleanArchitecture.Services.DependencyInjection
             var _ServiceTypes = _ConfigurationOptions
                                     .PipelineOptions
                                     .ElementOptions
-                                    .SelectMany(e => e.Services)
-                                    .Select(s => s.GetTypeDefinition())
+                                    .SelectMany(e => e.PipeServiceOptions)
+                                    .Select(s => s.PipeService.GetTypeDefinition())
                                     .ToHashSet();
 
             // Scan all specified Assemblies for classes that implement the Use Case Element Services.
@@ -48,16 +48,42 @@ namespace CleanArchitecture.Services.DependencyInjection
             foreach (var _Type in options.GetAssemblyTypes())
                 _Context.RegisterAssemblyType(_Type);
 
-            foreach (var _ValidationOptions in options.PipelineOptions.ElementOptions.Select(e => e.ValidationOptions).Where(v => v != null))
-            {
-                _Context.RegisterPipeOutputPort(_ValidationOptions!.OutputPort);
-                _Context.RegisterUseCaseServiceResolver(_ValidationOptions!.OutputPort, _ValidationOptions.GetRequiredServiceTypes);
-            }
+            foreach (var _PipeOptions in options.PipelineOptions.ElementOptions)
+                if (_PipeOptions.PipeOutputPort != null)
+                {
+                    _Context.RegisterPipeOutputPort(_PipeOptions.PipeOutputPort);
+
+                    var _SingleImplementationServiceOptions
+                        = _PipeOptions
+                            .PipeServiceOptions
+                            .Where(pso => pso.UseCaseServiceResolver == null)
+                            .ToArray();
+
+                    foreach (var _SingleImplementationServiceOption in _SingleImplementationServiceOptions)
+                        _Context.RegisterSingleImplementationService(
+                            _PipeOptions.PipeOutputPort,
+                            _SingleImplementationServiceOption.PipeService);
+
+                    var _PerUseCaseServiceOptions
+                        = _PipeOptions
+                            .PipeServiceOptions
+                            .Where(pso => pso.UseCaseServiceResolver != null);
+
+                    foreach (var _PerUseCaseServiceOption in _PerUseCaseServiceOptions)
+                        _Context.RegisterUseCaseService(
+                            _PipeOptions.PipeOutputPort,
+                            _PerUseCaseServiceOption.PipeService,
+                            _PerUseCaseServiceOption.UseCaseServiceResolver!);
+                }
 
             var _ExceptionBuilder = new ValidationExceptionBuilder();
 
-            foreach (var (_InputPort, _MissingServices) in _Context.GetMissingServices())
-                _ExceptionBuilder.AddMissingServices(_InputPort, _MissingServices);
+            foreach (var (_, _MissingSingleImplementationServices) in _Context.GetMissingSingleImplementationServices())
+                foreach (var _MissingSingleImplementationService in _MissingSingleImplementationServices)
+                    _ExceptionBuilder.AddMissingSingleImplementationService(_MissingSingleImplementationService);
+
+            foreach (var (_InputPort, _MissingUseCaseServices) in _Context.GetMissingUseCaseServices())
+                _ExceptionBuilder.AddMissingUseCaseServices(_InputPort, _MissingUseCaseServices);
 
             foreach (var (_PipeOutputPort, _AffectedUseCaseOutputPorts) in _Context.GetUnregisteredOutputPorts())
                 _ExceptionBuilder.AddUnregisteredOutputPort(_PipeOutputPort, _AffectedUseCaseOutputPorts);

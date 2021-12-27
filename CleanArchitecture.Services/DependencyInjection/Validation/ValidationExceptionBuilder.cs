@@ -8,7 +8,8 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly List<(Type InputPort, Type[] MissingServices)> m_MissingServices = new();
+        private readonly List<Type> m_MissingSingleImplementationServices = new();
+        private readonly List<(Type InputPort, Type[] MissingServices)> m_MissingUseCaseServices = new();
         private readonly List<(Type PipeOutputPort, Type[] AffectedUseCaseOutputPorts)> m_UnregisteredOutputPorts = new();
 
         #endregion Fields
@@ -16,15 +17,19 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
         #region - - - - - - Properties - - - - - -
 
         private bool HasValidationFailure
-            => this.m_MissingServices.Any() ||
+            => this.m_MissingSingleImplementationServices.Any() ||
+                this.m_MissingUseCaseServices.Any() ||
                 this.m_UnregisteredOutputPorts.Any();
 
         #endregion Properties
 
         #region - - - - - - Methods - - - - - -
 
-        public void AddMissingServices(Type inputPort, Type[] missingServices)
-            => this.m_MissingServices.Add((inputPort, missingServices));
+        public void AddMissingSingleImplementationService(Type missingSingleImplementationService)
+            => this.m_MissingSingleImplementationServices.Add(missingSingleImplementationService);
+
+        public void AddMissingUseCaseServices(Type inputPort, Type[] missingUseCaseServices)
+            => this.m_MissingUseCaseServices.Add((inputPort, missingUseCaseServices));
 
         public void AddUnregisteredOutputPort(Type pipeOutputPort, Type[] affectedUseCaseOutputPorts)
             => this.m_UnregisteredOutputPorts.Add((pipeOutputPort, affectedUseCaseOutputPorts));
@@ -34,7 +39,13 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
             var _StringBuilder = new StringBuilder(32);
             _ = _StringBuilder.AppendLine();
 
-            foreach (var (_InputPort, _MissingServices) in this.m_MissingServices.OrderBy(ipms => ipms.InputPort.Name))
+            foreach (var _MissingService in this.m_MissingSingleImplementationServices)
+                _ = _StringBuilder.Append(_MissingService.GetFriendlyName()).AppendLine(" has not been implemented.");
+
+            if (this.m_MissingSingleImplementationServices.Any())
+                _ = _StringBuilder.AppendLine();
+
+            foreach (var (_InputPort, _MissingServices) in this.m_MissingUseCaseServices.OrderBy(ipms => ipms.InputPort.Name))
             {
                 _ = _StringBuilder.Append(_InputPort.GetFriendlyName()).AppendLine(" is missing implementations for:");
 
