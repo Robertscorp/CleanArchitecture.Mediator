@@ -1,27 +1,27 @@
 ﻿namespace CleanArchitecture.Services.DependencyInjection
 {
 
-    public class PipeServiceOptions
+    internal class PipeServiceOptions
     {
 
         #region - - - - - - Constructors - - - - - -
 
-        internal PipeServiceOptions(Type serviceType)
+        public PipeServiceOptions(Type serviceType)
             => this.PipeService = serviceType;
 
         #endregion Constructors
 
         #region - - - - - - Properties - - - - - -
 
-        internal Type PipeService { get; }
+        public Type PipeService { get; }
 
-        internal Func<Type, Type, Type, Type>? UseCaseServiceResolver { get; private set; }
+        public Func<Type, Type, Type, Type>? UseCaseServiceResolver { get; private set; }
 
         #endregion Properties
 
         #region - - - - - - Methods - - - - - -
 
-        internal void WithUseCaseServiceResolver(Func<Type, Type, Type, Type> useCaseServiceResolver)
+        public void WithUseCaseServiceResolver(Func<Type, Type, Type, Type> useCaseServiceResolver)
             => this.UseCaseServiceResolver = useCaseServiceResolver;
 
         #endregion Methods
