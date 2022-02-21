@@ -3,6 +3,10 @@
 namespace CleanArchitecture.Services.Infrastructure
 {
 
+    /// <summary>
+    /// Handles invocation of the Business Rule Validator service and presentation of validation failures.
+    /// </summary>
+    /// <typeparam name="TValidationResult">The type of Validation Result.</typeparam>
     public class BusinessRuleValidatorUseCaseElement<TValidationResult> : IUseCaseElement where TValidationResult : IValidationResult
     {
 
@@ -14,6 +18,10 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Constructors - - - - - -
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="BusinessRuleValidatorUseCaseElement{TValidationResult}"/> class.
+        /// </summary>
+        /// <param name="serviceResolver">The delegate used to get services.</param>
         public BusinessRuleValidatorUseCaseElement(UseCaseServiceResolver serviceResolver)
             => this.m_ServiceResolver = serviceResolver;
 
@@ -21,7 +29,7 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - IUseCaseElement Implementation - - - - - -
 
-        public async Task HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        async Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
             UseCaseElementHandleAsync nextUseCaseElementHandle,

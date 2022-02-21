@@ -1,6 +1,9 @@
 ﻿namespace CleanArchitecture.Services.DependencyInjection.Validation
 {
 
+    /// <summary>
+    /// An exception thrown after Registration when an issue is detected.
+    /// </summary>
     public class ValidationException : Exception
     {
 

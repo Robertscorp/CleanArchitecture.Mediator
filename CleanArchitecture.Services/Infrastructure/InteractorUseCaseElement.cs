@@ -3,6 +3,9 @@
 namespace CleanArchitecture.Services.Infrastructure
 {
 
+    /// <summary>
+    /// Handles invocation of the Interactor service.
+    /// </summary>
     public class InteractorUseCaseElement : IUseCaseElement
     {
 
@@ -14,6 +17,10 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Constructors - - - - - -
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="InteractorUseCaseElement"/> class.
+        /// </summary>
+        /// <param name="serviceResolver">The delegate used to get services.</param>
         public InteractorUseCaseElement(UseCaseServiceResolver serviceResolver)
             => this.m_ServiceResolver = serviceResolver;
 
@@ -21,7 +28,7 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - IUseCaseElement Implementation - - - - - -
 
-        public Task HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
             UseCaseElementHandleAsync nextUseCaseElementHandle,

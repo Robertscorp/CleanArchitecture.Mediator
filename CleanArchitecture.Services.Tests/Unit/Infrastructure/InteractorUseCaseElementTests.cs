@@ -17,7 +17,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
 
-        private readonly InteractorUseCaseElement m_Element;
+        private readonly IUseCaseElement m_Element;
         private readonly object m_InputPort = new();
         private readonly IOutputPort m_OutputPort = new Mock<IOutputPort>().Object;
 
@@ -27,7 +27,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         public InteractorUseCaseElementTests()
         {
-            this.m_Element = new(this.m_MockServiceResolver.Object);
+            this.m_Element = new InteractorUseCaseElement(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
                     .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<object, IOutputPort>)))

@@ -27,7 +27,7 @@ namespace CleanArchitecture.Services.Tests.Integration.Infrastructure
         private readonly AuthorisationResult m_AuthResult = new() { IsAuthorised = true };
         private readonly ValidationResult m_BusinessRuleValidationResult = new() { IsValid = true };
         private readonly InputPort m_InputPort = new();
-        private readonly UseCaseInvoker m_UseCaseInvoker;
+        private readonly IUseCaseInvoker m_UseCaseInvoker;
         private readonly ValidationResult m_InputPortValidationResult = new() { IsValid = true };
 
         #endregion Fields
@@ -36,7 +36,7 @@ namespace CleanArchitecture.Services.Tests.Integration.Infrastructure
 
         public UseCaseInvokerTests()
         {
-            this.m_UseCaseInvoker = new(this.m_MockServiceResolver.Object);
+            this.m_UseCaseInvoker = new UseCaseInvoker(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockAuthEnforcer
                     .Setup(mock => mock.CheckAuthorisationAsync(this.m_InputPort, default))
