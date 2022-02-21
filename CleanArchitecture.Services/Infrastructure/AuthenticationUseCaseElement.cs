@@ -22,6 +22,7 @@ namespace CleanArchitecture.Services.Infrastructure
         /// <summary>
         /// Initialises a new instance of the <see cref="AuthenticationUseCaseElement"/> class.
         /// </summary>
+        /// <param name="serviceResolver">The delegate used to get services.</param>
         public AuthenticationUseCaseElement(UseCaseServiceResolver serviceResolver)
             => this.m_ServiceResolver = serviceResolver;
 

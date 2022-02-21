@@ -21,6 +21,7 @@ namespace CleanArchitecture.Services.Infrastructure
         /// <summary>
         /// Initialises a new instance of the <see cref="BusinessRuleValidatorUseCaseElement{TValidationResult}"/> class.
         /// </summary>
+        /// <param name="serviceResolver">The delegate used to get services.</param>
         public BusinessRuleValidatorUseCaseElement(UseCaseServiceResolver serviceResolver)
             => this.m_ServiceResolver = serviceResolver;
 
