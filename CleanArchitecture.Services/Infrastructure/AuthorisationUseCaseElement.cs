@@ -54,57 +54,28 @@ namespace CleanArchitecture.Services.Infrastructure
 
         private Task<TAuthorisationResult>? GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
             => inputPort is IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
-                ? this.GetEnforcerInvoker(inputPort)?.GetAuthorisationResultAsync(cancellationToken)
+                ? InvokeAsyncFactory<TUseCaseInputPort, TAuthorisationResult>
+                    .InvokeFactoryAsync(
+                        typeof(InvokeAsyncFactory<>).MakeGenericType(typeof(TAuthorisationResult), typeof(TUseCaseInputPort)),
+                        this.m_ServiceResolver,
+                        inputPort,
+                        cancellationToken)
                 : null;
-
-        private EnforcerInvoker? GetEnforcerInvoker<TUseCaseInputPort>(TUseCaseInputPort inputPort)
-            => (EnforcerInvoker?)Activator.CreateInstance(
-                typeof(EnforcerInvoker<>).MakeGenericType(typeof(TAuthorisationResult), typeof(TUseCaseInputPort)),
-                inputPort,
-                this.m_ServiceResolver);
 
         #endregion Methods
 
         #region - - - - - - Nested Classes - - - - - -
 
-        private abstract class EnforcerInvoker
-        {
-
-            #region - - - - - - Methods - - - - - -
-
-            public abstract Task<TAuthorisationResult>? GetAuthorisationResultAsync(CancellationToken cancellationToken);
-
-            #endregion Methods
-
-        }
-
-        private class EnforcerInvoker<TUseCaseInputPort> : EnforcerInvoker
+        private class InvokeAsyncFactory<TUseCaseInputPort> : InvokeAsyncFactory<TUseCaseInputPort, TAuthorisationResult>
             where TUseCaseInputPort : IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
         {
 
-            #region - - - - - - Fields - - - - - -
-
-            private readonly TUseCaseInputPort m_InputPort;
-            private readonly UseCaseServiceResolver m_ServiceResolver;
-
-            #endregion Fields
-
-            #region - - - - - - Constructors - - - - - -
-
-            public EnforcerInvoker(TUseCaseInputPort inputPort, UseCaseServiceResolver serviceResolver)
-            {
-                this.m_InputPort = inputPort;
-                this.m_ServiceResolver = serviceResolver;
-            }
-
-            #endregion Constructors
-
             #region - - - - - - Methods - - - - - -
 
-            public override Task<TAuthorisationResult>? GetAuthorisationResultAsync(CancellationToken cancellationToken)
-                => this.m_ServiceResolver
-                    .GetService<IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>>()?
-                    .CheckAuthorisationAsync(this.m_InputPort, cancellationToken);
+            public override InvokeAsync<TUseCaseInputPort, TAuthorisationResult> GetInvokeAsync(UseCaseServiceResolver serviceResolver)
+                => new((ip, c) => serviceResolver
+                                    .GetService<IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>>()?
+                                    .CheckAuthorisationAsync(ip, c));
 
             #endregion Methods
 
