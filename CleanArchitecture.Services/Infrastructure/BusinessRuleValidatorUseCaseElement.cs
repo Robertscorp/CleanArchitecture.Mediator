@@ -54,57 +54,28 @@ namespace CleanArchitecture.Services.Infrastructure
 
         private Task<TValidationResult>? GetValidationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
             => inputPort is IUseCaseInputPort<IBusinessRuleValidationOutputPort<TValidationResult>>
-                ? this.GetValidationInvoker(inputPort)?.GetValidationResultAsync(cancellationToken)
+                ? InvokeAsyncFactory<TUseCaseInputPort, TValidationResult>
+                    .InvokeFactoryAsync(
+                        typeof(InvokeAsyncFactory<>).MakeGenericType(typeof(TValidationResult), typeof(TUseCaseInputPort)),
+                        this.m_ServiceResolver,
+                        inputPort,
+                        cancellationToken)
                 : null;
-
-        private ValidationInvoker? GetValidationInvoker<TUseCaseInputPort>(TUseCaseInputPort inputPort)
-            => (ValidationInvoker?)Activator.CreateInstance(
-                typeof(ValidationInvoker<>).MakeGenericType(typeof(TValidationResult), typeof(TUseCaseInputPort)),
-                inputPort,
-                this.m_ServiceResolver);
 
         #endregion Methods
 
         #region - - - - - - Nested Classes - - - - - -
 
-        private abstract class ValidationInvoker
-        {
-
-            #region - - - - - - Methods - - - - - -
-
-            public abstract Task<TValidationResult>? GetValidationResultAsync(CancellationToken cancellationToken);
-
-            #endregion Methods
-
-        }
-
-        private class ValidationInvoker<TUseCaseInputPort> : ValidationInvoker
+        private class InvokeAsyncFactory<TUseCaseInputPort> : InvokeAsyncFactory<TUseCaseInputPort, TValidationResult>
             where TUseCaseInputPort : IUseCaseInputPort<IBusinessRuleValidationOutputPort<TValidationResult>>
         {
 
-            #region - - - - - - Fields - - - - - -
-
-            private readonly TUseCaseInputPort m_InputPort;
-            private readonly UseCaseServiceResolver m_ServiceResolver;
-
-            #endregion Fields
-
-            #region - - - - - - Constructors - - - - - -
-
-            public ValidationInvoker(TUseCaseInputPort inputPort, UseCaseServiceResolver serviceResolver)
-            {
-                this.m_InputPort = inputPort;
-                this.m_ServiceResolver = serviceResolver;
-            }
-
-            #endregion Constructors
-
             #region - - - - - - Methods - - - - - -
 
-            public override Task<TValidationResult>? GetValidationResultAsync(CancellationToken cancellationToken)
-                => this.m_ServiceResolver
-                    .GetService<IUseCaseBusinessRuleValidator<TUseCaseInputPort, TValidationResult>>()?
-                    .ValidateAsync(this.m_InputPort, cancellationToken);
+            public override InvokeAsync<TUseCaseInputPort, TValidationResult> GetInvokeAsync(UseCaseServiceResolver serviceResolver)
+                => new((ip, c) => serviceResolver
+                                    .GetService<IUseCaseBusinessRuleValidator<TUseCaseInputPort, TValidationResult>>()?
+                                    .ValidateAsync(ip, c));
 
             #endregion Methods
 
