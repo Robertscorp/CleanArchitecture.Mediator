@@ -19,7 +19,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
         private readonly Mock<IAuthenticationOutputPort> m_MockOutputPort = new();
 
-        private readonly AuthenticationUseCaseElement m_Element;
+        private readonly IUseCaseElement m_Element;
         private readonly object m_InputPort = new();
 
         #endregion Fields
@@ -28,7 +28,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         public AuthenticationUseCaseElementTests()
         {
-            this.m_Element = new(this.m_MockServiceResolver.Object);
+            this.m_Element = new AuthenticationUseCaseElement(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
                     .Setup(mock => mock.Invoke(typeof(IAuthenticatedClaimsPrincipalProvider)))

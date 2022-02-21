@@ -8,6 +8,9 @@
     /// <returns>The service that was produced.</returns>
     public delegate object? UseCaseServiceResolver(Type serviceType);
 
+    /// <summary>
+    /// Contains UseCaseServiceResolver extension methods.
+    /// </summary>
     public static class UseCaseServiceResolverExtensions
     {
 

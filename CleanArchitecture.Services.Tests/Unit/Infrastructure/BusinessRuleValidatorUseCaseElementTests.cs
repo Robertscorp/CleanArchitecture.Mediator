@@ -17,7 +17,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
         private readonly Mock<IUseCaseBusinessRuleValidator<TestInputPort, TestValidationResult>> m_MockValidator = new();
 
-        private readonly BusinessRuleValidatorUseCaseElement<TestValidationResult> m_Element;
+        private readonly IUseCaseElement m_Element;
         private readonly TestInputPort m_InputPort = new();
         private readonly TestValidationResult m_ValidationResult = new();
 
@@ -27,7 +27,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         public BusinessRuleValidatorUseCaseElementTests()
         {
-            this.m_Element = new(this.m_MockServiceResolver.Object);
+            this.m_Element = new BusinessRuleValidatorUseCaseElement<TestValidationResult>(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
                     .Setup(mock => mock.Invoke(typeof(IUseCaseBusinessRuleValidator<TestInputPort, TestValidationResult>)))

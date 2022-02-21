@@ -1,6 +1,9 @@
 ﻿namespace CleanArchitecture.Services.DependencyInjection
 {
 
+    /// <summary>
+    /// The options used to configure the Use Case Pipeline Element.
+    /// </summary>
     public class ElementOptions
     {
 

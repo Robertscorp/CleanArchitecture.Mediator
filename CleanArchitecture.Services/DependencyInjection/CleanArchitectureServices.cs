@@ -5,6 +5,9 @@ using CleanArchitecture.Services.Pipeline;
 namespace CleanArchitecture.Services.DependencyInjection
 {
 
+    /// <summary>
+    /// Contains the behaviour to register Clean Architecture Mediator services.
+    /// </summary>
     public static class CleanArchitectureServices
     {
 
