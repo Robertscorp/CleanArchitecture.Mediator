@@ -32,7 +32,7 @@ namespace CleanArchitecture.Services.DependencyInjection
                                     .ToHashSet();
 
             // Scan all specified Assemblies for classes that implement the Use Case Element Services.
-            foreach (var _Type in _ConfigurationOptions.GetAssemblyTypes())
+            foreach (var _Type in _ConfigurationOptions.GetAssemblyTypes().Where(t => !t.IsAbstract))
                 foreach (var _InterfaceType in _Type.GetInterfaces())
                     if (_ServiceTypes.Contains(_InterfaceType.GetTypeDefinition()))
                         _ConfigurationOptions.RegistrationAction?.Invoke(_InterfaceType, _Type);
