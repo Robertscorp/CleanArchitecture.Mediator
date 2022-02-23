@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace CleanArchitecture.Services.DependencyInjection
 {
@@ -17,13 +20,13 @@ namespace CleanArchitecture.Services.DependencyInjection
 
         #region - - - - - - Properties - - - - - -
 
-        private List<Assembly> AssembliesToScan { get; } = new();
+        private List<Assembly> AssembliesToScan { get; } = new List<Assembly>();
 
-        internal PipelineOptions PipelineOptions { get; } = new();
+        internal PipelineOptions PipelineOptions { get; } = new PipelineOptions();
 
-        internal Action<Type, Type>? RegistrationAction { get; private set; }
+        internal Action<Type, Type> RegistrationAction { get; private set; }
 
-        private Type[]? ScannedTypes { get; set; }
+        private Type[] ScannedTypes { get; set; }
 
         internal bool ShouldValidate { get; private set; }
 
@@ -32,7 +35,12 @@ namespace CleanArchitecture.Services.DependencyInjection
         #region - - - - - - Methods - - - - - -
 
         internal Type[] GetAssemblyTypes()
-            => this.ScannedTypes ??= this.AssembliesToScan.SelectMany(a => a.GetTypes()).ToArray();
+        {
+            if (this.ScannedTypes == null)
+                this.ScannedTypes = this.AssembliesToScan.SelectMany(a => a.GetTypes()).ToArray();
+
+            return this.ScannedTypes;
+        }
 
         /// <summary>
         /// Configures the Use Case Pipeline.

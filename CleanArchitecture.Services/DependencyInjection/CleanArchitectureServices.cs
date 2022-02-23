@@ -1,6 +1,9 @@
 ﻿using CleanArchitecture.Services.DependencyInjection.Validation;
 using CleanArchitecture.Services.Infrastructure;
 using CleanArchitecture.Services.Pipeline;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CleanArchitecture.Services.DependencyInjection
 {
@@ -24,12 +27,11 @@ namespace CleanArchitecture.Services.DependencyInjection
 
             _ConfigurationOptions.RegistrationAction?.Invoke(typeof(IUseCaseInvoker), typeof(UseCaseInvoker));
 
-            var _ServiceTypes = _ConfigurationOptions
-                                    .PipelineOptions
-                                    .ElementOptions
-                                    .SelectMany(e => e.PipeServiceOptions)
-                                    .Select(s => s.PipeService.GetTypeDefinition())
-                                    .ToHashSet();
+            var _ServiceTypes = new HashSet<Type>(_ConfigurationOptions
+                                                    .PipelineOptions
+                                                    .ElementOptions
+                                                    .SelectMany(e => e.PipeServiceOptions)
+                                                    .Select(s => s.PipeService.GetTypeDefinition()));
 
             // Scan all specified Assemblies for classes that implement the Use Case Element Services.
             foreach (var _Type in _ConfigurationOptions.GetAssemblyTypes().Where(t => !t.IsAbstract))
@@ -67,7 +69,7 @@ namespace CleanArchitecture.Services.DependencyInjection
                         _Context.RegisterUseCaseService(
                             _PipeOptions.PipeOutputPort,
                             _PipeServiceOption.PipeService,
-                            _PipeServiceOption.UseCaseServiceResolver!);
+                            _PipeServiceOption.UseCaseServiceResolver);
                 }
 
             var _ExceptionBuilder = new ValidationExceptionBuilder();

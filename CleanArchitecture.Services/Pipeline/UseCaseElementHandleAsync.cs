@@ -1,4 +1,6 @@
-﻿namespace CleanArchitecture.Services.Pipeline
+﻿using System.Threading.Tasks;
+
+namespace CleanArchitecture.Services.Pipeline
 {
 
     /// <summary>

@@ -1,4 +1,7 @@
-﻿namespace CleanArchitecture.Services.DependencyInjection
+﻿using System;
+using System.Collections.Generic;
+
+namespace CleanArchitecture.Services.DependencyInjection
 {
 
     /// <summary>
@@ -10,7 +13,7 @@
         #region - - - - - - Constructors - - - - - -
 
         internal ElementOptions(Type elementType)
-            => this.ElementType = elementType;
+            => this.ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 
         #endregion Constructors
 
@@ -18,9 +21,9 @@
 
         internal Type ElementType { get; }
 
-        internal Type? PipeOutputPort { get; private set; }
+        internal Type PipeOutputPort { get; private set; }
 
-        internal List<PipeServiceOptions> PipeServiceOptions { get; } = new();
+        internal List<PipeServiceOptions> PipeServiceOptions { get; } = new List<PipeServiceOptions>();
 
         #endregion Properties
 

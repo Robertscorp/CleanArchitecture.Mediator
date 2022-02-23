@@ -14,7 +14,7 @@ namespace CleanArchitecture.Services.Authentication
         /// <summary>
         /// The currently authenticated Claims Principal.
         /// </summary>
-        ClaimsPrincipal? AuthenticatedClaimsPrincipal { get; }
+        ClaimsPrincipal AuthenticatedClaimsPrincipal { get; }
 
         #endregion Properties
 

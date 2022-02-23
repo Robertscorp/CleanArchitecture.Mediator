@@ -1,4 +1,6 @@
-﻿namespace CleanArchitecture.Services.DependencyInjection.Validation
+﻿using System;
+
+namespace CleanArchitecture.Services.DependencyInjection.Validation
 {
 
     /// <summary>

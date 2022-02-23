@@ -1,4 +1,8 @@
-﻿namespace CleanArchitecture.Services.DependencyInjection.Validation
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CleanArchitecture.Services.DependencyInjection.Validation
 {
 
     internal class ValidationContext
@@ -6,11 +10,11 @@
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly HashSet<Type> m_PipeOutputPorts = new();
-        private readonly List<(Type Implementation, Type Interface)> m_RegisteredInputPorts = new();
-        private readonly HashSet<Type> m_RegisteredServices = new();
-        private readonly List<(Type PipeOutputPort, Type PipeService)> m_SingleImplementationServices = new();
-        private readonly Dictionary<Type, List<(Type PipeService, Func<Type, Type, Type, Type> UseCaseServiceResolver)>> m_UseCaseServiceResolversByOutputPort = new();
+        private readonly HashSet<Type> m_PipeOutputPorts = new HashSet<Type>();
+        private readonly List<(Type Implementation, Type Interface)> m_RegisteredInputPorts = new List<(Type Implementation, Type Interface)>();
+        private readonly HashSet<Type> m_RegisteredServices = new HashSet<Type>();
+        private readonly List<(Type PipeOutputPort, Type PipeService)> m_SingleImplementationServices = new List<(Type PipeOutputPort, Type PipeService)>();
+        private readonly Dictionary<Type, List<(Type PipeService, Func<Type, Type, Type, Type> UseCaseServiceResolver)>> m_UseCaseServiceResolversByOutputPort = new Dictionary<Type, List<(Type PipeService, Func<Type, Type, Type, Type> UseCaseServiceResolver)>>();
 
         #endregion Fields
 
@@ -87,7 +91,7 @@
         {
             if (!this.m_UseCaseServiceResolversByOutputPort.TryGetValue(pipeOutputPort, out var _UseCaseServiceResolvers))
             {
-                _UseCaseServiceResolvers = new();
+                _UseCaseServiceResolvers = new List<(Type PipeService, Func<Type, Type, Type, Type> UseCaseServiceResolver)>();
                 this.m_UseCaseServiceResolversByOutputPort.Add(pipeOutputPort, _UseCaseServiceResolvers);
             }
 
