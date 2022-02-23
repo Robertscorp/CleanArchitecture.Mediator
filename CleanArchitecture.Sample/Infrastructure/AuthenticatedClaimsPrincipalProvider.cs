@@ -7,11 +7,11 @@ namespace CleanArchitecture.Sample.Infrastructure
     public class AuthenticatedClaimsPrincipalProvider : IAuthenticatedClaimsPrincipalProvider
     {
 
-        #region - - - - - - IAuthenticatedClaimsPrincipalProvider Implementation - - - - - -
+        #region - - - - - - Properties - - - - - -
 
         public ClaimsPrincipal? AuthenticatedClaimsPrincipal { get; set; }
 
-        #endregion IAuthenticatedClaimsPrincipalProvider Implementation
+        #endregion Properties
 
     }
 

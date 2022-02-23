@@ -7,12 +7,14 @@ namespace CleanArchitecture.Sample.UseCases.CreateProduct
     public class CreateProductBusinessRuleValidator : IUseCaseBusinessRuleValidator<CreateProductInputPort, ValidationResult>
     {
 
-        #region - - - - - - IUseCaseBusinessRuleValidator Implementation - - - - - -
+        #region - - - - - - Methods - - - - - -
 
-        public Task<ValidationResult> ValidateAsync(CreateProductInputPort inputPort, CancellationToken cancellationToken)
+        Task<ValidationResult> IUseCaseBusinessRuleValidator<CreateProductInputPort, ValidationResult>.ValidateAsync(
+            CreateProductInputPort inputPort,
+            CancellationToken cancellationToken)
             => Task.FromResult(new ValidationResult { IsValid = !inputPort.FailBusinessRuleValidation });
 
-        #endregion IUseCaseBusinessRuleValidator Implementation
+        #endregion Methods
 
     }
 

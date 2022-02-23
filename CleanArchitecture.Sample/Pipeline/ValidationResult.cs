@@ -6,11 +6,11 @@ namespace CleanArchitecture.Sample.Pipeline
     public class ValidationResult : IValidationResult
     {
 
-        #region - - - - - - IValidationResult Implementation - - - - - -
+        #region - - - - - - Properties - - - - - -
 
         public bool IsValid { get; set; }
 
-        #endregion IValidationResult Implementation
+        #endregion Properties
 
     }
 
