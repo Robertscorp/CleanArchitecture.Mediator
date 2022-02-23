@@ -30,7 +30,17 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - IUseCaseElement Implementation - - - - - -
+        #region - - - - - - Methods - - - - - -
+
+        private Task<TAuthorisationResult> GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
+            => inputPort is IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
+                ? InvokeAsyncFactory<TUseCaseInputPort, TAuthorisationResult>
+                    .InvokeFactoryAsync(
+                        typeof(InvokeAsyncFactory<>).MakeGenericType(typeof(TAuthorisationResult), typeof(TUseCaseInputPort)),
+                        this.m_ServiceResolver,
+                        inputPort,
+                        cancellationToken)
+                : null;
 
         async Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
@@ -50,20 +60,6 @@ namespace CleanArchitecture.Services.Infrastructure
 
             await nextUseCaseElementHandle().ConfigureAwait(false);
         }
-
-        #endregion IUseCaseElement Implementation
-
-        #region - - - - - - Methods - - - - - -
-
-        private Task<TAuthorisationResult> GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
-            => inputPort is IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
-                ? InvokeAsyncFactory<TUseCaseInputPort, TAuthorisationResult>
-                    .InvokeFactoryAsync(
-                        typeof(InvokeAsyncFactory<>).MakeGenericType(typeof(TAuthorisationResult), typeof(TUseCaseInputPort)),
-                        this.m_ServiceResolver,
-                        inputPort,
-                        cancellationToken)
-                : null;
 
         #endregion Methods
 

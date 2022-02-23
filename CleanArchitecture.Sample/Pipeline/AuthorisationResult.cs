@@ -6,11 +6,11 @@ namespace CleanArchitecture.Sample.Pipeline
     public class AuthorisationResult : IAuthorisationResult
     {
 
-        #region - - - - - - IAuthorisationResult Implementation - - - - - -
+        #region - - - - - - Properties - - - - - -
 
         public bool IsAuthorised { get; set; }
 
-        #endregion IAuthorisationResult Implementation
+        #endregion Properties
 
     }
 

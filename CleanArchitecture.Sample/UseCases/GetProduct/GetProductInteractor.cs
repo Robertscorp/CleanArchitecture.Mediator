@@ -7,12 +7,15 @@ namespace CleanArchitecture.Sample.UseCases.GetProduct
     public class GetProductInteractor : IUseCaseInteractor<GetProductInputPort, IGetProductOutputPort>
     {
 
-        #region - - - - - - IUseCaseInteractor Implementation - - - - - -
+        #region - - - - - - Methods - - - - - -
 
-        public Task HandleAsync(GetProductInputPort inputPort, IGetProductOutputPort outputPort, CancellationToken cancellationToken)
+        Task IUseCaseInteractor<GetProductInputPort, IGetProductOutputPort>.HandleAsync(
+            GetProductInputPort inputPort,
+            IGetProductOutputPort outputPort,
+            CancellationToken cancellationToken)
             => outputPort.PresentProductAsync(new ProductDto { Name = "Hat" }, cancellationToken);
 
-        #endregion IUseCaseInteractor Implementation
+        #endregion Methods
 
     }
 

@@ -29,7 +29,7 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - IUseCaseElement Implementation - - - - - -
+        #region - - - - - - Methods - - - - - -
 
         Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
@@ -40,7 +40,7 @@ namespace CleanArchitecture.Services.Infrastructure
                 .HandleAsync(inputPort, outputPort, cancellationToken)
                     ?? Task.CompletedTask;
 
-        #endregion IUseCaseElement Implementation
+        #endregion Methods
 
     }
 

@@ -7,15 +7,15 @@ namespace CleanArchitecture.Sample.Presenters
     public class GetProductPresenter : IGetProductOutputPort
     {
 
-        #region - - - - - - IGetProductOutputPort Implementation - - - - - -
+        #region - - - - - - Methods - - - - - -
 
-        public Task PresentProductAsync(ProductDto product, CancellationToken cancellationToken)
+        Task IGetProductOutputPort.PresentProductAsync(ProductDto product, CancellationToken cancellationToken)
         {
             Console.WriteLine($"Get Product Presenter - Get Product '{product.Name}'");
             return Task.CompletedTask;
         }
 
-        #endregion IGetProductOutputPort Implementation
+        #endregion Methods
 
     }
 

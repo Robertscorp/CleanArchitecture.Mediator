@@ -30,7 +30,17 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - IUseCaseElement Implementation - - - - - -
+        #region - - - - - - Methods - - - - - -
+
+        private Task<TValidationResult> GetValidationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
+            => inputPort is IUseCaseInputPort<IValidationOutputPort<TValidationResult>>
+                ? InvokeAsyncFactory<TUseCaseInputPort, TValidationResult>
+                    .InvokeFactoryAsync(
+                        typeof(InvokeAsyncFactory<>).MakeGenericType(typeof(TValidationResult), typeof(TUseCaseInputPort)),
+                        this.m_ServiceResolver,
+                        inputPort,
+                        cancellationToken)
+                : null;
 
         async Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
@@ -50,20 +60,6 @@ namespace CleanArchitecture.Services.Infrastructure
 
             await nextUseCaseElementHandle().ConfigureAwait(false);
         }
-
-        #endregion IUseCaseElement Implementation
-
-        #region - - - - - - Methods - - - - - -
-
-        private Task<TValidationResult> GetValidationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
-            => inputPort is IUseCaseInputPort<IValidationOutputPort<TValidationResult>>
-                ? InvokeAsyncFactory<TUseCaseInputPort, TValidationResult>
-                    .InvokeFactoryAsync(
-                        typeof(InvokeAsyncFactory<>).MakeGenericType(typeof(TValidationResult), typeof(TUseCaseInputPort)),
-                        this.m_ServiceResolver,
-                        inputPort,
-                        cancellationToken)
-                : null;
 
         #endregion Methods
 

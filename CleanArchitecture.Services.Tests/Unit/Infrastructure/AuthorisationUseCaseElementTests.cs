@@ -12,12 +12,12 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IUseCaseAuthorisationEnforcer<TestInputPort, TestAuthorisationResult>> m_MockEnforcer = new();
+        private readonly Mock<IAuthorisationResult> m_MockAuthorisationResult = new();
+        private readonly Mock<IUseCaseAuthorisationEnforcer<TestInputPort, IAuthorisationResult>> m_MockEnforcer = new();
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
-        private readonly Mock<IAuthorisationOutputPort<TestAuthorisationResult>> m_MockOutputPort = new();
+        private readonly Mock<IAuthorisationOutputPort<IAuthorisationResult>> m_MockOutputPort = new();
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
 
-        private readonly TestAuthorisationResult m_AuthorisationResult = new();
         private readonly IUseCaseElement m_Element;
         private readonly TestInputPort m_InputPort = new();
 
@@ -27,15 +27,15 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         public AuthorisationUseCaseElementTests()
         {
-            this.m_Element = new AuthorisationUseCaseElement<TestAuthorisationResult>(this.m_MockServiceResolver.Object);
+            this.m_Element = new AuthorisationUseCaseElement<IAuthorisationResult>(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseAuthorisationEnforcer<TestInputPort, TestAuthorisationResult>)))
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseAuthorisationEnforcer<TestInputPort, IAuthorisationResult>)))
                     .Returns(this.m_MockEnforcer.Object);
 
             _ = this.m_MockEnforcer
                     .Setup(mock => mock.CheckAuthorisationAsync(this.m_InputPort, default))
-                    .Returns(Task.FromResult(this.m_AuthorisationResult));
+                    .Returns(Task.FromResult(this.m_MockAuthorisationResult.Object));
         }
 
         #endregion Constructors
@@ -79,21 +79,23 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
-            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<TestAuthorisationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<IAuthorisationResult>(), default), Times.Never());
         }
 
         [Fact]
         public async Task HandleAsync_AuthorisationSuccessful_InvokesNextHandleDelegate()
         {
             // Arrange
-            this.m_AuthorisationResult.IsAuthorised = true;
+            _ = this.m_MockAuthorisationResult
+                    .Setup(mock => mock.IsAuthorised)
+                    .Returns(true);
 
             // Act
             await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
-            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<TestAuthorisationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<IAuthorisationResult>(), default), Times.Never());
         }
 
         [Fact]
@@ -106,25 +108,14 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
-            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<TestAuthorisationResult>(), default), Times.Once());
+            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<IAuthorisationResult>(), default), Times.Once());
         }
 
         #endregion HandleAsync Tests
 
         #region - - - - - - Nested Classes - - - - - -
 
-        public class TestAuthorisationResult : IAuthorisationResult
-        {
-
-            #region - - - - - - IAuthorisationResult Implementation - - - - - -
-
-            public bool IsAuthorised { get; set; }
-
-            #endregion IAuthorisationResult Implementation
-
-        }
-
-        public class TestInputPort : IUseCaseInputPort<IAuthorisationOutputPort<TestAuthorisationResult>> { }
+        public class TestInputPort : IUseCaseInputPort<IAuthorisationOutputPort<IAuthorisationResult>> { }
 
         #endregion Nested Classes
 

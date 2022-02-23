@@ -12,14 +12,14 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IBusinessRuleValidationOutputPort<TestValidationResult>> m_MockOutputPort = new();
+        private readonly Mock<IBusinessRuleValidationOutputPort<IValidationResult>> m_MockOutputPort = new();
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
-        private readonly Mock<IUseCaseBusinessRuleValidator<TestInputPort, TestValidationResult>> m_MockValidator = new();
+        private readonly Mock<IValidationResult> m_MockValidationResult = new();
+        private readonly Mock<IUseCaseBusinessRuleValidator<TestInputPort, IValidationResult>> m_MockValidator = new();
 
         private readonly IUseCaseElement m_Element;
         private readonly TestInputPort m_InputPort = new();
-        private readonly TestValidationResult m_ValidationResult = new();
 
         #endregion Fields
 
@@ -27,15 +27,15 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         public BusinessRuleValidatorUseCaseElementTests()
         {
-            this.m_Element = new BusinessRuleValidatorUseCaseElement<TestValidationResult>(this.m_MockServiceResolver.Object);
+            this.m_Element = new BusinessRuleValidatorUseCaseElement<IValidationResult>(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseBusinessRuleValidator<TestInputPort, TestValidationResult>)))
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseBusinessRuleValidator<TestInputPort, IValidationResult>)))
                     .Returns(this.m_MockValidator.Object);
 
             _ = this.m_MockValidator
                     .Setup(mock => mock.ValidateAsync(this.m_InputPort, default))
-                    .Returns(Task.FromResult(this.m_ValidationResult));
+                    .Returns(Task.FromResult(this.m_MockValidationResult.Object));
         }
 
         #endregion Constructors
@@ -79,21 +79,23 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
-            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<IValidationResult>(), default), Times.Never());
         }
 
         [Fact]
         public async Task HandleAsync_ValidationSuccessful_InvokesNextHandleDelegate()
         {
             // Arrange
-            this.m_ValidationResult.IsValid = true;
+            _ = this.m_MockValidationResult
+                    .Setup(mock => mock.IsValid)
+                    .Returns(true);
 
             // Act
             await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
-            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<IValidationResult>(), default), Times.Never());
         }
 
         [Fact]
@@ -106,25 +108,14 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
-            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<TestValidationResult>(), default), Times.Once());
+            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<IValidationResult>(), default), Times.Once());
         }
 
         #endregion HandleAsync Tests
 
         #region - - - - - - Nested Classes - - - - - -
 
-        public class TestInputPort : IUseCaseInputPort<IBusinessRuleValidationOutputPort<TestValidationResult>> { }
-
-        public class TestValidationResult : IValidationResult
-        {
-
-            #region - - - - - - IValidationResult Implementation - - - - - -
-
-            public bool IsValid { get; set; }
-
-            #endregion IValidationResult Implementation
-
-        }
+        public class TestInputPort : IUseCaseInputPort<IBusinessRuleValidationOutputPort<IValidationResult>> { }
 
         #endregion Nested Classes
 

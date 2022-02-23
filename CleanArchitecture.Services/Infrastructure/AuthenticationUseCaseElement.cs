@@ -31,7 +31,10 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - IUseCaseElement Implementation - - - - - -
+        #region - - - - - - Methods - - - - - -
+
+        private ClaimsPrincipal GetAuthenticatedClaimsPrincipal()
+            => this.m_ServiceResolver.GetService<IAuthenticatedClaimsPrincipalProvider>()?.AuthenticatedClaimsPrincipal;
 
         Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
@@ -41,13 +44,6 @@ namespace CleanArchitecture.Services.Infrastructure
             => outputPort is IAuthenticationOutputPort _OutputPort && this.GetAuthenticatedClaimsPrincipal() == null
                 ? _OutputPort.PresentUnauthenticatedAsync(cancellationToken)
                 : nextUseCaseElementHandle();
-
-        #endregion IUseCaseElement Implementation
-
-        #region - - - - - - Methods - - - - - -
-
-        private ClaimsPrincipal GetAuthenticatedClaimsPrincipal()
-            => this.m_ServiceResolver.GetService<IAuthenticatedClaimsPrincipalProvider>()?.AuthenticatedClaimsPrincipal;
 
         #endregion Methods
 

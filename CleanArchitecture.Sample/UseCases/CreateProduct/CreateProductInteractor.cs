@@ -6,12 +6,15 @@ namespace CleanArchitecture.Sample.UseCases.CreateProduct
     public class CreateProductInteractor : IUseCaseInteractor<CreateProductInputPort, ICreateProductOutputPort>
     {
 
-        #region - - - - - - IUseCaseInteractor Implementation - - - - - -
+        #region - - - - - - Methods - - - - - -
 
-        public Task HandleAsync(CreateProductInputPort inputPort, ICreateProductOutputPort outputPort, CancellationToken cancellationToken)
+        Task IUseCaseInteractor<CreateProductInputPort, ICreateProductOutputPort>.HandleAsync(
+            CreateProductInputPort inputPort,
+            ICreateProductOutputPort outputPort,
+            CancellationToken cancellationToken)
             => outputPort.PresentCreatedProductAsync(new() { Name = $"Created - {DateTime.Now}" }, cancellationToken);
 
-        #endregion IUseCaseInteractor Implementation
+        #endregion Methods
 
     }
 

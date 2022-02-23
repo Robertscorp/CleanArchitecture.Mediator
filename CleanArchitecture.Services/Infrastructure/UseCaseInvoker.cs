@@ -31,17 +31,6 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - IUseCaseInvoker Implementation - - - - - -
-
-        Task IUseCaseInvoker.InvokeUseCaseAsync<TUseCaseOutputPort>(
-            IUseCaseInputPort<TUseCaseOutputPort> inputPort,
-            TUseCaseOutputPort outputPort,
-            CancellationToken cancellationToken)
-            => this.GetUseCaseInvoker(inputPort, outputPort)
-                .InvokeUseCaseAsync(cancellationToken);
-
-        #endregion IUseCaseInvoker Implementation
-
         #region - - - - - - Methods - - - - - -
 
         private Invoker GetUseCaseInvoker<TUseCaseOutputPort>(IUseCaseInputPort<TUseCaseOutputPort> inputPort, TUseCaseOutputPort outputPort)
@@ -50,6 +39,13 @@ namespace CleanArchitecture.Services.Infrastructure
                 inputPort,
                 outputPort,
                 this.m_ServiceResolver);
+
+        Task IUseCaseInvoker.InvokeUseCaseAsync<TUseCaseOutputPort>(
+            IUseCaseInputPort<TUseCaseOutputPort> inputPort,
+            TUseCaseOutputPort outputPort,
+            CancellationToken cancellationToken)
+            => this.GetUseCaseInvoker(inputPort, outputPort)
+                .InvokeUseCaseAsync(cancellationToken);
 
         #endregion Methods
 
