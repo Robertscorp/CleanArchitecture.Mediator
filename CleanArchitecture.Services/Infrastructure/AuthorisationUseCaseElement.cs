@@ -1,4 +1,7 @@
 ﻿using CleanArchitecture.Services.Pipeline;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CleanArchitecture.Services.Infrastructure
 {
@@ -23,7 +26,7 @@ namespace CleanArchitecture.Services.Infrastructure
         /// </summary>
         /// <param name="serviceResolver">The delegate used to get services.</param>
         public AuthorisationUseCaseElement(UseCaseServiceResolver serviceResolver)
-            => this.m_ServiceResolver = serviceResolver;
+            => this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
 
         #endregion Constructors
 
@@ -52,7 +55,7 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Methods - - - - - -
 
-        private Task<TAuthorisationResult>? GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
+        private Task<TAuthorisationResult> GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
             => inputPort is IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
                 ? InvokeAsyncFactory<TUseCaseInputPort, TAuthorisationResult>
                     .InvokeFactoryAsync(
@@ -73,9 +76,10 @@ namespace CleanArchitecture.Services.Infrastructure
             #region - - - - - - Methods - - - - - -
 
             public override InvokeAsync<TUseCaseInputPort, TAuthorisationResult> GetInvokeAsync(UseCaseServiceResolver serviceResolver)
-                => new((ip, c) => serviceResolver
-                                    .GetService<IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>>()?
-                                    .CheckAuthorisationAsync(ip, c));
+                => new InvokeAsync<TUseCaseInputPort, TAuthorisationResult>(
+                    (ip, c) => serviceResolver
+                                .GetService<IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>>()?
+                                .CheckAuthorisationAsync(ip, c));
 
             #endregion Methods
 

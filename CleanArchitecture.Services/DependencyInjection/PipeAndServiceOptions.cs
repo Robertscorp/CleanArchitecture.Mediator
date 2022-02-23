@@ -1,4 +1,6 @@
-﻿namespace CleanArchitecture.Services.DependencyInjection
+﻿using System;
+
+namespace CleanArchitecture.Services.DependencyInjection
 {
 
     /// <summary>
@@ -18,8 +20,8 @@
 
         internal PipeAndServiceOptions(ElementOptions pipeOptions, PipeServiceOptions pipeServiceOptions)
         {
-            this.m_PipeOptions = pipeOptions;
-            this.m_PipeServiceOptions = pipeServiceOptions;
+            this.m_PipeOptions = pipeOptions ?? throw new ArgumentNullException(nameof(pipeOptions));
+            this.m_PipeServiceOptions = pipeServiceOptions ?? throw new ArgumentNullException(nameof(pipeServiceOptions));
         }
 
         #endregion Constructors

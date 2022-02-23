@@ -1,4 +1,9 @@
 ﻿using CleanArchitecture.Services.Pipeline;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CleanArchitecture.Services.Infrastructure
 {
@@ -22,7 +27,7 @@ namespace CleanArchitecture.Services.Infrastructure
         /// </summary>
         /// <param name="serviceResolver">The delegate used to get services.</param>
         public UseCaseInvoker(UseCaseServiceResolver serviceResolver)
-            => this.m_ServiceResolver = serviceResolver;
+            => this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
 
         #endregion Constructors
 
@@ -44,7 +49,7 @@ namespace CleanArchitecture.Services.Infrastructure
                 typeof(Invoker<,>).MakeGenericType(inputPort.GetType(), typeof(TUseCaseOutputPort)),
                 inputPort,
                 outputPort,
-                this.m_ServiceResolver)!;
+                this.m_ServiceResolver);
 
         #endregion Methods
 
@@ -78,7 +83,7 @@ namespace CleanArchitecture.Services.Infrastructure
             {
                 this.m_InputPort = inputPort;
                 this.m_OutputPort = outputPort;
-                this.m_ServiceResolver = serviceResolver;
+                this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
             }
 
             #endregion Constructors
@@ -86,7 +91,7 @@ namespace CleanArchitecture.Services.Infrastructure
             #region - - - - - - Methods - - - - - -
 
             public override Task InvokeUseCaseAsync(CancellationToken cancellationToken)
-                => this.m_ServiceResolver.GetService<IEnumerable<IUseCaseElement>>()!
+                => this.m_ServiceResolver.GetService<IEnumerable<IUseCaseElement>>()
                     .Reverse()
                     .Aggregate(
                         new UseCaseElementHandleAsync(() => Task.CompletedTask),

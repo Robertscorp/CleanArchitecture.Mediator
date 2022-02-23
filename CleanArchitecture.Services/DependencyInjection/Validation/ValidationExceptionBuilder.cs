@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace CleanArchitecture.Services.DependencyInjection.Validation
 {
@@ -8,9 +11,9 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly List<Type> m_MissingSingleImplementationServices = new();
-        private readonly List<(Type InputPort, Type[] MissingServices)> m_MissingUseCaseServices = new();
-        private readonly List<(Type PipeOutputPort, Type[] AffectedUseCaseOutputPorts)> m_UnregisteredOutputPorts = new();
+        private readonly List<Type> m_MissingSingleImplementationServices = new List<Type>();
+        private readonly List<(Type InputPort, Type[] MissingServices)> m_MissingUseCaseServices = new List<(Type InputPort, Type[] MissingServices)>();
+        private readonly List<(Type PipeOutputPort, Type[] AffectedUseCaseOutputPorts)> m_UnregisteredOutputPorts = new List<(Type PipeOutputPort, Type[] AffectedUseCaseOutputPorts)>();
 
         #endregion Fields
 
@@ -70,7 +73,7 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
             return _StringBuilder.ToString().TrimEnd();
         }
 
-        public ValidationException? ToValidationException()
+        public ValidationException ToValidationException()
             => this.HasValidationFailure ? new ValidationException(this.GetMessage()) : null;
 
         #endregion Methods

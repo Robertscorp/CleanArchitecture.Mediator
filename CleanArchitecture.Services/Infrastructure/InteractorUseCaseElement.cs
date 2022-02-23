@@ -1,4 +1,7 @@
 ﻿using CleanArchitecture.Services.Pipeline;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CleanArchitecture.Services.Infrastructure
 {
@@ -22,7 +25,7 @@ namespace CleanArchitecture.Services.Infrastructure
         /// </summary>
         /// <param name="serviceResolver">The delegate used to get services.</param>
         public InteractorUseCaseElement(UseCaseServiceResolver serviceResolver)
-            => this.m_ServiceResolver = serviceResolver;
+            => this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
 
         #endregion Constructors
 

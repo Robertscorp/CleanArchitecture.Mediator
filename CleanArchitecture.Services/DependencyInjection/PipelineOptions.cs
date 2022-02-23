@@ -1,6 +1,8 @@
 ﻿using CleanArchitecture.Services.Authentication;
 using CleanArchitecture.Services.Infrastructure;
 using CleanArchitecture.Services.Pipeline;
+using System;
+using System.Collections.Generic;
 
 namespace CleanArchitecture.Services.DependencyInjection
 {
@@ -19,7 +21,7 @@ namespace CleanArchitecture.Services.DependencyInjection
 
         #region - - - - - - Properties - - - - - -
 
-        internal List<ElementOptions> ElementOptions { get; } = new();
+        internal List<ElementOptions> ElementOptions { get; } = new List<ElementOptions>();
 
         #endregion Properties
 

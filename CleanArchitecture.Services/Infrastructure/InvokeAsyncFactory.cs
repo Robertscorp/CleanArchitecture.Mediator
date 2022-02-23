@@ -1,7 +1,11 @@
-﻿namespace CleanArchitecture.Services.Infrastructure
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace CleanArchitecture.Services.Infrastructure
 {
 
-    internal delegate Task<TResult>? InvokeAsync<TParameter, TResult>(TParameter parameter, CancellationToken cancellationToken);
+    internal delegate Task<TResult> InvokeAsync<TParameter, TResult>(TParameter parameter, CancellationToken cancellationToken);
 
     internal abstract class InvokeAsyncFactory<TParameter, TResult>
     {
@@ -10,7 +14,7 @@
 
         public abstract InvokeAsync<TParameter, TResult> GetInvokeAsync(UseCaseServiceResolver serviceResolver);
 
-        public static Task<TResult>? InvokeFactoryAsync(
+        public static Task<TResult> InvokeFactoryAsync(
             Type factoryType,
             UseCaseServiceResolver serviceResolver,
             TParameter parameter,
