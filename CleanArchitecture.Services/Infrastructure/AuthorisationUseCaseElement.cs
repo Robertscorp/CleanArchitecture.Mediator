@@ -34,12 +34,10 @@ namespace CleanArchitecture.Services.Infrastructure
 
         private Task<TAuthorisationResult> GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
             => inputPort is IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
-                ? InvokeAsyncFactory<TUseCaseInputPort, TAuthorisationResult>
-                    .InvokeFactoryAsync(
-                        typeof(InvokeAsyncFactory<>).MakeGenericType(typeof(TAuthorisationResult), typeof(TUseCaseInputPort)),
-                        this.m_ServiceResolver,
-                        inputPort,
-                        cancellationToken)
+                ? DelegateFactory
+                    .GetFunction<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TAuthorisationResult>>(
+                        typeof(EnforcerCheckFactory<>).MakeGenericType(typeof(TAuthorisationResult), typeof(TUseCaseInputPort)))?
+                    .Invoke((this.m_ServiceResolver, inputPort, cancellationToken))
                 : null;
 
         async Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
@@ -65,17 +63,18 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Nested Classes - - - - - -
 
-        private class InvokeAsyncFactory<TUseCaseInputPort> : InvokeAsyncFactory<TUseCaseInputPort, TAuthorisationResult>
+        private class EnforcerCheckFactory<TUseCaseInputPort>
+            : IDelegateFactory<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TAuthorisationResult>>
             where TUseCaseInputPort : IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
         {
 
             #region - - - - - - Methods - - - - - -
 
-            public override InvokeAsync<TUseCaseInputPort, TAuthorisationResult> GetInvokeAsync(UseCaseServiceResolver serviceResolver)
-                => new InvokeAsync<TUseCaseInputPort, TAuthorisationResult>(
-                    (ip, c) => serviceResolver
-                                .GetService<IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>>()?
-                                .CheckAuthorisationAsync(ip, c));
+            public Func<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TAuthorisationResult>> GetFunction()
+                => sripc
+                    => sripc.Item1
+                        .GetService<IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>>()?
+                        .CheckAuthorisationAsync(sripc.Item2, sripc.Item3);
 
             #endregion Methods
 

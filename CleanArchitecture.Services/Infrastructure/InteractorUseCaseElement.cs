@@ -36,11 +36,34 @@ namespace CleanArchitecture.Services.Infrastructure
             TUseCaseOutputPort outputPort,
             UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken)
-            => this.m_ServiceResolver.GetService<IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>>()?
-                .HandleAsync(inputPort, outputPort, cancellationToken)
+            => DelegateFactory
+                .GetFunction<(UseCaseServiceResolver, TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task>(
+                    typeof(InteractorHandleFactory<,>).MakeGenericType(typeof(TUseCaseInputPort), typeof(TUseCaseOutputPort)))?
+                .Invoke((this.m_ServiceResolver, inputPort, outputPort, cancellationToken))
                     ?? Task.CompletedTask;
 
         #endregion Methods
+
+        #region - - - - - - Nested Classes - - - - - -
+
+        private class InteractorHandleFactory<TUseCaseInputPort, TUseCaseOutputPort>
+            : IDelegateFactory<(UseCaseServiceResolver, TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task>
+            where TUseCaseInputPort : IUseCaseInputPort<TUseCaseOutputPort>
+        {
+
+            #region - - - - - - Methods - - - - - -
+
+            public Func<(UseCaseServiceResolver, TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task> GetFunction()
+                => sripopc
+                    => sripopc.Item1
+                        .GetService<IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>>()?
+                        .HandleAsync(sripopc.Item2, sripopc.Item3, sripopc.Item4);
+
+            #endregion Methods
+
+        }
+
+        #endregion Nested Classes
 
     }
 
