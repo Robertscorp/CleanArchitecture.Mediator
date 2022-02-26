@@ -69,6 +69,7 @@ namespace CleanArchitecture.Services.Infrastructure
         {
 
             #region - - - - - - Methods - - - - - -
+
             public Func<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TAuthorisationResult>> GetFunction()
                 => sripc
                     => sripc.Item1
