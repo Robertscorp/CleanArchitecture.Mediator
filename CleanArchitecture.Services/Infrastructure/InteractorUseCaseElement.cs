@@ -36,11 +36,33 @@ namespace CleanArchitecture.Services.Infrastructure
             TUseCaseOutputPort outputPort,
             UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken)
-            => this.m_ServiceResolver.GetService<IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>>()?
-                .HandleAsync(inputPort, outputPort, cancellationToken)
+            => DelegateFactory.GetFunction<(TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task>(
+                typeof(InteractorHandleFactory<,>).MakeGenericType(typeof(TUseCaseInputPort), typeof(TUseCaseOutputPort)),
+                this.m_ServiceResolver).Invoke((inputPort, outputPort, cancellationToken))
                     ?? Task.CompletedTask;
 
         #endregion Methods
+
+        #region - - - - - - Nested Classes - - - - - -
+
+        private class InteractorHandleFactory<TUseCaseInputPort, TUseCaseOutputPort>
+            : IDelegateFactory<(TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task>
+            where TUseCaseInputPort : IUseCaseInputPort<TUseCaseOutputPort>
+        {
+
+            #region - - - - - - Methods - - - - - -
+
+            public Func<(TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task> GetFunction(
+                UseCaseServiceResolver serviceResolver)
+                => ipopc
+                    => serviceResolver.GetService<IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>>()?
+                        .HandleAsync(ipopc.Item1, ipopc.Item2, ipopc.Item3);
+
+            #endregion Methods
+
+        }
+
+        #endregion Nested Classes
 
     }
 
