@@ -10,6 +10,7 @@ namespace CleanArchitecture.Services
     /// <typeparam name="TUseCaseInputPort">The type of the Use Case's Input Port.</typeparam>
     /// <typeparam name="TUseCaseOutputPort">The type of the Use Case's Output Port.</typeparam>
     public interface IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>
+        where TUseCaseInputPort : IUseCaseInputPort<TUseCaseOutputPort>
     {
 
         #region - - - - - - Methods - - - - - -
