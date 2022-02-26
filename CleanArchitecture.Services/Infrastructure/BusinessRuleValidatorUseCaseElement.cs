@@ -35,9 +35,9 @@ namespace CleanArchitecture.Services.Infrastructure
         private Task<TValidationResult> GetValidationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
             => inputPort is IUseCaseInputPort<IBusinessRuleValidationOutputPort<TValidationResult>>
                 ? DelegateFactory
-                    .GetFunction<(TUseCaseInputPort, CancellationToken), Task<TValidationResult>>(
-                        typeof(ValidateFactory<>).MakeGenericType(typeof(TValidationResult), typeof(TUseCaseInputPort)),
-                        this.m_ServiceResolver).Invoke((inputPort, cancellationToken))
+                    .GetFunction<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TValidationResult>>(
+                        typeof(ValidateFactory<>).MakeGenericType(typeof(TValidationResult), typeof(TUseCaseInputPort)))?
+                    .Invoke((this.m_ServiceResolver, inputPort, cancellationToken))
                 : null;
 
         async Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
@@ -63,17 +63,18 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Nested Classes - - - - - -
 
-        private class ValidateFactory<TUseCaseInputPort> : IDelegateFactory<(TUseCaseInputPort, CancellationToken), Task<TValidationResult>>
+        private class ValidateFactory<TUseCaseInputPort>
+            : IDelegateFactory<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TValidationResult>>
             where TUseCaseInputPort : IUseCaseInputPort<IBusinessRuleValidationOutputPort<TValidationResult>>
         {
 
             #region - - - - - - Methods - - - - - -
 
-            public Func<(TUseCaseInputPort, CancellationToken), Task<TValidationResult>> GetFunction(
-                UseCaseServiceResolver serviceResolver)
-                => ipc => serviceResolver
-                            .GetService<IUseCaseBusinessRuleValidator<TUseCaseInputPort, TValidationResult>>()?
-                            .ValidateAsync(ipc.Item1, ipc.Item2);
+            public Func<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TValidationResult>> GetFunction()
+                => sripc
+                    => sripc.Item1
+                        .GetService<IUseCaseBusinessRuleValidator<TUseCaseInputPort, TValidationResult>>()?
+                        .ValidateAsync(sripc.Item2, sripc.Item3);
 
             #endregion Methods
 

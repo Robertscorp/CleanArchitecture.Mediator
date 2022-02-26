@@ -9,22 +9,22 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private static ConcurrentDictionary<Type, object> s_Factories
+        private static ConcurrentDictionary<Type, object> s_FactoryFunctions
             = new ConcurrentDictionary<Type, object>();
 
         #endregion Fields
 
         #region - - - - - - Methods - - - - - -
 
-        public static Func<TInput, TOutput> GetFunction<TInput, TOutput>(Type factoryType, UseCaseServiceResolver serviceResolver)
+        public static Func<TInput, TOutput> GetFunction<TInput, TOutput>(Type factoryType)
         {
-            if (!s_Factories.TryGetValue(factoryType, out var _Factory))
+            if (!s_FactoryFunctions.TryGetValue(factoryType, out var _Function))
             {
-                _Factory = (IDelegateFactory<TInput, TOutput>)Activator.CreateInstance(factoryType);
-                _ = s_Factories.TryAdd(factoryType, _Factory);
+                _Function = (Activator.CreateInstance(factoryType) as IDelegateFactory<TInput, TOutput>)?.GetFunction();
+                _ = s_FactoryFunctions.TryAdd(factoryType, _Function);
             }
 
-            return (_Factory as IDelegateFactory<TInput, TOutput>)?.GetFunction(serviceResolver);
+            return _Function as Func<TInput, TOutput>;
         }
 
         #endregion Methods
@@ -36,7 +36,7 @@ namespace CleanArchitecture.Services.Infrastructure
 
         #region - - - - - - Methods - - - - - -
 
-        Func<TInput, TOutput> GetFunction(UseCaseServiceResolver serviceResolver);
+        Func<TInput, TOutput> GetFunction();
 
         #endregion Methods
 

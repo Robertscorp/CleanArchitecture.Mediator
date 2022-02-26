@@ -36,9 +36,10 @@ namespace CleanArchitecture.Services.Infrastructure
             TUseCaseOutputPort outputPort,
             UseCaseElementHandleAsync nextUseCaseElementHandle,
             CancellationToken cancellationToken)
-            => DelegateFactory.GetFunction<(TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task>(
-                typeof(InteractorHandleFactory<,>).MakeGenericType(typeof(TUseCaseInputPort), typeof(TUseCaseOutputPort)),
-                this.m_ServiceResolver).Invoke((inputPort, outputPort, cancellationToken))
+            => DelegateFactory
+                .GetFunction<(UseCaseServiceResolver, TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task>(
+                    typeof(InteractorHandleFactory<,>).MakeGenericType(typeof(TUseCaseInputPort), typeof(TUseCaseOutputPort)))?
+                .Invoke((this.m_ServiceResolver, inputPort, outputPort, cancellationToken))
                     ?? Task.CompletedTask;
 
         #endregion Methods
@@ -46,17 +47,17 @@ namespace CleanArchitecture.Services.Infrastructure
         #region - - - - - - Nested Classes - - - - - -
 
         private class InteractorHandleFactory<TUseCaseInputPort, TUseCaseOutputPort>
-            : IDelegateFactory<(TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task>
+            : IDelegateFactory<(UseCaseServiceResolver, TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task>
             where TUseCaseInputPort : IUseCaseInputPort<TUseCaseOutputPort>
         {
 
             #region - - - - - - Methods - - - - - -
 
-            public Func<(TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task> GetFunction(
-                UseCaseServiceResolver serviceResolver)
-                => ipopc
-                    => serviceResolver.GetService<IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>>()?
-                        .HandleAsync(ipopc.Item1, ipopc.Item2, ipopc.Item3);
+            public Func<(UseCaseServiceResolver, TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task> GetFunction()
+                => sripopc
+                    => sripopc.Item1
+                        .GetService<IUseCaseInteractor<TUseCaseInputPort, TUseCaseOutputPort>>()?
+                        .HandleAsync(sripopc.Item2, sripopc.Item3, sripopc.Item4);
 
             #endregion Methods
 
