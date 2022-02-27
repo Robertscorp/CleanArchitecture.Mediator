@@ -9,26 +9,26 @@ using Xunit;
 namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 {
 
-    public class AuthenticationUseCaseElementTests
+    public class AuthenticationPipeTests
     {
 
         #region - - - - - - Fields - - - - - -
 
         private readonly Mock<IAuthenticatedClaimsPrincipalProvider> m_MockClaimsPrincipalProvider = new();
-        private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
+        private readonly Mock<UseCasePipeHandleAsync> m_MockNextHandleDelegate = new();
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
         private readonly Mock<IAuthenticationOutputPort> m_MockOutputPort = new();
 
-        private readonly IUseCaseElement m_Element;
         private readonly object m_InputPort = new();
+        private readonly IUseCasePipe m_Pipe;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        public AuthenticationUseCaseElementTests()
+        public AuthenticationPipeTests()
         {
-            this.m_Element = new AuthenticationUseCaseElement(this.m_MockServiceResolver.Object);
+            this.m_Pipe = new AuthenticationPipe(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
                     .Setup(mock => mock.Invoke(typeof(IAuthenticatedClaimsPrincipalProvider)))
@@ -50,7 +50,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
             var _OutputPort = new object();
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, _OutputPort, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.HandleAsync(this.m_InputPort, _OutputPort, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
@@ -63,7 +63,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
             this.m_MockServiceResolver.Reset();
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
@@ -76,7 +76,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
             // Arrange
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
@@ -90,7 +90,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
             this.m_MockClaimsPrincipalProvider.Reset();
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());

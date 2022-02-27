@@ -10,7 +10,7 @@ namespace CleanArchitecture.Services.Infrastructure
     /// Handles invocation of the Authorisation Enforcer service and presentation of authorisation failures.
     /// </summary>
     /// <typeparam name="TAuthorisationResult">The type of Authorisation Result.</typeparam>
-    public class AuthorisationUseCaseElement<TAuthorisationResult> : IUseCaseElement where TAuthorisationResult : IAuthorisationResult
+    public class AuthorisationPipe<TAuthorisationResult> : IUseCasePipe where TAuthorisationResult : IAuthorisationResult
     {
 
         #region - - - - - - Fields - - - - - -
@@ -22,10 +22,10 @@ namespace CleanArchitecture.Services.Infrastructure
         #region - - - - - - Constructors - - - - - -
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="AuthorisationUseCaseElement{TAuthorisationResult}"/> class.
+        /// Initialises a new instance of the <see cref="AuthorisationPipe{TAuthorisationResult}"/> class.
         /// </summary>
         /// <param name="serviceResolver">The delegate used to get services.</param>
-        public AuthorisationUseCaseElement(UseCaseServiceResolver serviceResolver)
+        public AuthorisationPipe(UseCaseServiceResolver serviceResolver)
             => this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
 
         #endregion Constructors
@@ -40,10 +40,10 @@ namespace CleanArchitecture.Services.Infrastructure
                     .Invoke((this.m_ServiceResolver, inputPort, cancellationToken))
                 : null;
 
-        async Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        async Task IUseCasePipe.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
-            UseCaseElementHandleAsync nextUseCaseElementHandle,
+            UseCasePipeHandleAsync nextUseCasePipeHandle,
             CancellationToken cancellationToken)
         {
             if (outputPort is IAuthorisationOutputPort<TAuthorisationResult> _OutputPort)
@@ -56,7 +56,7 @@ namespace CleanArchitecture.Services.Infrastructure
                 }
             }
 
-            await nextUseCaseElementHandle().ConfigureAwait(false);
+            await nextUseCasePipeHandle().ConfigureAwait(false);
         }
 
         #endregion Methods

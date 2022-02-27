@@ -7,30 +7,30 @@ using Xunit;
 namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 {
 
-    public class BusinessRuleValidatorUseCaseElementTests
+    public class InputPortValidationPipeTests
     {
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IBusinessRuleValidationOutputPort<IValidationResult>> m_MockOutputPort = new();
-        private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
+        private readonly Mock<UseCasePipeHandleAsync> m_MockNextHandleDelegate = new();
+        private readonly Mock<IValidationOutputPort<IValidationResult>> m_MockOutputPort = new();
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
         private readonly Mock<IValidationResult> m_MockValidationResult = new();
-        private readonly Mock<IUseCaseBusinessRuleValidator<TestInputPort, IValidationResult>> m_MockValidator = new();
+        private readonly Mock<IUseCaseInputPortValidator<TestInputPort, IValidationResult>> m_MockValidator = new();
 
-        private readonly IUseCaseElement m_Element;
         private readonly TestInputPort m_InputPort = new();
+        private readonly IUseCasePipe m_Pipe;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        public BusinessRuleValidatorUseCaseElementTests()
+        public InputPortValidationPipeTests()
         {
-            this.m_Element = new BusinessRuleValidatorUseCaseElement<IValidationResult>(this.m_MockServiceResolver.Object);
+            this.m_Pipe = new InputPortValidationPipe<IValidationResult>(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseBusinessRuleValidator<TestInputPort, IValidationResult>)))
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseInputPortValidator<TestInputPort, IValidationResult>)))
                     .Returns(this.m_MockValidator.Object);
 
             _ = this.m_MockValidator
@@ -49,7 +49,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
             var _InputPort = new object();
 
             // Act
-            await this.m_Element.HandleAsync(_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.HandleAsync(_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
@@ -62,7 +62,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
             var _OutputPort = new object();
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, _OutputPort, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.HandleAsync(this.m_InputPort, _OutputPort, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
@@ -75,11 +75,11 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
             this.m_MockServiceResolver.Reset();
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
-            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<IValidationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<IValidationResult>(), default), Times.Never());
         }
 
         [Fact]
@@ -91,11 +91,11 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
                     .Returns(true);
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
-            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<IValidationResult>(), default), Times.Never());
+            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<IValidationResult>(), default), Times.Never());
         }
 
         [Fact]
@@ -104,18 +104,18 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
             // Arrange
 
             // Act
-            await this.m_Element.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
 
             // Assert
             this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
-            this.m_MockOutputPort.Verify(mock => mock.PresentBusinessRuleValidationFailureAsync(It.IsAny<IValidationResult>(), default), Times.Once());
+            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(It.IsAny<IValidationResult>(), default), Times.Once());
         }
 
         #endregion HandleAsync Tests
 
         #region - - - - - - Nested Classes - - - - - -
 
-        public class TestInputPort : IUseCaseInputPort<IBusinessRuleValidationOutputPort<IValidationResult>> { }
+        public class TestInputPort : IUseCaseInputPort<IValidationOutputPort<IValidationResult>> { }
 
         #endregion Nested Classes
 

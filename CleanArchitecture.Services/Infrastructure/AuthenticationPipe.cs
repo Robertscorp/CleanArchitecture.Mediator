@@ -11,7 +11,7 @@ namespace CleanArchitecture.Services.Infrastructure
     /// <summary>
     /// Handles authentication verification and presenting authentication failures.
     /// </summary>
-    public class AuthenticationUseCaseElement : IUseCaseElement
+    public class AuthenticationPipe : IUseCasePipe
     {
 
         #region - - - - - - Fields - - - - - -
@@ -23,10 +23,10 @@ namespace CleanArchitecture.Services.Infrastructure
         #region - - - - - - Constructors - - - - - -
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="AuthenticationUseCaseElement"/> class.
+        /// Initialises a new instance of the <see cref="AuthenticationPipe"/> class.
         /// </summary>
         /// <param name="serviceResolver">The delegate used to get services.</param>
-        public AuthenticationUseCaseElement(UseCaseServiceResolver serviceResolver)
+        public AuthenticationPipe(UseCaseServiceResolver serviceResolver)
             => this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
 
         #endregion Constructors
@@ -36,14 +36,14 @@ namespace CleanArchitecture.Services.Infrastructure
         private ClaimsPrincipal GetAuthenticatedClaimsPrincipal()
             => this.m_ServiceResolver.GetService<IAuthenticatedClaimsPrincipalProvider>()?.AuthenticatedClaimsPrincipal;
 
-        Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        Task IUseCasePipe.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
-            UseCaseElementHandleAsync nextUseCaseElementHandle,
+            UseCasePipeHandleAsync nextUseCasePipeHandle,
             CancellationToken cancellationToken)
             => outputPort is IAuthenticationOutputPort _OutputPort && this.GetAuthenticatedClaimsPrincipal() == null
                 ? _OutputPort.PresentUnauthenticatedAsync(cancellationToken)
-                : nextUseCaseElementHandle();
+                : nextUseCasePipeHandle();
 
         #endregion Methods
 

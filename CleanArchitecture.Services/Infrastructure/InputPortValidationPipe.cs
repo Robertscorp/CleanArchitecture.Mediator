@@ -7,10 +7,10 @@ namespace CleanArchitecture.Services.Infrastructure
 {
 
     /// <summary>
-    /// Handles invocation of the Business Rule Validator service and presentation of validation failures.
+    /// Handles invocation of the Input Port Validator service and presentation of validation failures.
     /// </summary>
     /// <typeparam name="TValidationResult">The type of Validation Result.</typeparam>
-    public class BusinessRuleValidatorUseCaseElement<TValidationResult> : IUseCaseElement where TValidationResult : IValidationResult
+    public class InputPortValidationPipe<TValidationResult> : IUseCasePipe where TValidationResult : IValidationResult
     {
 
         #region - - - - - - Fields - - - - - -
@@ -22,10 +22,10 @@ namespace CleanArchitecture.Services.Infrastructure
         #region - - - - - - Constructors - - - - - -
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="BusinessRuleValidatorUseCaseElement{TValidationResult}"/> class.
+        /// Initialises a new instance of the <see cref="InputPortValidationPipe{TValidationResult}"/> class.
         /// </summary>
         /// <param name="serviceResolver">The delegate used to get services.</param>
-        public BusinessRuleValidatorUseCaseElement(UseCaseServiceResolver serviceResolver)
+        public InputPortValidationPipe(UseCaseServiceResolver serviceResolver)
             => this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
 
         #endregion Constructors
@@ -33,30 +33,30 @@ namespace CleanArchitecture.Services.Infrastructure
         #region - - - - - - Methods - - - - - -
 
         private Task<TValidationResult> GetValidationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
-            => inputPort is IUseCaseInputPort<IBusinessRuleValidationOutputPort<TValidationResult>>
+            => inputPort is IUseCaseInputPort<IValidationOutputPort<TValidationResult>>
                 ? DelegateFactory
                     .GetFunction<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TValidationResult>>(
                         typeof(ValidateFactory<>).MakeGenericType(typeof(TValidationResult), typeof(TUseCaseInputPort)))?
                     .Invoke((this.m_ServiceResolver, inputPort, cancellationToken))
                 : null;
 
-        async Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        async Task IUseCasePipe.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
-            UseCaseElementHandleAsync nextUseCaseElementHandle,
+            UseCasePipeHandleAsync nextUseCasePipeHandle,
             CancellationToken cancellationToken)
         {
-            if (outputPort is IBusinessRuleValidationOutputPort<TValidationResult> _OutputPort)
+            if (outputPort is IValidationOutputPort<TValidationResult> _OutputPort)
             {
                 var _ValidationResultAsync = this.GetValidationResultAsync(inputPort, cancellationToken);
                 if (_ValidationResultAsync != null && !(await _ValidationResultAsync).IsValid)
                 {
-                    await _OutputPort.PresentBusinessRuleValidationFailureAsync(await _ValidationResultAsync, cancellationToken).ConfigureAwait(false);
+                    await _OutputPort.PresentValidationFailureAsync(await _ValidationResultAsync, cancellationToken).ConfigureAwait(false);
                     return;
                 }
             }
 
-            await nextUseCaseElementHandle().ConfigureAwait(false);
+            await nextUseCasePipeHandle().ConfigureAwait(false);
         }
 
         #endregion Methods
@@ -65,7 +65,7 @@ namespace CleanArchitecture.Services.Infrastructure
 
         private class ValidateFactory<TUseCaseInputPort>
             : IDelegateFactory<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TValidationResult>>
-            where TUseCaseInputPort : IUseCaseInputPort<IBusinessRuleValidationOutputPort<TValidationResult>>
+            where TUseCaseInputPort : IUseCaseInputPort<IValidationOutputPort<TValidationResult>>
         {
 
             #region - - - - - - Methods - - - - - -
@@ -73,7 +73,7 @@ namespace CleanArchitecture.Services.Infrastructure
             public Func<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TValidationResult>> GetFunction()
                 => sripc
                     => sripc.Item1
-                        .GetService<IUseCaseBusinessRuleValidator<TUseCaseInputPort, TValidationResult>>()?
+                        .GetService<IUseCaseInputPortValidator<TUseCaseInputPort, TValidationResult>>()?
                         .ValidateAsync(sripc.Item2, sripc.Item3);
 
             #endregion Methods
