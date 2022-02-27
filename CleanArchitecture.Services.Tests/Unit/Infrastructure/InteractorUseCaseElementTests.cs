@@ -13,13 +13,13 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IUseCaseInteractor<object, object>> m_MockInteractor = new();
+        private readonly Mock<IUseCaseInteractor<IUseCaseInputPort<object>, object>> m_MockInteractor = new();
         private readonly Mock<UseCaseElementHandleAsync> m_MockNextHandleDelegate = new();
         private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
 
         private readonly IUseCaseElement m_Element;
-        private readonly object m_InputPort = new();
-        private readonly object m_OutputPort = new Mock<object>().Object;
+        private readonly IUseCaseInputPort<object> m_InputPort = new Mock<IUseCaseInputPort<object>>().Object;
+        private readonly object m_OutputPort = new();
 
         #endregion Fields
 
@@ -30,7 +30,7 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
             this.m_Element = new InteractorUseCaseElement(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<object, object>)))
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<IUseCaseInputPort<object>, object>)))
                     .Returns(this.m_MockInteractor.Object);
 
         }
