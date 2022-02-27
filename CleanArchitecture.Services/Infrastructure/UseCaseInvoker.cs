@@ -87,12 +87,12 @@ namespace CleanArchitecture.Services.Infrastructure
             #region - - - - - - Methods - - - - - -
 
             public override Task InvokeUseCaseAsync(CancellationToken cancellationToken)
-                => this.m_ServiceResolver.GetService<IEnumerable<IUseCaseElement>>()
+                => this.m_ServiceResolver.GetService<IEnumerable<IUseCasePipe>>()
                     .Reverse()
                     .Aggregate(
-                        new UseCaseElementHandleAsync(() => Task.CompletedTask),
-                        (nextElementHandleDelegate, useCaseElement) =>
-                            new UseCaseElementHandleAsync(() => useCaseElement.HandleAsync(this.m_InputPort, this.m_OutputPort, nextElementHandleDelegate, cancellationToken)))();
+                        new UseCasePipeHandleAsync(() => Task.CompletedTask),
+                        (nextPipeHandleDelegate, useCasePipe) =>
+                            new UseCasePipeHandleAsync(() => useCasePipe.HandleAsync(this.m_InputPort, this.m_OutputPort, nextPipeHandleDelegate, cancellationToken)))();
 
             #endregion Methods
 

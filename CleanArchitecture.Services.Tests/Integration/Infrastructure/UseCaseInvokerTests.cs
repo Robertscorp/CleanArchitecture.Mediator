@@ -55,14 +55,14 @@ namespace CleanArchitecture.Services.Tests.Integration.Infrastructure
                     .Returns(Task.FromResult(this.m_InputPortValidationResult));
 
             _ = this.m_MockServiceResolver
-                    .Setup(mock => mock.Invoke(typeof(IEnumerable<IUseCaseElement>)))
-                    .Returns(new List<IUseCaseElement>()
+                    .Setup(mock => mock.Invoke(typeof(IEnumerable<IUseCasePipe>)))
+                    .Returns(new List<IUseCasePipe>()
                     {
-                        new AuthenticationUseCaseElement(this.m_MockServiceResolver.Object),
-                        new AuthorisationUseCaseElement<AuthorisationResult>(this.m_MockServiceResolver.Object),
-                        new InputPortValidatorUseCaseElement<ValidationResult>(this.m_MockServiceResolver.Object),
-                        new BusinessRuleValidatorUseCaseElement<ValidationResult>(this.m_MockServiceResolver.Object),
-                        new InteractorUseCaseElement(this.m_MockServiceResolver.Object)
+                        new AuthenticationPipe(this.m_MockServiceResolver.Object),
+                        new AuthorisationPipe<AuthorisationResult>(this.m_MockServiceResolver.Object),
+                        new InputPortValidationPipe<ValidationResult>(this.m_MockServiceResolver.Object),
+                        new BusinessRuleValidationPipe<ValidationResult>(this.m_MockServiceResolver.Object),
+                        new InteractorPipe(this.m_MockServiceResolver.Object)
                     });
 
             _ = this.m_MockServiceResolver

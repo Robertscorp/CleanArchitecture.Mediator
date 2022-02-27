@@ -9,7 +9,7 @@ namespace CleanArchitecture.Services.Infrastructure
     /// <summary>
     /// Handles invocation of the Interactor service.
     /// </summary>
-    public class InteractorUseCaseElement : IUseCaseElement
+    public class InteractorPipe : IUseCasePipe
     {
 
         #region - - - - - - Fields - - - - - -
@@ -21,20 +21,20 @@ namespace CleanArchitecture.Services.Infrastructure
         #region - - - - - - Constructors - - - - - -
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="InteractorUseCaseElement"/> class.
+        /// Initialises a new instance of the <see cref="InteractorPipe"/> class.
         /// </summary>
         /// <param name="serviceResolver">The delegate used to get services.</param>
-        public InteractorUseCaseElement(UseCaseServiceResolver serviceResolver)
+        public InteractorPipe(UseCaseServiceResolver serviceResolver)
             => this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
 
         #endregion Constructors
 
         #region - - - - - - Methods - - - - - -
 
-        Task IUseCaseElement.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        Task IUseCasePipe.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
-            UseCaseElementHandleAsync nextUseCaseElementHandle,
+            UseCasePipeHandleAsync nextUseCasePipeHandle,
             CancellationToken cancellationToken)
             => DelegateFactory
                 .GetFunction<(UseCaseServiceResolver, TUseCaseInputPort, TUseCaseOutputPort, CancellationToken), Task>(

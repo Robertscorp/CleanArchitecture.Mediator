@@ -29,11 +29,11 @@ namespace CleanArchitecture.Services.DependencyInjection
 
             var _ServiceTypes = new HashSet<Type>(_ConfigurationOptions
                                                     .PipelineOptions
-                                                    .ElementOptions
+                                                    .PipeOptions
                                                     .SelectMany(e => e.PipeServiceOptions)
                                                     .Select(s => s.PipeService.GetTypeDefinition()));
 
-            // Scan all specified Assemblies for classes that implement the Use Case Element Services.
+            // Scan all specified Assemblies for classes that implement the Use Case Pipe Services.
             foreach (var _Type in _ConfigurationOptions.GetAssemblyTypes().Where(t => !t.IsAbstract))
                 foreach (var _InterfaceType in _Type.GetInterfaces())
                     if (_ServiceTypes.Contains(_InterfaceType.GetTypeDefinition()))
@@ -43,8 +43,8 @@ namespace CleanArchitecture.Services.DependencyInjection
                         else
                             _ConfigurationOptions.RegistrationAction?.Invoke(_InterfaceType, _Type);
 
-            foreach (var _Type in _ConfigurationOptions.PipelineOptions.ElementOptions.Select(e => e.ElementType))
-                _ConfigurationOptions.RegistrationAction?.Invoke(typeof(IUseCaseElement), _Type);
+            foreach (var _Type in _ConfigurationOptions.PipelineOptions.PipeOptions.Select(e => e.PipeType))
+                _ConfigurationOptions.RegistrationAction?.Invoke(typeof(IUseCasePipe), _Type);
 
             if (_ConfigurationOptions.ShouldValidate)
                 Validate(_ConfigurationOptions);
@@ -57,7 +57,7 @@ namespace CleanArchitecture.Services.DependencyInjection
             foreach (var _Type in options.GetAssemblyTypes())
                 _Context.RegisterAssemblyType(_Type);
 
-            foreach (var _PipeOptions in options.PipelineOptions.ElementOptions)
+            foreach (var _PipeOptions in options.PipelineOptions.PipeOptions)
                 if (_PipeOptions.PipeOutputPort != null)
                 {
                     var _PipeServiceOptions = _PipeOptions.PipeServiceOptions;
