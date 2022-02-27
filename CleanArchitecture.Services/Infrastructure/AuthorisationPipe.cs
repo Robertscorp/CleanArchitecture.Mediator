@@ -49,10 +49,14 @@ namespace CleanArchitecture.Services.Infrastructure
             if (outputPort is IAuthorisationOutputPort<TAuthorisationResult> _OutputPort)
             {
                 var _AuthorisationResultAsync = this.GetAuthorisationResultAsync(inputPort, cancellationToken);
-                if (_AuthorisationResultAsync != null && !(await _AuthorisationResultAsync).IsAuthorised)
+                if (_AuthorisationResultAsync != null)
                 {
-                    await _OutputPort.PresentUnauthorisedAsync(await _AuthorisationResultAsync, cancellationToken).ConfigureAwait(false);
-                    return;
+                    var _AuthorisationResult = await _AuthorisationResultAsync.ConfigureAwait(false);
+                    if (!_AuthorisationResult.IsAuthorised)
+                    {
+                        await _OutputPort.PresentUnauthorisedAsync(_AuthorisationResult, cancellationToken).ConfigureAwait(false);
+                        return;
+                    }
                 }
             }
 
