@@ -49,10 +49,14 @@ namespace CleanArchitecture.Services.Infrastructure
             if (outputPort is IBusinessRuleValidationOutputPort<TValidationResult> _OutputPort)
             {
                 var _ValidationResultAsync = this.GetValidationResultAsync(inputPort, cancellationToken);
-                if (_ValidationResultAsync != null && !(await _ValidationResultAsync).IsValid)
+                if (_ValidationResultAsync != null)
                 {
-                    await _OutputPort.PresentBusinessRuleValidationFailureAsync(await _ValidationResultAsync, cancellationToken).ConfigureAwait(false);
-                    return;
+                    var _ValidationResult = await _ValidationResultAsync.ConfigureAwait(false);
+                    if (!_ValidationResult.IsValid)
+                    {
+                        await _OutputPort.PresentBusinessRuleValidationFailureAsync(_ValidationResult, cancellationToken).ConfigureAwait(false);
+                        return;
+                    }
                 }
             }
 
