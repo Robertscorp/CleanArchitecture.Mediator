@@ -10,7 +10,7 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly HashSet<Type> m_PipeOutputPorts = new HashSet<Type>();
+        private readonly HashSet<Type> m_OutputPorts = new HashSet<Type>();
         private readonly List<(Type Implementation, Type Interface)> m_RegisteredInputPorts = new List<(Type Implementation, Type Interface)>();
         private readonly HashSet<Type> m_RegisteredServices = new HashSet<Type>();
         private readonly List<(Type PipeOutputPort, Type PipeService)> m_SingleImplementationServices = new List<(Type PipeOutputPort, Type PipeService)>();
@@ -49,7 +49,7 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
             => this.m_RegisteredInputPorts
                 .Select(ip => GetUseCaseOutputPort(ip.Interface))
                 .SelectMany(ucop => GetPipeOutputPorts(ucop).Select(pop => (PipeOutputPort: pop, UseCaseOutputPort: ucop)))
-                .Where(pucops => !this.m_PipeOutputPorts.Contains(pucops.PipeOutputPort))
+                .Where(pucops => !this.m_OutputPorts.Contains(pucops.PipeOutputPort))
                 .GroupBy(pucops => pucops.PipeOutputPort)
                 .Select(gpucops => (gpucops.Key, gpucops.Select(pucops => pucops.UseCaseOutputPort).ToArray()))
                 .ToArray();
@@ -81,8 +81,8 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
                     _ = this.m_RegisteredServices.Add(_Interface);
         }
 
-        public void RegisterPipeOutputPort(Type pipeOutputPort)
-            => this.m_PipeOutputPorts.Add(pipeOutputPort);
+        public void RegisterOutputPort(Type pipeOutputPort)
+            => this.m_OutputPorts.Add(pipeOutputPort);
 
         public void RegisterSingleImplementationService(Type pipeOutputPort, Type pipeService)
             => this.m_SingleImplementationServices.Add((pipeOutputPort, pipeService));

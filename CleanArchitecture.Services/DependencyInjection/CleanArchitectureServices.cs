@@ -58,7 +58,7 @@ namespace CleanArchitecture.Services.DependencyInjection
                 {
                     var _PipeServiceOptions = _PipeOptions.PipeServiceOptions;
 
-                    _Context.RegisterPipeOutputPort(_PipeOptions.PipeOutputPort);
+                    _Context.RegisterOutputPort(_PipeOptions.PipeOutputPort);
 
                     foreach (var _PipeServiceOption in _PipeServiceOptions.Where(pso => pso.UseCaseServiceResolver == null))
                         _Context.RegisterSingleImplementationService(
@@ -71,6 +71,9 @@ namespace CleanArchitecture.Services.DependencyInjection
                             _PipeServiceOption.PipeService,
                             _PipeServiceOption.UseCaseServiceResolver);
                 }
+
+            foreach (var _IgnoredOutputPort in options.IgnoredOutputPorts)
+                _Context.RegisterOutputPort(_IgnoredOutputPort);
 
             var _ExceptionBuilder = new ValidationExceptionBuilder();
 
