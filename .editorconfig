@@ -192,6 +192,10 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = suggestion
 dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
 dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
+dotnet_naming_rule.non_public_static_field_should_be_begins_with_s_.severity = warning
+dotnet_naming_rule.non_public_static_field_should_be_begins_with_s_.symbols = non_public_static_field
+dotnet_naming_rule.non_public_static_field_should_be_begins_with_s_.style = begins_with_s_
+
 dotnet_naming_rule.private_or_internal_field_should_be_private_or_internal_field.severity = warning
 dotnet_naming_rule.private_or_internal_field_should_be_private_or_internal_field.symbols = private_or_internal_field
 dotnet_naming_rule.private_or_internal_field_should_be_private_or_internal_field.style = private_or_internal_field
@@ -222,6 +226,10 @@ dotnet_naming_symbols.variable.applicable_kinds = local
 dotnet_naming_symbols.variable.applicable_accessibilities = *
 dotnet_naming_symbols.variable.required_modifiers = 
 
+dotnet_naming_symbols.non_public_static_field.applicable_kinds = field
+dotnet_naming_symbols.non_public_static_field.applicable_accessibilities = internal, private, protected, protected_internal
+dotnet_naming_symbols.non_public_static_field.required_modifiers = static
+
 # Naming styles
 
 dotnet_naming_style.pascal_case.required_prefix = 
@@ -243,3 +251,8 @@ dotnet_naming_style.variable.required_prefix = _
 dotnet_naming_style.variable.required_suffix = 
 dotnet_naming_style.variable.word_separator = 
 dotnet_naming_style.variable.capitalization = pascal_case
+
+dotnet_naming_style.begins_with_s_.required_prefix = s_
+dotnet_naming_style.begins_with_s_.required_suffix = 
+dotnet_naming_style.begins_with_s_.word_separator = 
+dotnet_naming_style.begins_with_s_.capitalization = pascal_case
