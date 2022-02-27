@@ -1,5 +1,5 @@
-﻿using CleanArchitecture.Sample.Dtos;
-using CleanArchitecture.Services;
+﻿using CleanArchitecture.Mediator;
+using CleanArchitecture.Sample.Dtos;
 
 namespace CleanArchitecture.Sample.UseCases.GetProduct
 {

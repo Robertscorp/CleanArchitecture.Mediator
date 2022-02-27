@@ -1,6 +1,6 @@
-﻿using CleanArchitecture.Sample.Dtos;
+﻿using CleanArchitecture.Mediator;
+using CleanArchitecture.Sample.Dtos;
 using CleanArchitecture.Sample.Pipeline;
-using CleanArchitecture.Services;
 
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {

@@ -1,5 +1,5 @@
-﻿using CleanArchitecture.Sample.Pipeline;
-using CleanArchitecture.Services.DependencyInjection;
+﻿using CleanArchitecture.Mediator.DependencyInjection;
+using CleanArchitecture.Sample.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CleanArchitecture.Sample
@@ -12,7 +12,7 @@ namespace CleanArchitecture.Sample
 
         public static IServiceCollection AddCleanArchitectureServices(this IServiceCollection serviceCollection)
         {
-            CleanArchitectureServices.Register(opts =>
+            CleanArchitectureMediator.Register(opts =>
                 _ = opts.ConfigurePipeline(pipeline =>
                             pipeline.AddAuthentication()
                                 .AddAuthorisation<AuthorisationResult>()
