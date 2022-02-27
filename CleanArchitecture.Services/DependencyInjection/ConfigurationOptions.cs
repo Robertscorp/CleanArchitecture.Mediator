@@ -22,6 +22,8 @@ namespace CleanArchitecture.Services.DependencyInjection
 
         private List<Assembly> AssembliesToScan { get; } = new List<Assembly>();
 
+        internal List<Type> IgnoredOutputPorts { get; } = new List<Type>();
+
         internal PipelineOptions PipelineOptions { get; } = new PipelineOptions();
 
         internal Action<Type, Type> RegistrationAction { get; private set; }
@@ -50,6 +52,17 @@ namespace CleanArchitecture.Services.DependencyInjection
         public ConfigurationOptions ConfigurePipeline(Action<PipelineOptions> pipelineConfigurationAction)
         {
             pipelineConfigurationAction(this.PipelineOptions);
+            return this;
+        }
+
+        /// <summary>
+        /// Prevents validation failures from occurring when specified Output Ports are not registered to a Pipe.
+        /// </summary>
+        /// <param name="outputPorts">A collection of Output Ports to ignore.</param>
+        /// <returns>Itself.</returns>
+        public ConfigurationOptions IgnoreOutputPorts(params Type[] outputPorts)
+        {
+            this.IgnoredOutputPorts.AddRange(outputPorts);
             return this;
         }
 
