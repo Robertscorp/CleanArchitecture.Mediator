@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Services", "CleanArchitecture.Services\CleanArchitecture.Services.csproj", "{67818317-620B-48DF-AA1C-6157FC328C29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Mediator", "CleanArchitecture.Mediator\CleanArchitecture.Mediator.csproj", "{67818317-620B-48DF-AA1C-6157FC328C29}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Services.Tests", "CleanArchitecture.Services.Tests\CleanArchitecture.Services.Tests.csproj", "{66598747-FB4C-4EA4-8591-A0872396A556}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Mediator.Tests", "CleanArchitecture.Mediator.Tests\CleanArchitecture.Mediator.Tests.csproj", "{66598747-FB4C-4EA4-8591-A0872396A556}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Sample", "CleanArchitecture.Sample\CleanArchitecture.Sample.csproj", "{44101A3E-D827-4860-A1AD-2915DCE33CEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.Sample.Tests", "CleanArchitecture.Sample.Tests\CleanArchitecture.Sample.Tests.csproj", "{16BE51ED-DACD-4F4F-87D4-6BD223037E7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Sample.Tests", "CleanArchitecture.Sample.Tests\CleanArchitecture.Sample.Tests.csproj", "{16BE51ED-DACD-4F4F-87D4-6BD223037E7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

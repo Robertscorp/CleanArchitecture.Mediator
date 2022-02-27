@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CleanArchitecture.Services\CleanArchitecture.Services.csproj" />
+    <ProjectReference Include="..\CleanArchitecture.Mediator\CleanArchitecture.Mediator.csproj" />
   </ItemGroup>
 
 </Project>

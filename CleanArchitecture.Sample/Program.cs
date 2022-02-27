@@ -1,11 +1,11 @@
-﻿using CleanArchitecture.Sample;
+﻿using CleanArchitecture.Mediator;
+using CleanArchitecture.Mediator.Authentication;
+using CleanArchitecture.Mediator.Infrastructure;
+using CleanArchitecture.Sample;
 using CleanArchitecture.Sample.Infrastructure;
 using CleanArchitecture.Sample.Presenters;
 using CleanArchitecture.Sample.UseCases.CreateProduct;
 using CleanArchitecture.Sample.UseCases.GetProduct;
-using CleanArchitecture.Services;
-using CleanArchitecture.Services.Authentication;
-using CleanArchitecture.Services.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 
