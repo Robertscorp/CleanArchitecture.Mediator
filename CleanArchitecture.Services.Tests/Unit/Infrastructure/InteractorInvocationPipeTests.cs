@@ -8,7 +8,7 @@ using Xunit;
 namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 {
 
-    public class InteractorPipeTests
+    public class InteractorInvocationPipeTests
     {
 
         #region - - - - - - Fields - - - - - -
@@ -25,9 +25,9 @@ namespace CleanArchitecture.Services.Tests.Unit.Infrastructure
 
         #region - - - - - - Constructors - - - - - -
 
-        public InteractorPipeTests()
+        public InteractorInvocationPipeTests()
         {
-            this.m_Pipe = new InteractorPipe(this.m_MockServiceResolver.Object);
+            this.m_Pipe = new InteractorInvocationPipe(this.m_MockServiceResolver.Object);
 
             _ = this.m_MockServiceResolver
                     .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<IUseCaseInputPort<object>, object>)))

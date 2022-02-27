@@ -84,7 +84,7 @@ namespace CleanArchitecture.Services.DependencyInjection
         /// This means that any Pipe registered after this will never be invoked.
         /// </remarks>
         public void AddInteractorInvocation()
-            => this.AddUseCasePipe<InteractorPipe>(opts
+            => this.AddUseCasePipe<InteractorInvocationPipe>(opts
                 => _ = opts.AddPipeService(typeof(IUseCaseInteractor<,>)));
 
         /// <summary>
