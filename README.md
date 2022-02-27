@@ -1,8 +1,8 @@
-# Clean Architecture Services
+# Clean Architecture Mediator
 
-### What are Clean Architecture Services?
+### What is Clean Architecture Mediator?
 
-Clean Architecture Services are designed to be the right tools for building Clean Architecture Use Cases. There are other, more generic, tools out there to help build use cases - but their limitations become apparent. The generic tools are great, but they aren't designed to handle output ports and flow of control.
+Clean Architecture Mediator designed to be the right mediator for building Clean Architecture Use Cases. There are other, more generic, mediators out there, but their limitations become apparent when building use cases. The generic tools are great, but they aren't designed to handle output ports and flow of control.
 
 ### Why are Output Ports and Flow of Control important?
 Great question.
