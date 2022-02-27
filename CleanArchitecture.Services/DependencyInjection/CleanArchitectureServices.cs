@@ -37,7 +37,11 @@ namespace CleanArchitecture.Services.DependencyInjection
             foreach (var _Type in _ConfigurationOptions.GetAssemblyTypes().Where(t => !t.IsAbstract))
                 foreach (var _InterfaceType in _Type.GetInterfaces())
                     if (_ServiceTypes.Contains(_InterfaceType.GetTypeDefinition()))
-                        _ConfigurationOptions.RegistrationAction?.Invoke(_InterfaceType, _Type);
+                        if (_Type.IsGenericTypeDefinition)
+                            _ConfigurationOptions.RegistrationAction?.Invoke(_InterfaceType.GetTypeDefinition(), _Type);
+
+                        else
+                            _ConfigurationOptions.RegistrationAction?.Invoke(_InterfaceType, _Type);
 
             foreach (var _Type in _ConfigurationOptions.PipelineOptions.ElementOptions.Select(e => e.ElementType))
                 _ConfigurationOptions.RegistrationAction?.Invoke(typeof(IUseCaseElement), _Type);

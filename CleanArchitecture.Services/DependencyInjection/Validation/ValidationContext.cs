@@ -10,10 +10,11 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
 
         #region - - - - - - Fields - - - - - -
 
+        private readonly HashSet<Type> m_GenericRegisteredServices = new HashSet<Type>();
         private readonly HashSet<Type> m_OutputPorts = new HashSet<Type>();
         private readonly List<(Type Implementation, Type Interface)> m_RegisteredInputPorts = new List<(Type Implementation, Type Interface)>();
-        private readonly HashSet<Type> m_RegisteredServices = new HashSet<Type>();
         private readonly List<(Type PipeOutputPort, Type PipeService)> m_SingleImplementationServices = new List<(Type PipeOutputPort, Type PipeService)>();
+        private readonly HashSet<Type> m_SpecificRegisteredServices = new HashSet<Type>();
         private readonly Dictionary<Type, List<(Type PipeService, Func<Type, Type, Type, Type> UseCaseServiceResolver)>> m_UseCaseServiceResolversByOutputPort = new Dictionary<Type, List<(Type PipeService, Func<Type, Type, Type, Type> UseCaseServiceResolver)>>();
 
         #endregion Fields
@@ -30,7 +31,7 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
 
         public (Type OutputPort, Type[] MissingServices)[] GetMissingSingleImplementationServices()
             => this.m_SingleImplementationServices
-                .Where(popps => !this.m_RegisteredServices.Contains(popps.PipeService))
+                .Where(popps => !this.HasRegisteredImplementation(popps.PipeService))
                 .GroupBy(popps => popps.PipeOutputPort)
                 .Select(gpopps => (gpopps.Key, gpopps.Select(popps => popps.PipeService).ToArray()))
                 .ToArray();
@@ -40,7 +41,7 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
                 .Select(popucs => (popucs.PipeOutputPort,
                                     UseCaseServices: popucs
                                                         .UseCaseServices
-                                                        .Where(ucs => !this.m_RegisteredServices.Contains(ucs))
+                                                        .Where(ucs => !this.HasRegisteredImplementation(ucs))
                                                         .ToArray()))
                 .Where(popucs => popucs.UseCaseServices.Any())
                 .ToArray();
@@ -72,13 +73,20 @@ namespace CleanArchitecture.Services.DependencyInjection.Validation
                     .ToArray();
         }
 
+        private bool HasRegisteredImplementation(Type type)
+            => this.m_SpecificRegisteredServices.Contains(type) ||
+                this.m_GenericRegisteredServices.Contains(type.GetTypeDefinition());
+
         public void RegisterAssemblyType(Type type)
         {
             foreach (var _Interface in type.GetInterfaces())
                 if (Equals(typeof(IUseCaseInputPort<>), _Interface.GetTypeDefinition()))
                     this.m_RegisteredInputPorts.Add((type, _Interface));
+
                 else
-                    _ = this.m_RegisteredServices.Add(_Interface);
+                    _ = type.IsGenericType
+                            ? this.m_GenericRegisteredServices.Add(_Interface.GetTypeDefinition())
+                            : this.m_SpecificRegisteredServices.Add(_Interface);
         }
 
         public void RegisterOutputPort(Type pipeOutputPort)
