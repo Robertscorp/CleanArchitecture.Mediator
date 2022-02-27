@@ -2,7 +2,7 @@
 
 ### What is Clean Architecture Mediator?
 
-Clean Architecture Mediator is designed to be the right mediator for building Clean Architecture Use Cases. There are other, more generic, mediators out there, but their limitations become apparent when building use cases. The generic tools are great, but they aren't designed to handle output ports and flow of control.
+Clean Architecture Mediator is designed to be the right tool for building Clean Architecture Use Cases. There are other, more generic, mediators out there, but their limitations become apparent when building use cases. The generic tools are great, but they aren't designed to handle output ports and flow of control.
 
 ### Why are Output Ports and Flow of Control important?
 Great question.
