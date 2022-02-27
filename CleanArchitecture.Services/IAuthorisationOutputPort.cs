@@ -8,7 +8,7 @@ namespace CleanArchitecture.Services
     /// An Output Port for when authorisation is required by a Use Case.
     /// </summary>
     /// <typeparam name="TAuthorisationFailure">The type of authorisation failure for the Use Case Pipeline.</typeparam>
-    public interface IAuthorisationOutputPort<TAuthorisationFailure>
+    public interface IAuthorisationOutputPort<TAuthorisationFailure> where TAuthorisationFailure : IAuthorisationResult
     {
 
         #region - - - - - - Methods - - - - - -

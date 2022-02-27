@@ -8,7 +8,7 @@ namespace CleanArchitecture.Services
     /// An Output Port for when business rule validation is required by a Use Case.
     /// </summary>
     /// <typeparam name="TValidationFailure">The type of validation failure for the Use Case Pipeline.</typeparam>
-    public interface IBusinessRuleValidationOutputPort<TValidationFailure>
+    public interface IBusinessRuleValidationOutputPort<TValidationFailure> where TValidationFailure : IValidationResult
     {
 
         #region - - - - - - Methods - - - - - -
