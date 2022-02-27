@@ -9,7 +9,7 @@ namespace CleanArchitecture.Services.Infrastructure
     /// <summary>
     /// Handles invocation of the Interactor service.
     /// </summary>
-    public class InteractorPipe : IUseCasePipe
+    public class InteractorInvocationPipe : IUseCasePipe
     {
 
         #region - - - - - - Fields - - - - - -
@@ -21,10 +21,10 @@ namespace CleanArchitecture.Services.Infrastructure
         #region - - - - - - Constructors - - - - - -
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="InteractorPipe"/> class.
+        /// Initialises a new instance of the <see cref="InteractorInvocationPipe"/> class.
         /// </summary>
         /// <param name="serviceResolver">The delegate used to get services.</param>
-        public InteractorPipe(UseCaseServiceResolver serviceResolver)
+        public InteractorInvocationPipe(UseCaseServiceResolver serviceResolver)
             => this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
 
         #endregion Constructors

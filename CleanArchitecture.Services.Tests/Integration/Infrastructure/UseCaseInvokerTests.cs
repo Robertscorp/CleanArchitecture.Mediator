@@ -62,7 +62,7 @@ namespace CleanArchitecture.Services.Tests.Integration.Infrastructure
                         new AuthorisationPipe<AuthorisationResult>(this.m_MockServiceResolver.Object),
                         new InputPortValidationPipe<ValidationResult>(this.m_MockServiceResolver.Object),
                         new BusinessRuleValidationPipe<ValidationResult>(this.m_MockServiceResolver.Object),
-                        new InteractorPipe(this.m_MockServiceResolver.Object)
+                        new InteractorInvocationPipe(this.m_MockServiceResolver.Object)
                     });
 
             _ = this.m_MockServiceResolver
