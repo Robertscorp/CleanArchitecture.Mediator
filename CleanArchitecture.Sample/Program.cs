@@ -12,7 +12,7 @@ using System.Security.Claims;
 using var _ServiceProvider
     = new ServiceCollection()
             .AddScoped<UseCaseServiceResolver>(serviceProvider => serviceProvider.GetService)
-            .AddCleanArchitectureServices()
+            .AddCleanArchitectureMediator()
             .BuildServiceProvider();
 
 using var _Scope = _ServiceProvider.CreateScope();

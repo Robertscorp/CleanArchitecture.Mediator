@@ -10,20 +10,8 @@ namespace CleanArchitecture.Sample
 
         #region - - - - - - Methods - - - - - -
 
-        public static IServiceCollection AddCleanArchitectureServices(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddCleanArchitectureMediator(this IServiceCollection serviceCollection)
         {
-            CleanArchitectureMediator.Register(opts =>
-                _ = opts.ConfigurePipeline(pipeline =>
-                            pipeline.AddAuthentication()
-                                .AddAuthorisation<AuthorisationResult>()
-                                .AddBusinessRuleValidation<ValidationResult>()
-                                .AddInputPortValidation<ValidationResult>()
-                                .AddInteractorInvocation())
-                        .ScanAssemblies(typeof(Program).Assembly)
-                        .SetRegistrationAction((serviceType, implementationType) =>
-                            _ = serviceCollection.AddScoped(serviceType, implementationType))
-                        .Validate());
-
             return serviceCollection;
         }
 
