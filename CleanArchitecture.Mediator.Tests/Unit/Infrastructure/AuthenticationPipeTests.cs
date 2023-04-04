@@ -15,12 +15,14 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
         #region - - - - - - Fields - - - - - -
 
         private readonly Mock<IAuthenticatedClaimsPrincipalProvider> m_MockClaimsPrincipalProvider = new();
-        private readonly Mock<UseCasePipeHandleAsync> m_MockNextHandleDelegate = new();
-        private readonly Mock<UseCaseServiceResolver> m_MockServiceResolver = new();
         private readonly Mock<IAuthenticationOutputPort> m_MockOutputPort = new();
+        private readonly Mock<IPipe> m_MockPipe = new();
+        private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
         private readonly object m_InputPort = new();
-        private readonly IUseCasePipe m_Pipe;
+        private readonly PipeHandle m_NextPipeHandle = new(null, null);
+        private readonly IPipe m_Pipe;
+        private readonly PipeHandle m_PipeHandle;
 
         #endregion Fields
 
@@ -28,9 +30,10 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
 
         public AuthenticationPipeTests()
         {
-            this.m_Pipe = new AuthenticationPipe(this.m_MockServiceResolver.Object);
+            this.m_Pipe = new AuthenticationPipe();
+            this.m_PipeHandle = new(this.m_MockPipe.Object, this.m_NextPipeHandle);
 
-            _ = this.m_MockServiceResolver
+            _ = this.m_MockServiceFactory
                     .Setup(mock => mock.Invoke(typeof(IAuthenticatedClaimsPrincipalProvider)))
                     .Returns(this.m_MockClaimsPrincipalProvider.Object);
 
@@ -41,63 +44,63 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
 
         #endregion Constructors
 
-        #region - - - - - - HandleAsync Tests - - - - - -
+        #region - - - - - - InvokeAsync Tests - - - - - -
 
         [Fact]
-        public async Task HandleAsync_OutputPortDoesNotSupportAuthentication_InvokesNextHandleDelegate()
+        public async Task InvokeAsync_OutputPortDoesNotSupportAuthentication_MovesToNextPipe()
         {
             // Arrange
             var _OutputPort = new object();
 
             // Act
-            await this.m_Pipe.HandleAsync(this.m_InputPort, _OutputPort, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.InvokeAsync(this.m_InputPort, _OutputPort, this.m_MockServiceFactory.Object, this.m_PipeHandle, default);
 
             // Assert
-            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
+            this.m_MockPipe.Verify(mock => mock.InvokeAsync(this.m_InputPort, _OutputPort, this.m_MockServiceFactory.Object, this.m_NextPipeHandle, default), Times.Once());
         }
 
         [Fact]
-        public async Task HandleAsync_ClaimsPrincipalProviderHasNotBeenRegistered_PresentsAuthenticationFailureAsync()
+        public async Task InvokeAsync_ClaimsPrincipalProviderHasNotBeenRegistered_StopsWithAuthenticationFailure()
         {
             // Arrange
-            this.m_MockServiceResolver.Reset();
+            this.m_MockServiceFactory.Reset();
 
             // Act
-            await this.m_Pipe.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_PipeHandle, default);
 
             // Assert
-            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
             this.m_MockOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
+            this.m_MockPipe.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task HandleAsync_ClaimsPrincipalIsAuthenticated_InvokesNextHandleDelegate()
-        {
-            // Arrange
-
-            // Act
-            await this.m_Pipe.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
-
-            // Assert
-            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Once());
-            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Never());
-        }
-
-        [Fact]
-        public async Task HandleAsync_NoAuthenticatedClaimsPrincipal_PresentsAuthenticationFailureAsync()
+        public async Task InvokeAsync_NoAuthenticatedClaimsPrincipal_StopsWithAuthenticationFailure()
         {
             // Arrange
             this.m_MockClaimsPrincipalProvider.Reset();
 
             // Act
-            await this.m_Pipe.HandleAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockNextHandleDelegate.Object, default);
+            await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_PipeHandle, default);
 
             // Assert
-            this.m_MockNextHandleDelegate.Verify(mock => mock.Invoke(), Times.Never());
             this.m_MockOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
+            this.m_MockPipe.VerifyNoOtherCalls();
         }
 
-        #endregion HandleAsync Tests
+        [Fact]
+        public async Task InvokeAsync_ClaimsPrincipalIsAuthenticated_MovesToNextPipe()
+        {
+            // Arrange
+
+            // Act
+            await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_PipeHandle, default);
+
+            // Assert
+            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Never());
+            this.m_MockPipe.Verify(mock => mock.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_NextPipeHandle, default), Times.Once());
+        }
+
+        #endregion InvokeAsync Tests
 
     }
 
