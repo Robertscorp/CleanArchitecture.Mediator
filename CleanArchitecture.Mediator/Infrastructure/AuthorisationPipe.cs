@@ -10,45 +10,29 @@ namespace CleanArchitecture.Mediator.Infrastructure
     /// Handles invocation of the Authorisation Enforcer service and presentation of authorisation failures.
     /// </summary>
     /// <typeparam name="TAuthorisationResult">The type of Authorisation Result.</typeparam>
-    public class AuthorisationPipe<TAuthorisationResult> : IUseCasePipe where TAuthorisationResult : IAuthorisationResult
+    public class AuthorisationPipe<TAuthorisationResult> : IPipe where TAuthorisationResult : IAuthorisationResult
     {
-
-        #region - - - - - - Fields - - - - - -
-
-        private readonly UseCaseServiceResolver m_ServiceResolver;
-
-        #endregion Fields
-
-        #region - - - - - - Constructors - - - - - -
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="AuthorisationPipe{TAuthorisationResult}"/> class.
-        /// </summary>
-        /// <param name="serviceResolver">The delegate used to get services.</param>
-        public AuthorisationPipe(UseCaseServiceResolver serviceResolver)
-            => this.m_ServiceResolver = serviceResolver ?? throw new ArgumentNullException(nameof(serviceResolver));
-
-        #endregion Constructors
 
         #region - - - - - - Methods - - - - - -
 
-        private Task<TAuthorisationResult> GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, CancellationToken cancellationToken)
+        private Task<TAuthorisationResult> GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken)
             => inputPort is IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
                 ? DelegateFactory
-                    .GetFunction<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TAuthorisationResult>>(
+                    .GetFunction<(ServiceFactory, TUseCaseInputPort, CancellationToken), Task<TAuthorisationResult>>(
                         typeof(EnforcerCheckFactory<>).MakeGenericType(typeof(TAuthorisationResult), typeof(TUseCaseInputPort)))?
-                    .Invoke((this.m_ServiceResolver, inputPort, cancellationToken))
+                    .Invoke((serviceFactory, inputPort, cancellationToken))
                 : null;
 
-        async Task IUseCasePipe.HandleAsync<TUseCaseInputPort, TUseCaseOutputPort>(
-            TUseCaseInputPort inputPort,
-            TUseCaseOutputPort outputPort,
-            UseCasePipeHandleAsync nextUseCasePipeHandle,
+        async Task IPipe.InvokeAsync<TInputPort, TOutputPort>(
+            TInputPort inputPort,
+            TOutputPort outputPort,
+            ServiceFactory serviceFactory,
+            PipeHandle nextPipeHandle,
             CancellationToken cancellationToken)
         {
             if (outputPort is IAuthorisationOutputPort<TAuthorisationResult> _OutputPort)
             {
-                var _AuthorisationResultAsync = this.GetAuthorisationResultAsync(inputPort, cancellationToken);
+                var _AuthorisationResultAsync = this.GetAuthorisationResultAsync(inputPort, serviceFactory, cancellationToken);
                 if (_AuthorisationResultAsync != null)
                 {
                     var _AuthorisationResult = await _AuthorisationResultAsync.ConfigureAwait(false);
@@ -60,25 +44,25 @@ namespace CleanArchitecture.Mediator.Infrastructure
                 }
             }
 
-            await nextUseCasePipeHandle().ConfigureAwait(false);
+            await nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, default).ConfigureAwait(false);
         }
 
         #endregion Methods
 
         #region - - - - - - Nested Classes - - - - - -
 
-        private class EnforcerCheckFactory<TUseCaseInputPort>
-            : IDelegateFactory<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TAuthorisationResult>>
-            where TUseCaseInputPort : IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
+        private class EnforcerCheckFactory<TInputPort>
+            : IDelegateFactory<(ServiceFactory, TInputPort, CancellationToken), Task<TAuthorisationResult>>
+            where TInputPort : IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
         {
 
             #region - - - - - - Methods - - - - - -
 
-            public Func<(UseCaseServiceResolver, TUseCaseInputPort, CancellationToken), Task<TAuthorisationResult>> GetFunction()
-                => sripc
-                    => sripc.Item1
-                        .GetService<IUseCaseAuthorisationEnforcer<TUseCaseInputPort, TAuthorisationResult>>()?
-                        .CheckAuthorisationAsync(sripc.Item2, sripc.Item3);
+            public Func<(ServiceFactory, TInputPort, CancellationToken), Task<TAuthorisationResult>> GetFunction()
+                => tuple
+                    => tuple.Item1
+                        .GetService<IUseCaseAuthorisationEnforcer<TInputPort, TAuthorisationResult>>()?
+                        .CheckAuthorisationAsync(tuple.Item2, tuple.Item3);
 
             #endregion Methods
 
