@@ -111,7 +111,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
             await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_PipeHandle, default);
 
             // Assert
-            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(It.IsAny<IAuthorisationResult>(), default), Times.Once());
+            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(this.m_MockAuthorisationResult.Object, default), Times.Once());
             this.m_MockPipe.VerifyNoOtherCalls();
         }
 
