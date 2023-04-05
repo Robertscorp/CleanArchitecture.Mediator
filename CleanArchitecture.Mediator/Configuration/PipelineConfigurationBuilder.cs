@@ -1,4 +1,5 @@
-﻿using CleanArchitecture.Mediator.Pipeline;
+﻿using CleanArchitecture.Mediator.Infrastructure;
+using CleanArchitecture.Mediator.Pipeline;
 using System;
 
 namespace CleanArchitecture.Mediator.Configuration
@@ -26,6 +27,27 @@ namespace CleanArchitecture.Mediator.Configuration
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
+        /// Adds Authentication to the Pipeline.
+        /// </summary>
+        /// <returns>Itself.</returns>
+        public PipelineConfigurationBuilder AddAuthentication()
+            => this.AddPipe<AuthenticationPipe>();
+
+        /// <summary>
+        /// Adds Authorisation to the Pipeline.
+        /// </summary>
+        /// <returns>Itself.</returns>
+        public PipelineConfigurationBuilder AddAuthorisation<TAuthorisationResult>() where TAuthorisationResult : IAuthorisationResult
+            => this.AddPipe<AuthorisationPipe<TAuthorisationResult>>();
+
+        /// <summary>
+        /// Adds Interactor Invocation to the Pipeline.
+        /// </summary>
+        /// <returns>Itself.</returns>
+        public void AddInteractorInvocation()
+            => this.AddPipe<InteractorInvocationPipe>();
+
+        /// <summary>
         /// Adds a Pipe to the Pipeline.
         /// </summary>
         /// <typeparam name="TPipe">The type of Pipe to add to the Pipeline.</typeparam>
@@ -36,6 +58,13 @@ namespace CleanArchitecture.Mediator.Configuration
 
             return this;
         }
+
+        /// <summary>
+        /// Adds Validation to the Pipeline.
+        /// </summary>
+        /// <returns>Itself.</returns>
+        public PipelineConfigurationBuilder AddValidation<TValidationResult>() where TValidationResult : IValidationResult
+            => this.AddPipe<ValidationPipe<TValidationResult>>();
 
         #endregion Methods
 
