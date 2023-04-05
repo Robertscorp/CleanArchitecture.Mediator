@@ -9,7 +9,7 @@ namespace CleanArchitecture.Mediator.Infrastructure
 
         #region - - - - - - Fields - - - - - -
 
-        private static ConcurrentDictionary<Type, object> s_FactoryFunctions
+        private static readonly ConcurrentDictionary<Type, object> s_FactoryFunctions
             = new ConcurrentDictionary<Type, object>();
 
         #endregion Fields
