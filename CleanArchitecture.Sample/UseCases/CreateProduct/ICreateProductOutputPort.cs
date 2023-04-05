@@ -8,7 +8,6 @@ namespace CleanArchitecture.Sample.UseCases.CreateProduct
     public interface ICreateProductOutputPort :
         IAuthenticationOutputPort,
         IAuthorisationOutputPort<AuthorisationResult>,
-        IBusinessRuleValidationOutputPort<ValidationResult>,
         IValidationOutputPort<ValidationResult>
     {
 

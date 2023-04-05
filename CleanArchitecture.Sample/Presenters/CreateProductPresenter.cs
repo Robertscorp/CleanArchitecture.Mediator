@@ -11,12 +11,6 @@ namespace CleanArchitecture.Sample.Presenters
 
         #region - - - - - - Methods - - - - - -
 
-        Task IBusinessRuleValidationOutputPort<ValidationResult>.PresentBusinessRuleValidationFailureAsync(ValidationResult validationFailure, CancellationToken cancellationToken)
-        {
-            Console.WriteLine("Create Product Presenter - Business Rule Validation Failure");
-            return Task.CompletedTask;
-        }
-
         Task ICreateProductOutputPort.PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken)
         {
             Console.WriteLine($"Create Product Presenter - Product Created - '{product.Name}'");
