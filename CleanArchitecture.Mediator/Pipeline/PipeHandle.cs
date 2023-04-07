@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator.Pipeline
 {
 
     /// <summary>
-    /// Encapsulates the invocation of a Pipe to allow the same Pipe to be invoked by multiple Pipelines.
+    /// A handle to a Pipe in the Pipeline.
     /// </summary>
     public class PipeHandle
     {
