@@ -1,6 +1,8 @@
 ﻿using CleanArchitecture.Mediator.Infrastructure;
 using CleanArchitecture.Mediator.Pipeline;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CleanArchitecture.Mediator.Configuration
 {
@@ -54,7 +56,22 @@ namespace CleanArchitecture.Mediator.Configuration
         /// <returns>Itself.</returns>
         public PipelineConfigurationBuilder AddPipe<TPipe>() where TPipe : IPipe
         {
-            this.PipelineConfiguration.PipeTypes.Add(typeof(TPipe));
+            this.PipelineConfiguration.PipeFactories.Add(pipesByType => pipesByType.TryGetValue(typeof(TPipe), out var _Pipe) ? _Pipe : null);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds inline behaviour to the Pipeline.
+        /// </summary>
+        /// <param name="inlineBehaviourAsync">The behaviour of the Pipe. Return true if the pipeline should continue. </param>
+        /// <returns>Itself.</returns>
+        public PipelineConfigurationBuilder AddPipe(
+            Func<(object InputPort, object OutputPort, ServiceFactory ServiceFactory, NextPipeHandle NextPipeHandle, CancellationToken CancellationToken), Task> inlineBehaviourAsync)
+        {
+            if (inlineBehaviourAsync is null) throw new ArgumentNullException(nameof(inlineBehaviourAsync));
+
+            this.PipelineConfiguration.PipeFactories.Add(pipesByType => new InlinePipe(inlineBehaviourAsync));
 
             return this;
         }

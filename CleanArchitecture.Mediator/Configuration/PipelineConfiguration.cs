@@ -26,7 +26,7 @@ namespace CleanArchitecture.Mediator.Configuration
 
         internal Type PipelineType { get; }
 
-        internal List<Type> PipeTypes { get; } = new List<Type>();
+        internal List<Func<IDictionary<Type, IPipe>, IPipe>> PipeFactories { get; private set; } = new List<Func<IDictionary<Type, IPipe>, IPipe>>();
 
         #endregion Properties
 
@@ -38,13 +38,15 @@ namespace CleanArchitecture.Mediator.Configuration
             {
                 var _PipesByType = serviceFactory.GetService<IEnumerable<IPipe>>().ToDictionary(p => p.GetType());
 
-                this.m_PipeHandle = this.PipeTypes
-                                        .Select(t => _PipesByType.TryGetValue(t, out var _Pipe) ? _Pipe : null)
+                this.m_PipeHandle = this.PipeFactories
+                                        .Select(f => f.Invoke(_PipesByType))
                                         .Where(p => p != null)
                                         .Reverse()
                                         .Aggregate(
                                             new PipeHandle(null, null),
                                             (nextPipeHandle, useCasePipe) => new PipeHandle(useCasePipe, nextPipeHandle));
+
+                this.PipeFactories = null;
             }
 
             return this.m_PipeHandle;
