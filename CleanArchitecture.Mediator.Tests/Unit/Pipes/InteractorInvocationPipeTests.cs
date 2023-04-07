@@ -1,11 +1,11 @@
-﻿using CleanArchitecture.Mediator.Infrastructure;
-using CleanArchitecture.Mediator.Pipeline;
+﻿using CleanArchitecture.Mediator.Pipeline;
+using CleanArchitecture.Mediator.Pipes;
 using FluentAssertions;
 using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
+namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
 {
 
     public class InteractorInvocationPipeTests

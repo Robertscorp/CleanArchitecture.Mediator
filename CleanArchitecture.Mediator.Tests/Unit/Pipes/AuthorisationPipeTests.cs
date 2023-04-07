@@ -1,22 +1,22 @@
-﻿using CleanArchitecture.Mediator.Infrastructure;
-using CleanArchitecture.Mediator.Pipeline;
+﻿using CleanArchitecture.Mediator.Pipeline;
+using CleanArchitecture.Mediator.Pipes;
 using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
+namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
 {
 
-    public class ValidationPipeTests
+    public class AuthorisationPipeTests
     {
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IValidationOutputPort<IValidationResult>> m_MockOutputPort = new();
+        private readonly Mock<IAuthorisationResult> m_MockAuthorisationResult = new();
+        private readonly Mock<IUseCaseAuthorisationEnforcer<TestInputPort, IAuthorisationResult>> m_MockEnforcer = new();
+        private readonly Mock<IAuthorisationOutputPort<IAuthorisationResult>> m_MockOutputPort = new();
         private readonly Mock<IPipe> m_MockPipe = new();
         private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
-        private readonly Mock<IValidationResult> m_MockValidationResult = new();
-        private readonly Mock<IValidator<TestInputPort, IValidationResult>> m_MockValidator = new();
 
         private readonly TestInputPort m_InputPort = new();
         private readonly PipeHandle m_NextPipeHandle = new(null, null);
@@ -27,18 +27,18 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
 
         #region - - - - - - Constructors - - - - - -
 
-        public ValidationPipeTests()
+        public AuthorisationPipeTests()
         {
-            this.m_Pipe = new ValidationPipe<IValidationResult>();
+            this.m_Pipe = new AuthorisationPipe<IAuthorisationResult>();
             this.m_PipeHandle = new(this.m_MockPipe.Object, this.m_NextPipeHandle);
 
-            _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IValidator<TestInputPort, IValidationResult>)))
-                    .Returns(this.m_MockValidator.Object);
+            _ = this.m_MockEnforcer
+                    .Setup(mock => mock.CheckAuthorisationAsync(this.m_InputPort, default))
+                    .Returns(Task.FromResult(this.m_MockAuthorisationResult.Object));
 
-            _ = this.m_MockValidator
-                    .Setup(mock => mock.ValidateAsync(this.m_InputPort, default))
-                    .Returns(Task.FromResult(this.m_MockValidationResult.Object));
+            _ = this.m_MockServiceFactory
+                    .Setup(mock => mock.Invoke(typeof(IUseCaseAuthorisationEnforcer<TestInputPort, IAuthorisationResult>)))
+                    .Returns(this.m_MockEnforcer.Object);
         }
 
         #endregion Constructors
@@ -46,7 +46,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
         #region - - - - - - InvokeAsync Tests - - - - - -
 
         [Fact]
-        public async Task InvokeAsync_InputPortDoesNotSupportValidation_MovesToNextPipe()
+        public async Task InvokeAsync_InputPortDoesNotSupportAuthorisation_MovesToNextPipe()
         {
             // Arrange
             var _InputPort = new object();
@@ -60,7 +60,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
         }
 
         [Fact]
-        public async Task InvokeAsync_OutputPortDoesNotSupportValidation_MovesToNextPipe()
+        public async Task InvokeAsync_OutputPortDoesNotSupportAuthorisation_MovesToNextPipe()
         {
             // Arrange
             var _OutputPort = new object();
@@ -73,7 +73,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
         }
 
         [Fact]
-        public async Task InvokeAsync_ValidatorHasNotBeenRegistered_MovesToNextPipe()
+        public async Task InvokeAsync_EnforcerHasNotBeenRegistered_MovesToNextPipe()
         {
             // Arrange
             this.m_MockServiceFactory.Reset();
@@ -87,11 +87,11 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
         }
 
         [Fact]
-        public async Task InvokeAsync_ValidationSuccessful_MovesToNextPipe()
+        public async Task InvokeAsync_AuthorisationSuccessful_MovesToNextPipe()
         {
             // Arrange
-            _ = this.m_MockValidationResult
-                    .Setup(mock => mock.IsValid)
+            _ = this.m_MockAuthorisationResult
+                    .Setup(mock => mock.IsAuthorised)
                     .Returns(true);
 
             // Act
@@ -103,7 +103,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
         }
 
         [Fact]
-        public async Task InvokeAsync_ValidationFails_StopsWithValidationFailure()
+        public async Task InvokeAsync_AuthorisationFails_StopsWithAuthorisationFailure()
         {
             // Arrange
 
@@ -111,7 +111,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
             await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_PipeHandle, default);
 
             // Assert
-            this.m_MockOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_MockValidationResult.Object, default), Times.Once());
+            this.m_MockOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(this.m_MockAuthorisationResult.Object, default), Times.Once());
             this.m_MockPipe.VerifyNoOtherCalls();
         }
 
@@ -119,7 +119,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Infrastructure
 
         #region - - - - - - Nested Classes - - - - - -
 
-        public class TestInputPort : IUseCaseInputPort<IValidationOutputPort<IValidationResult>> { }
+        public class TestInputPort : IUseCaseInputPort<IAuthorisationOutputPort<IAuthorisationResult>> { }
 
         #endregion Nested Classes
 
