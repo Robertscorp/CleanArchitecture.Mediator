@@ -1,33 +1,50 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Mediator.Pipeline
+namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// A single Pipe in the Pipeline.
+    /// A handle to a Pipe in the Pipeline.
     /// </summary>
-    public interface IPipe
+    public class PipeHandle
     {
+
+        #region - - - - - - Fields - - - - - -
+
+        private readonly IPipe m_Pipe;
+        private readonly PipeHandle m_NextPipeHandle;
+
+        #endregion Fields
+
+        #region - - - - - - Constructors - - - - - -
+
+        internal PipeHandle(IPipe pipe, PipeHandle nextPipeHandle)
+        {
+            this.m_Pipe = pipe;
+            this.m_NextPipeHandle = nextPipeHandle;
+        }
+
+        #endregion Constructors
 
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Handles the relevant behaviour for this section of the Pipeline.
+        /// Invokes the pipe with the specified parameters.
         /// </summary>
         /// <typeparam name="TUseCaseInputPort">The type of the Use Case's Input Port.</typeparam>
         /// <typeparam name="TUseCaseOutputPort">The type of the Use Case's Output Port.</typeparam>
         /// <param name="inputPort">The Use Case's Input Port.</param>
         /// <param name="outputPort">The Use Case's Output Port.</param>
         /// <param name="serviceFactory">The factory used to get the service object of the specified type.</param>
-        /// <param name="nextPipeHandle">The handle to the next Pipe in the Pipeline.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
-        Task InvokeAsync<TUseCaseInputPort, TUseCaseOutputPort>(
+        public Task InvokePipeAsync<TUseCaseInputPort, TUseCaseOutputPort>(
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
             ServiceFactory serviceFactory,
-            PipeHandle nextPipeHandle,
-            CancellationToken cancellationToken);
+            CancellationToken cancellationToken)
+            => this.m_Pipe?.InvokeAsync(inputPort, outputPort, serviceFactory, this.m_NextPipeHandle, cancellationToken)
+                ?? Task.CompletedTask;
 
         #endregion Methods
 

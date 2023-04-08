@@ -1,5 +1,4 @@
 ﻿using CleanArchitecture.Mediator.Authentication;
-using CleanArchitecture.Mediator.Pipeline;
 using CleanArchitecture.Mediator.Pipes;
 using Moq;
 using System.Security.Claims;

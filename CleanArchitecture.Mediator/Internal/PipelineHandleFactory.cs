@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace CleanArchitecture.Mediator.Pipeline
+namespace CleanArchitecture.Mediator.Internal
 {
 
     /// <summary>

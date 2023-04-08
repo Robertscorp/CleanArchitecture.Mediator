@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Mediator.Pipeline;
-using CleanArchitecture.Mediator.Pipes;
+﻿using CleanArchitecture.Mediator.Pipes;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

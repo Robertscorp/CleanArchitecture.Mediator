@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Mediator.Pipeline;
+﻿using CleanArchitecture.Mediator.Internal;
 using System;
 
 namespace CleanArchitecture.Mediator.Configuration

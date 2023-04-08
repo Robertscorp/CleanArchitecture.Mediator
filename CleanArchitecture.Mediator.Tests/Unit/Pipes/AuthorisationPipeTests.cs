@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Mediator.Pipeline;
-using CleanArchitecture.Mediator.Pipes;
+﻿using CleanArchitecture.Mediator.Pipes;
 using Moq;
 using System.Threading.Tasks;
 using Xunit;

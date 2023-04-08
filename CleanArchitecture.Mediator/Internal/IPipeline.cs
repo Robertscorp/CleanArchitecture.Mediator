@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Mediator.Pipeline
+namespace CleanArchitecture.Mediator.Internal
 {
 
     /// <summary>

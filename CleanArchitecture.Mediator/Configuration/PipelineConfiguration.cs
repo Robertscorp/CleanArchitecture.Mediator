@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Mediator.Pipeline;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 

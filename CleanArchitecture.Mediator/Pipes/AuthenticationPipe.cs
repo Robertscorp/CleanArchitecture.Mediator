@@ -1,5 +1,4 @@
 ﻿using CleanArchitecture.Mediator.Authentication;
-using CleanArchitecture.Mediator.Pipeline;
 using System.Threading;
 using System.Threading.Tasks;
 

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using CleanArchitecture.Mediator.Internal;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Mediator.Pipeline
+namespace CleanArchitecture.Mediator
 {
 
     /// <summary>

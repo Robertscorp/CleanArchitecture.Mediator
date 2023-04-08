@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CleanArchitecture.Mediator.Pipeline
+namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
