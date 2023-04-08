@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Mediator.Authentication;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace CleanArchitecture.Mediator.Pipes

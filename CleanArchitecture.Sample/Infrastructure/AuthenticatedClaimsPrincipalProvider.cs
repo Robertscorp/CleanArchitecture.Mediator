@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Mediator.Authentication;
+﻿using CleanArchitecture.Mediator;
 using System.Security.Claims;
 
 namespace CleanArchitecture.Sample.Infrastructure

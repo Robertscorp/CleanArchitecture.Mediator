@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace CleanArchitecture.Mediator.Authentication
+namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
