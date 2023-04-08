@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace CleanArchitecture.Mediator.Infrastructure
+namespace CleanArchitecture.Mediator.Internal
 {
 
     internal static class DelegateFactory
