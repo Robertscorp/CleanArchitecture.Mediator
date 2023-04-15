@@ -17,7 +17,7 @@ namespace CleanArchitecture.Mediator
         /// Presents an authorisation failure.
         /// </summary>
         /// <param name="authorisationFailure">The authorisation failure that occurred.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         Task PresentUnauthorisedAsync(TAuthorisationFailure authorisationFailure, CancellationToken cancellationToken);
 
         #endregion Methods

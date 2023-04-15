@@ -17,7 +17,7 @@ namespace CleanArchitecture.Mediator
         /// Presents an Input Port validation failure.
         /// </summary>
         /// <param name="validationFailure">The validation failure that occurred.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         Task PresentValidationFailureAsync(TValidationFailure validationFailure, CancellationToken cancellationToken);
 
         #endregion Methods

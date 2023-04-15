@@ -20,7 +20,7 @@ namespace CleanArchitecture.Mediator
         /// Determines if the Use Case's Interactor is allowed to be invoked with the specified Input Port.
         /// </summary>
         /// <param name="inputPort">The Use Case's Input Port.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         /// <returns>An authorisation result indicating if the Use Case's Interactor is allowed to be invoked.</returns>
         Task<TAuthorisationResult> CheckAuthorisationAsync(TUseCaseInputPort inputPort, CancellationToken cancellationToken);
 

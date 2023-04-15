@@ -20,7 +20,7 @@ namespace CleanArchitecture.Mediator
         /// Determines if the specified Input Port is valid.
         /// </summary>
         /// <param name="inputPort">The Use Case's Input Port.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         /// <returns>A validation result indicating if the Input Port is valid.</returns>
         Task<TValidationResult> ValidateAsync(TInputPort inputPort, CancellationToken cancellationToken);
 
