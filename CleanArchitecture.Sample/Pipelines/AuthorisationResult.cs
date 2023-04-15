@@ -1,6 +1,6 @@
 ﻿using CleanArchitecture.Mediator;
 
-namespace CleanArchitecture.Sample.Pipeline
+namespace CleanArchitecture.Sample.Pipelines
 {
 
     public class AuthorisationResult : IAuthorisationResult
