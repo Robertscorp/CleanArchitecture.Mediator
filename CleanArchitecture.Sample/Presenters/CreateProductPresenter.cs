@@ -1,6 +1,6 @@
 ﻿using CleanArchitecture.Mediator;
 using CleanArchitecture.Sample.Dtos;
-using CleanArchitecture.Sample.Pipeline;
+using CleanArchitecture.Sample.Pipelines;
 using CleanArchitecture.Sample.UseCases.CreateProduct;
 
 namespace CleanArchitecture.Sample.Presenters

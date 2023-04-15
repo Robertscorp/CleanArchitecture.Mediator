@@ -1,5 +1,5 @@
 ﻿using CleanArchitecture.Mediator;
-using CleanArchitecture.Sample.Pipeline;
+using CleanArchitecture.Sample.Pipelines;
 
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {
