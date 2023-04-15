@@ -12,7 +12,7 @@ namespace CleanArchitecture.Sample.UseCases.CreateProduct
         Task<ValidationResult> IValidator<CreateProductInputPort, ValidationResult>.ValidateAsync(
             CreateProductInputPort inputPort,
             CancellationToken cancellationToken)
-            => Task.FromResult(new ValidationResult { IsValid = !inputPort.FailInputPortValidation });
+            => Task.FromResult(new ValidationResult { IsValid = !inputPort.FailValidation });
 
         #endregion Methods
 
