@@ -45,20 +45,6 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
         #region - - - - - - InvokeAsync Tests - - - - - -
 
         [Fact]
-        public async Task InvokeAsync_InputPortDoesNotSupportValidation_MovesToNextPipe()
-        {
-            // Arrange
-            var _InputPort = new object();
-
-            // Act
-            await this.m_Pipe.InvokeAsync(_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_PipeHandle, default);
-
-            // Assert
-            this.m_MockPipe.Verify(mock => mock.InvokeAsync(_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_NextPipeHandle, default), Times.Once());
-            this.m_MockOutputPort.VerifyNoOtherCalls();
-        }
-
-        [Fact]
         public async Task InvokeAsync_OutputPortDoesNotSupportValidation_MovesToNextPipe()
         {
             // Arrange

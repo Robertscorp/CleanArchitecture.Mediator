@@ -42,7 +42,7 @@ namespace CleanArchitecture.Mediator
             TUseCaseInputPort inputPort,
             TUseCaseOutputPort outputPort,
             ServiceFactory serviceFactory,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken) where TUseCaseInputPort : IUseCaseInputPort<TUseCaseOutputPort>
             => this.m_Pipe?.InvokeAsync(inputPort, outputPort, serviceFactory, this.m_NextPipeHandle, cancellationToken)
                 ?? Task.CompletedTask;
 

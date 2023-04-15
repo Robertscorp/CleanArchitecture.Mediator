@@ -27,7 +27,7 @@ namespace CleanArchitecture.Mediator
             TUseCaseOutputPort outputPort,
             ServiceFactory serviceFactory,
             PipeHandle nextPipeHandle,
-            CancellationToken cancellationToken);
+            CancellationToken cancellationToken) where TUseCaseInputPort : IUseCaseInputPort<TUseCaseOutputPort>;
 
         #endregion Methods
 
