@@ -7,7 +7,7 @@ namespace CleanArchitecture.Mediator
     /// <summary>
     /// A service used to determine if it's valid for the pipeline to continue.
     /// </summary>
-    /// <typeparam name="TInputPort">The type of Input Port.</typeparam>
+    /// <typeparam name="TInputPort">The type of input port.</typeparam>
     /// <typeparam name="TValidationResult">The type of validation result for the pipeline.</typeparam>
     public interface IValidator<TInputPort, TValidationResult>
         where TInputPort : IInputPort<IValidationOutputPort<TValidationResult>>

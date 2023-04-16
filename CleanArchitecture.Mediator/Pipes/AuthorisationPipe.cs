@@ -7,9 +7,9 @@ namespace CleanArchitecture.Mediator.Pipes
 {
 
     /// <summary>
-    /// Handles invocation of the Authorisation Enforcer service and presentation of authorisation failures.
+    /// Handles invocation of the authorisation enforcer service and presentation of authorisation failures.
     /// </summary>
-    /// <typeparam name="TAuthorisationResult">The type of Authorisation Result.</typeparam>
+    /// <typeparam name="TAuthorisationResult">The type of authorisation result.</typeparam>
     public class AuthorisationPipe<TAuthorisationResult> : IPipe where TAuthorisationResult : IAuthorisationResult
     {
 

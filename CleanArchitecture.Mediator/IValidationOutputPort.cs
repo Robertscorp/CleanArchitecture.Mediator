@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// An Output Port for when validation is required.
+    /// An output port for when validation is required.
     /// </summary>
     /// <typeparam name="TValidationFailure">The type of validation failure for the pipeline.</typeparam>
     public interface IValidationOutputPort<TValidationFailure> where TValidationFailure : IValidationResult

@@ -28,30 +28,31 @@ namespace CleanArchitecture.Mediator.Configuration
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Adds Authentication to the Pipeline.
+        /// Adds authentication to the pipeline.
         /// </summary>
         /// <returns>Itself.</returns>
         public PipelineConfigurationBuilder AddAuthentication()
             => this.AddPipe<AuthenticationPipe>();
 
         /// <summary>
-        /// Adds Authorisation to the Pipeline.
+        /// Adds authorisation to the pipeline.
         /// </summary>
+        /// <typeparam name="TAuthorisationResult">The type of authorisation result for the pipeline.</typeparam>
         /// <returns>Itself.</returns>
         public PipelineConfigurationBuilder AddAuthorisation<TAuthorisationResult>() where TAuthorisationResult : IAuthorisationResult
             => this.AddPipe<AuthorisationPipe<TAuthorisationResult>>();
 
         /// <summary>
-        /// Adds Interactor Invocation to the Pipeline.
+        /// Adds interactor invocation to the pipeline.
         /// </summary>
         /// <returns>Itself.</returns>
         public void AddInteractorInvocation()
             => this.AddPipe<InteractorInvocationPipe>();
 
         /// <summary>
-        /// Adds a Pipe to the Pipeline.
+        /// Adds a pipe to the pipeline.
         /// </summary>
-        /// <typeparam name="TPipe">The type of Pipe to add to the Pipeline.</typeparam>
+        /// <typeparam name="TPipe">The type of pipe to add to the pipeline.</typeparam>
         /// <returns>Itself.</returns>
         public PipelineConfigurationBuilder AddPipe<TPipe>() where TPipe : IPipe
         {
@@ -61,9 +62,9 @@ namespace CleanArchitecture.Mediator.Configuration
         }
 
         /// <summary>
-        /// Adds inline behaviour to the Pipeline.
+        /// Adds inline behaviour to the pipeline.
         /// </summary>
-        /// <param name="inlineBehaviourAsync">The behaviour of the Pipe. Return true if the pipeline should continue. </param>
+        /// <param name="inlineBehaviourAsync">The behaviour of the pipe.</param>
         /// <returns>Itself.</returns>
         public PipelineConfigurationBuilder AddPipe(
             Func<(object InputPort, object OutputPort, ServiceFactory ServiceFactory, NextPipeHandle NextPipeHandle, CancellationToken CancellationToken), Task> inlineBehaviourAsync)
@@ -76,8 +77,9 @@ namespace CleanArchitecture.Mediator.Configuration
         }
 
         /// <summary>
-        /// Adds Validation to the Pipeline.
+        /// Adds validation to the pipeline.
         /// </summary>
+        /// <typeparam name="TValidationResult">The type of validation result for the pipeline.</typeparam>
         /// <returns>Itself.</returns>
         public PipelineConfigurationBuilder AddValidation<TValidationResult>() where TValidationResult : IValidationResult
             => this.AddPipe<ValidationPipe<TValidationResult>>();

@@ -37,7 +37,7 @@ namespace CleanArchitecture.Mediator.Pipes
     }
 
     /// <summary>
-    /// A handle to the next Pipe in the Pipeline.
+    /// A handle to the next pipe in the pipeline.
     /// </summary>
     public abstract class NextPipeHandle
     {
@@ -53,7 +53,7 @@ namespace CleanArchitecture.Mediator.Pipes
             => new NextPipeHandleInternal<TInputPort, TOutputPort>(inputPort, outputPort, serviceFactory, nextPipeHandle, cancellationToken);
 
         /// <summary>
-        /// Invokes the next Pipe in the Pipeline.
+        /// Invokes the next pipe in the pipeline.
         /// </summary>
         public abstract Task InvokePipeAsync();
 

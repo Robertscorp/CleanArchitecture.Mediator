@@ -21,8 +21,8 @@ namespace CleanArchitecture.Mediator.Configuration
         /// <summary>
         /// Adds and configures a pipeline.
         /// </summary>
-        /// <typeparam name="TPipeline">The type of Pipeline to add.</typeparam>
-        /// <param name="configurationAction">An action used to configure the Pipeline.</param>
+        /// <typeparam name="TPipeline">The type of pipeline to add.</typeparam>
+        /// <param name="configurationAction">An action used to configure the pipeline.</param>
         /// <returns>Itself.</returns>
         public PackageConfigurationBuilder AddPipeline<TPipeline>(Action<PipelineConfigurationBuilder> configurationAction)
             where TPipeline : IPipeline

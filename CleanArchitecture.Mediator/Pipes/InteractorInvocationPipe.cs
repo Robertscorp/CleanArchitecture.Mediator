@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator.Pipes
 {
 
     /// <summary>
-    /// Handles invocation of the Interactor service.
+    /// Handles invocation of the interactor service.
     /// </summary>
     public class InteractorInvocationPipe : IPipe
     {

@@ -7,9 +7,9 @@ namespace CleanArchitecture.Mediator.Pipes
 {
 
     /// <summary>
-    /// Handles invocation of the Validator service and presentation of validation failures.
+    /// Handles invocation of the validator service and presentation of validation failures.
     /// </summary>
-    /// <typeparam name="TValidationResult">The type of Validation Result.</typeparam>
+    /// <typeparam name="TValidationResult">The type of validation result.</typeparam>
     public class ValidationPipe<TValidationResult> : IPipe where TValidationResult : IValidationResult
     {
 

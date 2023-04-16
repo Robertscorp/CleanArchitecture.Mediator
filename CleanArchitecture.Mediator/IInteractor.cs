@@ -7,8 +7,8 @@ namespace CleanArchitecture.Mediator
     /// <summary>
     /// A service used to handle the success case for a pipeline.
     /// </summary>
-    /// <typeparam name="TInputPort">The type of Input Port.</typeparam>
-    /// <typeparam name="TOutputPort">The type of Output Port.</typeparam>
+    /// <typeparam name="TInputPort">The type of input port.</typeparam>
+    /// <typeparam name="TOutputPort">The type of output port.</typeparam>
     public interface IInteractor<TInputPort, TOutputPort>
         where TInputPort : IInputPort<TOutputPort>
     {

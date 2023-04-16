@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator.Internal
 {
 
     /// <summary>
-    /// A Pipeline that can be configured and invoked.
+    /// A pipeline that can be configured and invoked.
     /// </summary>
     public interface IPipeline
     {
@@ -13,9 +13,9 @@ namespace CleanArchitecture.Mediator.Internal
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Invokes the Pipeline.
+        /// Invokes the pipeline.
         /// </summary>
-        /// <typeparam name="TOutputPort">The type of Output Port.</typeparam>
+        /// <typeparam name="TOutputPort">The type of output port.</typeparam>
         /// <param name="inputPort">The input to the pipeline.</param>
         /// <param name="outputPort">The output mechanism for the pipeline.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>

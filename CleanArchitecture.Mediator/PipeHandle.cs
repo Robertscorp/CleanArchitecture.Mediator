@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// A handle to a Pipe in the Pipeline.
+    /// A handle to a pipe in the pipeline.
     /// </summary>
     public class PipeHandle
     {
@@ -32,8 +32,8 @@ namespace CleanArchitecture.Mediator
         /// <summary>
         /// Invokes the pipe with the specified parameters.
         /// </summary>
-        /// <typeparam name="TInputPort">The type of Input Port.</typeparam>
-        /// <typeparam name="TOutputPort">The type of Output Port.</typeparam>
+        /// <typeparam name="TInputPort">The type of input port.</typeparam>
+        /// <typeparam name="TOutputPort">The type of output port.</typeparam>
         /// <param name="inputPort">The input to the pipeline.</param>
         /// <param name="outputPort">The output mechanism for the pipeline.</param>
         /// <param name="serviceFactory">The factory used to get the service object of the specified type.</param>

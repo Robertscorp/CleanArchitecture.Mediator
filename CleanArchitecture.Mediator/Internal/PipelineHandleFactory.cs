@@ -6,7 +6,7 @@ namespace CleanArchitecture.Mediator.Internal
 {
 
     /// <summary>
-    /// A factory that provides an invokable handle for a Pipeline.
+    /// A factory that provides an invokable handle for a pipeline.
     /// </summary>
     public class PipelineHandleFactory : IPipelineHandleFactory
     {

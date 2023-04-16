@@ -4,7 +4,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// A service used to get the currently authenticated Claims Principal.
+    /// A service used to get the currently authenticated claims principal.
     /// </summary>
     public interface IAuthenticatedClaimsPrincipalProvider
     {
@@ -12,7 +12,7 @@ namespace CleanArchitecture.Mediator
         #region - - - - - - Properties - - - - - -
 
         /// <summary>
-        /// The currently authenticated Claims Principal.
+        /// The currently authenticated claims principal.
         /// </summary>
         ClaimsPrincipal AuthenticatedClaimsPrincipal { get; }
 

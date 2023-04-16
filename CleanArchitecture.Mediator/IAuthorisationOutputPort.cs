@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// An Output Port for when authorisation is required.
+    /// An output port for when authorisation is required.
     /// </summary>
     /// <typeparam name="TAuthorisationFailure">The type of authorisation failure for the pipeline.</typeparam>
     public interface IAuthorisationOutputPort<TAuthorisationFailure> where TAuthorisationFailure : IAuthorisationResult
