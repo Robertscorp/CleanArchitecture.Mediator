@@ -15,10 +15,10 @@ namespace CleanArchitecture.Mediator.Tests.Integration
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IUseCaseAuthorisationEnforcer<InputPort, AuthorisationResult>> m_MockAuthEnforcer = new();
+        private readonly Mock<IAuthorisationEnforcer<InputPort, AuthorisationResult>> m_MockAuthEnforcer = new();
         private readonly Mock<IAuthenticatedClaimsPrincipalProvider> m_MockClaimsPrincipalProvider = new();
         private readonly Mock<IEmptyOutputPort> m_MockEmptyOutputPort = new();
-        private readonly Mock<IUseCaseInteractor<InputPort, IEmptyOutputPort>> m_MockEmptyOutputPortInteractor = new();
+        private readonly Mock<IInteractor<InputPort, IEmptyOutputPort>> m_MockEmptyOutputPortInteractor = new();
         private readonly Mock<IEverythingOutputPort> m_MockEverythingOutputPort = new();
         private readonly Mock<IValidator<InputPort, ValidationResult>> m_MockInputPortValidator = new();
         private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
@@ -73,7 +73,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
                     .Returns(_PipelineHandleFactory);
 
             _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseAuthorisationEnforcer<InputPort, AuthorisationResult>)))
+                    .Setup(mock => mock.Invoke(typeof(IAuthorisationEnforcer<InputPort, AuthorisationResult>)))
                     .Returns(this.m_MockAuthEnforcer.Object);
 
             _ = this.m_MockServiceFactory
@@ -81,7 +81,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
                     .Returns(this.m_MockClaimsPrincipalProvider.Object);
 
             _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<InputPort, IEmptyOutputPort>)))
+                    .Setup(mock => mock.Invoke(typeof(IInteractor<InputPort, IEmptyOutputPort>)))
                     .Returns(this.m_MockEmptyOutputPortInteractor.Object);
 
             _ = this.m_MockServiceFactory
@@ -191,8 +191,8 @@ namespace CleanArchitecture.Mediator.Tests.Integration
         { }
 
         public class InputPort :
-            IUseCaseInputPort<IEmptyOutputPort>,
-            IUseCaseInputPort<IEverythingOutputPort>
+            IInputPort<IEmptyOutputPort>,
+            IInputPort<IEverythingOutputPort>
         { }
 
         public class ValidationResult : IValidationResult

@@ -16,16 +16,16 @@ namespace CleanArchitecture.Mediator.Pipes
         #region - - - - - - Methods - - - - - -
 
         private Task<TValidationResult> GetValidationResultAsync<TInputPort>(TInputPort inputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken)
-            => inputPort is IUseCaseInputPort<IValidationOutputPort<TValidationResult>>
+            => inputPort is IInputPort<IValidationOutputPort<TValidationResult>>
                 ? DelegateFactory
                     .GetFunction<(ServiceFactory, TInputPort, CancellationToken), Task<TValidationResult>>(
                         typeof(ValidateFactory<>).MakeGenericType(typeof(TValidationResult), typeof(TInputPort)))?
                     .Invoke((serviceFactory, inputPort, cancellationToken))
                 : null;
 
-        async Task IPipe.InvokeAsync<TUseCaseInputPort, TUseCaseOutputPort>(
-            TUseCaseInputPort inputPort,
-            TUseCaseOutputPort outputPort,
+        async Task IPipe.InvokeAsync<TInputPort, TOutputPort>(
+            TInputPort inputPort,
+            TOutputPort outputPort,
             ServiceFactory serviceFactory,
             PipeHandle nextPipeHandle,
             CancellationToken cancellationToken)
@@ -53,7 +53,7 @@ namespace CleanArchitecture.Mediator.Pipes
 
         private class ValidateFactory<TInputPort>
             : IDelegateFactory<(ServiceFactory, TInputPort, CancellationToken), Task<TValidationResult>>
-            where TInputPort : IUseCaseInputPort<IValidationOutputPort<TValidationResult>>
+            where TInputPort : IInputPort<IValidationOutputPort<TValidationResult>>
         {
 
             #region - - - - - - Methods - - - - - -

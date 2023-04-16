@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// An Output Port for when authentication is required by a Use Case.
+    /// An Output Port for when authentication is required.
     /// </summary>
     public interface IAuthenticationOutputPort
     {

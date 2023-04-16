@@ -12,7 +12,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
         #region - - - - - - Fields - - - - - -
 
         private readonly Mock<IAuthorisationResult> m_MockAuthorisationResult = new();
-        private readonly Mock<IUseCaseAuthorisationEnforcer<TestInputPort, IAuthorisationResult>> m_MockEnforcer = new();
+        private readonly Mock<IAuthorisationEnforcer<TestInputPort, IAuthorisationResult>> m_MockEnforcer = new();
         private readonly Mock<IAuthorisationOutputPort<IAuthorisationResult>> m_MockOutputPort = new();
         private readonly Mock<IPipe> m_MockPipe = new();
         private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
@@ -36,7 +36,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
                     .Returns(Task.FromResult(this.m_MockAuthorisationResult.Object));
 
             _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseAuthorisationEnforcer<TestInputPort, IAuthorisationResult>)))
+                    .Setup(mock => mock.Invoke(typeof(IAuthorisationEnforcer<TestInputPort, IAuthorisationResult>)))
                     .Returns(this.m_MockEnforcer.Object);
         }
 
@@ -104,7 +104,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
 
         #region - - - - - - Nested Classes - - - - - -
 
-        public class TestInputPort : IUseCaseInputPort<IAuthorisationOutputPort<IAuthorisationResult>> { }
+        public class TestInputPort : IInputPort<IAuthorisationOutputPort<IAuthorisationResult>> { }
 
         #endregion Nested Classes
 

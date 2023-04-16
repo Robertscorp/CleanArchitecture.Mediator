@@ -31,7 +31,7 @@ namespace CleanArchitecture.Mediator
 
         #region - - - - - - Methods - - - - - -
 
-        private Invoker GetInvoker<TOutputPort>(IUseCaseInputPort<TOutputPort> inputPort, TOutputPort outputPort)
+        private Invoker GetInvoker<TOutputPort>(IInputPort<TOutputPort> inputPort, TOutputPort outputPort)
             => (Invoker)Activator.CreateInstance(
                 typeof(Invoker<,,>).MakeGenericType(this.GetType(), inputPort.GetType(), typeof(TOutputPort)),
                 inputPort,
@@ -45,7 +45,7 @@ namespace CleanArchitecture.Mediator
         /// <param name="outputPort">The output mechanism for the pipeline.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         public Task InvokeAsync<TOutputPort>(
-            IUseCaseInputPort<TOutputPort> inputPort,
+            IInputPort<TOutputPort> inputPort,
             TOutputPort outputPort,
             CancellationToken cancellationToken)
             => this.GetInvoker(inputPort, outputPort)
@@ -68,7 +68,7 @@ namespace CleanArchitecture.Mediator
 
         private class Invoker<TPipeline, TInputPort, TOutputPort> : Invoker
             where TPipeline : IPipeline
-            where TInputPort : IUseCaseInputPort<TOutputPort>
+            where TInputPort : IInputPort<TOutputPort>
         {
 
             #region - - - - - - Fields - - - - - -

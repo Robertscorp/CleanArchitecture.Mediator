@@ -12,11 +12,11 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IUseCaseInteractor<IUseCaseInputPort<object>, object>> m_MockInteractor = new();
+        private readonly Mock<IInteractor<IInputPort<object>, object>> m_MockInteractor = new();
         private readonly Mock<IPipe> m_MockPipe = new();
         private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
-        private readonly IUseCaseInputPort<object> m_InputPort = new Mock<IUseCaseInputPort<object>>().Object;
+        private readonly IInputPort<object> m_InputPort = new Mock<IInputPort<object>>().Object;
         private readonly object m_OutputPort = new();
         private readonly IPipe m_Pipe;
         private readonly PipeHandle m_PipeHandle;
@@ -31,7 +31,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
             this.m_PipeHandle = new(this.m_MockPipe.Object, null);
 
             _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IUseCaseInteractor<IUseCaseInputPort<object>, object>)))
+                    .Setup(mock => mock.Invoke(typeof(IInteractor<IInputPort<object>, object>)))
                     .Returns(this.m_MockInteractor.Object);
         }
 
@@ -55,7 +55,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
         }
 
         [Fact]
-        public async Task InvokeAsync_InteractorExists_InvokesUseCaseAsync()
+        public async Task InvokeAsync_InteractorExists_InvokesInteractor()
         {
             // Arrange
 

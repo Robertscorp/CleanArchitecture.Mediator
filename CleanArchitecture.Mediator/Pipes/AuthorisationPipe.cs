@@ -15,11 +15,11 @@ namespace CleanArchitecture.Mediator.Pipes
 
         #region - - - - - - Methods - - - - - -
 
-        private Task<TAuthorisationResult> GetAuthorisationResultAsync<TUseCaseInputPort>(TUseCaseInputPort inputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken)
-            => inputPort is IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
+        private Task<TAuthorisationResult> GetAuthorisationResultAsync<TInputPort>(TInputPort inputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken)
+            => inputPort is IInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
                 ? DelegateFactory
-                    .GetFunction<(ServiceFactory, TUseCaseInputPort, CancellationToken), Task<TAuthorisationResult>>(
-                        typeof(EnforcerCheckFactory<>).MakeGenericType(typeof(TAuthorisationResult), typeof(TUseCaseInputPort)))?
+                    .GetFunction<(ServiceFactory, TInputPort, CancellationToken), Task<TAuthorisationResult>>(
+                        typeof(EnforcerCheckFactory<>).MakeGenericType(typeof(TAuthorisationResult), typeof(TInputPort)))?
                     .Invoke((serviceFactory, inputPort, cancellationToken))
                 : null;
 
@@ -53,7 +53,7 @@ namespace CleanArchitecture.Mediator.Pipes
 
         private class EnforcerCheckFactory<TInputPort>
             : IDelegateFactory<(ServiceFactory, TInputPort, CancellationToken), Task<TAuthorisationResult>>
-            where TInputPort : IUseCaseInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
+            where TInputPort : IInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
         {
 
             #region - - - - - - Methods - - - - - -
@@ -61,7 +61,7 @@ namespace CleanArchitecture.Mediator.Pipes
             public Func<(ServiceFactory, TInputPort, CancellationToken), Task<TAuthorisationResult>> GetFunction()
                 => tuple
                     => tuple.Item1
-                        .GetService<IUseCaseAuthorisationEnforcer<TInputPort, TAuthorisationResult>>()?
+                        .GetService<IAuthorisationEnforcer<TInputPort, TAuthorisationResult>>()?
                         .CheckAuthorisationAsync(tuple.Item2, tuple.Item3);
 
             #endregion Methods

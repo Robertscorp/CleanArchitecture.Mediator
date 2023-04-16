@@ -43,7 +43,7 @@ namespace CleanArchitecture.Mediator.Configuration
                                         .Reverse()
                                         .Aggregate(
                                             new PipeHandle(null, null),
-                                            (nextPipeHandle, useCasePipe) => new PipeHandle(useCasePipe, nextPipeHandle));
+                                            (nextPipeHandle, pipe) => new PipeHandle(pipe, nextPipeHandle));
 
                 this.PipeFactories = null;
             }

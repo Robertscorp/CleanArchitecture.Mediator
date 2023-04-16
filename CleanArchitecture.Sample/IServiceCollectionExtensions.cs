@@ -52,14 +52,14 @@ namespace CleanArchitecture.Sample
             // The following services will be handled via ServiceRegistrations (returned in place of _PackageConfiguration)
             _ = serviceCollection.AddScoped<DefaultPipeline>();
             _ = serviceCollection.AddScoped<IAuthenticatedClaimsPrincipalProvider, AuthenticatedClaimsPrincipalProvider>();
+            _ = serviceCollection.AddScoped<IAuthorisationEnforcer<CreateProductInputPort, AuthorisationResult>, CreateProductAuthorisationEnforcer>();
+            _ = serviceCollection.AddScoped<IInteractor<CreateProductInputPort, ICreateProductOutputPort>, CreateProductInteractor>();
+            _ = serviceCollection.AddScoped<IInteractor<GetProductInputPort, IGetProductOutputPort>, GetProductInteractor>();
             _ = serviceCollection.AddScoped<IPipe, AuthenticationPipe>();
             _ = serviceCollection.AddScoped<IPipe, AuthorisationPipe<AuthorisationResult>>();
             _ = serviceCollection.AddScoped<IPipe, InteractorInvocationPipe>();
             _ = serviceCollection.AddScoped<IPipe, ValidationPipe<ValidationResult>>();
-            _ = serviceCollection.AddScoped<IUseCaseAuthorisationEnforcer<CreateProductInputPort, AuthorisationResult>, CreateProductAuthorisationEnforcer>();
             _ = serviceCollection.AddScoped<IValidator<CreateProductInputPort, ValidationResult>, CreateProductInputPortValidator>();
-            _ = serviceCollection.AddScoped<IUseCaseInteractor<CreateProductInputPort, ICreateProductOutputPort>, CreateProductInteractor>();
-            _ = serviceCollection.AddScoped<IUseCaseInteractor<GetProductInputPort, IGetProductOutputPort>, GetProductInteractor>();
             _ = serviceCollection.AddScoped<VerificationPipeline>();
             _ = serviceCollection.AddSingleton<IPipelineHandleFactory, PipelineHandleFactory>();
 

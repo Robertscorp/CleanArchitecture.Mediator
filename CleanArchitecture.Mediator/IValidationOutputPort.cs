@@ -5,16 +5,16 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// An Output Port for when Input Port validation is required by a Use Case.
+    /// An Output Port for when validation is required.
     /// </summary>
-    /// <typeparam name="TValidationFailure">The type of validation failure for the Use Case Pipeline.</typeparam>
+    /// <typeparam name="TValidationFailure">The type of validation failure for the pipeline.</typeparam>
     public interface IValidationOutputPort<TValidationFailure> where TValidationFailure : IValidationResult
     {
 
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Presents an Input Port validation failure.
+        /// Presents a validation failure.
         /// </summary>
         /// <param name="validationFailure">The validation failure that occurred.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>

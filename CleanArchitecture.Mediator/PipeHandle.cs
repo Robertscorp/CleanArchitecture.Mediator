@@ -32,17 +32,17 @@ namespace CleanArchitecture.Mediator
         /// <summary>
         /// Invokes the pipe with the specified parameters.
         /// </summary>
-        /// <typeparam name="TUseCaseInputPort">The type of the Use Case's Input Port.</typeparam>
-        /// <typeparam name="TUseCaseOutputPort">The type of the Use Case's Output Port.</typeparam>
-        /// <param name="inputPort">The Use Case's Input Port.</param>
-        /// <param name="outputPort">The Use Case's Output Port.</param>
+        /// <typeparam name="TInputPort">The type of Input Port.</typeparam>
+        /// <typeparam name="TOutputPort">The type of Output Port.</typeparam>
+        /// <param name="inputPort">The input to the pipeline.</param>
+        /// <param name="outputPort">The output mechanism for the pipeline.</param>
         /// <param name="serviceFactory">The factory used to get the service object of the specified type.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
-        public Task InvokePipeAsync<TUseCaseInputPort, TUseCaseOutputPort>(
-            TUseCaseInputPort inputPort,
-            TUseCaseOutputPort outputPort,
+        public Task InvokePipeAsync<TInputPort, TOutputPort>(
+            TInputPort inputPort,
+            TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            CancellationToken cancellationToken) where TUseCaseInputPort : IUseCaseInputPort<TUseCaseOutputPort>
+            CancellationToken cancellationToken) where TInputPort : IInputPort<TOutputPort>
             => this.m_Pipe?.InvokeAsync(inputPort, outputPort, serviceFactory, this.m_NextPipeHandle, cancellationToken)
                 ?? Task.CompletedTask;
 

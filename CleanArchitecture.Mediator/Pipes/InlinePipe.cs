@@ -49,7 +49,7 @@ namespace CleanArchitecture.Mediator.Pipes
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
             PipeHandle nextPipeHandle,
-            CancellationToken cancellationToken) where TInputPort : IUseCaseInputPort<TOutputPort>
+            CancellationToken cancellationToken) where TInputPort : IInputPort<TOutputPort>
             => new NextPipeHandleInternal<TInputPort, TOutputPort>(inputPort, outputPort, serviceFactory, nextPipeHandle, cancellationToken);
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace CleanArchitecture.Mediator.Pipes
 
         #region - - - - - - Nested Classes - - - - - -
 
-        private class NextPipeHandleInternal<TInputPort, TOutputPort> : NextPipeHandle where TInputPort : IUseCaseInputPort<TOutputPort>
+        private class NextPipeHandleInternal<TInputPort, TOutputPort> : NextPipeHandle where TInputPort : IInputPort<TOutputPort>
         {
 
             #region - - - - - - Fields - - - - - -

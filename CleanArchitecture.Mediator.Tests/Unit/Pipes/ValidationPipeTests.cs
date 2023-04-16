@@ -104,7 +104,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
 
         #region - - - - - - Nested Classes - - - - - -
 
-        public class TestInputPort : IUseCaseInputPort<IValidationOutputPort<IValidationResult>> { }
+        public class TestInputPort : IInputPort<IValidationOutputPort<IValidationResult>> { }
 
         #endregion Nested Classes
 

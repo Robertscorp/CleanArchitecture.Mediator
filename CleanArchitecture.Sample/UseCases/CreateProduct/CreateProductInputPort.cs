@@ -3,7 +3,7 @@
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {
 
-    public class CreateProductInputPort : IUseCaseInputPort<ICreateProductOutputPort>
+    public class CreateProductInputPort : IInputPort<ICreateProductOutputPort>
     {
 
         #region - - - - - - Properties - - - - - -
