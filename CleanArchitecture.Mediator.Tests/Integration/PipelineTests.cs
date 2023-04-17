@@ -124,8 +124,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, default), Times.Never());
 
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_ValidationResult, default), Times.Never());
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(this.m_AuthResult, default), Times.Never());
+            this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -142,9 +141,8 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal, Times.Once());
             this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, default), Times.Never());
 
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Never());
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_ValidationResult, default), Times.Never());
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(this.m_AuthResult, default), Times.Once());
+            this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -161,9 +159,8 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal, Times.Once());
             this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, default), Times.Once());
 
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Never());
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_ValidationResult, default), Times.Once());
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(this.m_AuthResult, default), Times.Never());
+            this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
         }
 
         #endregion InvokeAsync Tests
