@@ -3,7 +3,7 @@
 namespace CleanArchitecture.Sample.Pipelines
 {
 
-    public class VerificationPipeline : Mediator.Pipeline
+    public class VerificationPipeline : Pipeline
     {
 
         #region - - - - - - Constructors - - - - - -
