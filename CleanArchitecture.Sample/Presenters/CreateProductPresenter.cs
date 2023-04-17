@@ -1,6 +1,6 @@
 ﻿using CleanArchitecture.Mediator;
 using CleanArchitecture.Sample.Dtos;
-using CleanArchitecture.Sample.Pipeline;
+using CleanArchitecture.Sample.Pipelines;
 using CleanArchitecture.Sample.UseCases.CreateProduct;
 
 namespace CleanArchitecture.Sample.Presenters
@@ -11,33 +11,27 @@ namespace CleanArchitecture.Sample.Presenters
 
         #region - - - - - - Methods - - - - - -
 
-        Task IBusinessRuleValidationOutputPort<ValidationResult>.PresentBusinessRuleValidationFailureAsync(ValidationResult validationFailure, CancellationToken cancellationToken)
-        {
-            Console.WriteLine("Create Product Presenter - Business Rule Validation Failure");
-            return Task.CompletedTask;
-        }
-
         Task ICreateProductOutputPort.PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"Create Product Presenter - Product Created - '{product.Name}'");
+            Console.Write($" CreateProductPresenter.PresentCreatedProductAsync('{product.Name}')");
             return Task.CompletedTask;
         }
 
         Task IAuthenticationOutputPort.PresentUnauthenticatedAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine("Create Product Presenter - Unauthenticated");
+            Console.Write(" CreateProductPresenter.PresentUnauthenticatedAsync");
             return Task.CompletedTask;
         }
 
         Task IAuthorisationOutputPort<AuthorisationResult>.PresentUnauthorisedAsync(AuthorisationResult authorisationFailure, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Create Product Presenter - Unauthorised");
+            Console.Write(" CreateProductPresenter.PresentUnauthorisedAsync");
             return Task.CompletedTask;
         }
 
         Task IValidationOutputPort<ValidationResult>.PresentValidationFailureAsync(ValidationResult validationFailure, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Create Product Presenter - Input Port Validation Failure");
+            Console.Write(" CreateProductPresenter.PresentValidationFailureAsync");
             return Task.CompletedTask;
         }
 

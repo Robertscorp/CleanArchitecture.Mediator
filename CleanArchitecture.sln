@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Mediator.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Sample", "CleanArchitecture.Sample\CleanArchitecture.Sample.csproj", "{44101A3E-D827-4860-A1AD-2915DCE33CEC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Sample.Tests", "CleanArchitecture.Sample.Tests\CleanArchitecture.Sample.Tests.csproj", "{16BE51ED-DACD-4F4F-87D4-6BD223037E7B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{44101A3E-D827-4860-A1AD-2915DCE33CEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44101A3E-D827-4860-A1AD-2915DCE33CEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44101A3E-D827-4860-A1AD-2915DCE33CEC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16BE51ED-DACD-4F4F-87D4-6BD223037E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16BE51ED-DACD-4F4F-87D4-6BD223037E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16BE51ED-DACD-4F4F-87D4-6BD223037E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16BE51ED-DACD-4F4F-87D4-6BD223037E7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

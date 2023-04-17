@@ -3,12 +3,12 @@
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {
 
-    public class CreateProductInteractor : IUseCaseInteractor<CreateProductInputPort, ICreateProductOutputPort>
+    public class CreateProductInteractor : IInteractor<CreateProductInputPort, ICreateProductOutputPort>
     {
 
         #region - - - - - - Methods - - - - - -
 
-        Task IUseCaseInteractor<CreateProductInputPort, ICreateProductOutputPort>.HandleAsync(
+        Task IInteractor<CreateProductInputPort, ICreateProductOutputPort>.HandleAsync(
             CreateProductInputPort inputPort,
             ICreateProductOutputPort outputPort,
             CancellationToken cancellationToken)

@@ -4,12 +4,12 @@ using CleanArchitecture.Sample.Dtos;
 namespace CleanArchitecture.Sample.UseCases.GetProduct
 {
 
-    public class GetProductInteractor : IUseCaseInteractor<GetProductInputPort, IGetProductOutputPort>
+    public class GetProductInteractor : IInteractor<GetProductInputPort, IGetProductOutputPort>
     {
 
         #region - - - - - - Methods - - - - - -
 
-        Task IUseCaseInteractor<GetProductInputPort, IGetProductOutputPort>.HandleAsync(
+        Task IInteractor<GetProductInputPort, IGetProductOutputPort>.HandleAsync(
             GetProductInputPort inputPort,
             IGetProductOutputPort outputPort,
             CancellationToken cancellationToken)

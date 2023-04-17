@@ -3,16 +3,14 @@
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {
 
-    public class CreateProductInputPort : IUseCaseInputPort<ICreateProductOutputPort>
+    public class CreateProductInputPort : IInputPort<ICreateProductOutputPort>
     {
 
         #region - - - - - - Properties - - - - - -
 
         public bool FailAuthorisation { get; set; }
 
-        public bool FailBusinessRuleValidation { get; set; }
-
-        public bool FailInputPortValidation { get; set; }
+        public bool FailValidation { get; set; }
 
         #endregion Properties
 

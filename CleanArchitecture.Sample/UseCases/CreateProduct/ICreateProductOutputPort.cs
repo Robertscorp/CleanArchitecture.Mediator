@@ -1,6 +1,6 @@
 ﻿using CleanArchitecture.Mediator;
 using CleanArchitecture.Sample.Dtos;
-using CleanArchitecture.Sample.Pipeline;
+using CleanArchitecture.Sample.Pipelines;
 
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {
@@ -8,7 +8,6 @@ namespace CleanArchitecture.Sample.UseCases.CreateProduct
     public interface ICreateProductOutputPort :
         IAuthenticationOutputPort,
         IAuthorisationOutputPort<AuthorisationResult>,
-        IBusinessRuleValidationOutputPort<ValidationResult>,
         IValidationOutputPort<ValidationResult>
     {
 

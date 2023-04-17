@@ -11,7 +11,7 @@ namespace CleanArchitecture.Sample.Presenters
 
         Task IGetProductOutputPort.PresentProductAsync(ProductDto product, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"Get Product Presenter - Get Product '{product.Name}'");
+            Console.Write($" GetProductPresenter.PresentProductAsync('{product.Name}')");
             return Task.CompletedTask;
         }
 

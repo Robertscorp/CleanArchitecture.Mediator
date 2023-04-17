@@ -2,7 +2,7 @@
 {
 
     /// <summary>
-    /// An authorisation result from an Authorisation Enforcer.
+    /// An authorisation result from an authorisation enforcer.
     /// </summary>
     public interface IAuthorisationResult
     {

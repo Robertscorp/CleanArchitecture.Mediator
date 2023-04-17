@@ -3,6 +3,6 @@
 namespace CleanArchitecture.Sample.UseCases.GetProduct
 {
 
-    public class GetProductInputPort : IUseCaseInputPort<IGetProductOutputPort> { }
+    public class GetProductInputPort : IInputPort<IGetProductOutputPort> { }
 
 }
