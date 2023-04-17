@@ -91,7 +91,6 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             _ = this.m_MockServiceFactory
                     .Setup(mock => mock.Invoke(typeof(PackageConfiguration)))
                     .Returns(_PackageConfiguration);
-
         }
 
         #endregion Constructors
