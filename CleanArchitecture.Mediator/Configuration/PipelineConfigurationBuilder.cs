@@ -45,7 +45,6 @@ namespace CleanArchitecture.Mediator.Configuration
         /// <summary>
         /// Adds interactor invocation to the pipeline.
         /// </summary>
-        /// <returns>Itself.</returns>
         public void AddInteractorInvocation()
             => this.AddPipe<InteractorInvocationPipe>();
 
