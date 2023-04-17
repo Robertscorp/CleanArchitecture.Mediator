@@ -26,7 +26,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
         private readonly AuthorisationResult m_AuthResult = new() { IsAuthorised = true };
         private readonly InputPort m_InputPort = new();
         private readonly Pipeline m_Pipeline;
-        private readonly ValidationResult m_InputPortValidationResult = new() { IsValid = true };
+        private readonly ValidationResult m_ValidationResult = new() { IsValid = true };
 
         #endregion Fields
 
@@ -56,7 +56,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
 
             _ = this.m_MockInputPortValidator
                     .Setup(mock => mock.ValidateAsync(this.m_InputPort, default))
-                    .Returns(Task.FromResult(this.m_InputPortValidationResult));
+                    .Returns(Task.FromResult(this.m_ValidationResult));
 
             _ = this.m_MockServiceFactory
                     .Setup(mock => mock.Invoke(typeof(IEnumerable<IPipe>)))
@@ -125,7 +125,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, default), Times.Never());
 
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_InputPortValidationResult, default), Times.Never());
+            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_ValidationResult, default), Times.Never());
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(this.m_AuthResult, default), Times.Never());
         }
 
@@ -144,7 +144,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, default), Times.Never());
 
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Never());
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_InputPortValidationResult, default), Times.Never());
+            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_ValidationResult, default), Times.Never());
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(this.m_AuthResult, default), Times.Once());
         }
 
@@ -152,7 +152,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
         public async Task InvokeAsync_EverythingOutputPortWithValidationFailure_StopsWithValidationFailure()
         {
             // Arrange
-            this.m_InputPortValidationResult.IsValid = false;
+            this.m_ValidationResult.IsValid = false;
 
             // Act
             await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default);
@@ -163,7 +163,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, default), Times.Once());
 
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Never());
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_InputPortValidationResult, default), Times.Once());
+            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_ValidationResult, default), Times.Once());
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(this.m_AuthResult, default), Times.Never());
         }
 
