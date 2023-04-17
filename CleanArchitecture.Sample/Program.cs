@@ -44,7 +44,7 @@ Console.WriteLine();
 // Get Product - Not Authenticated. Output Port doesn't support Authentication, so we expect to invoke the Interactor.
 await _DefaultPipeline.InvokeAsync(new GetProductInputPort(), new GetProductPresenter(), default);
 
-// Get Product - Not Authenticated. Output Port doesn't support Authentication, so we expect to invoke the Interactor.
+// Get Product - Not Authenticated. Output Port doesn't support Authentication, so we don't expect to invoke anything.
 await _VerificationPipeline.InvokeAsync(new GetProductInputPort(), new GetProductPresenter(), default);
 
 Console.WriteLine();
@@ -101,7 +101,7 @@ Console.WriteLine();
 // Create Product - Interactor Invoked.
 await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
 
-// Create Product - Interactor Invoked.
+// Create Product - No services Invoked.
 await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
 
 Console.WriteLine("Press 'enter' to finish.");
