@@ -44,12 +44,18 @@ namespace CleanArchitecture.Mediator
         /// <param name="inputPort">The input to the pipeline.</param>
         /// <param name="outputPort">The output mechanism for the pipeline.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="inputPort"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="outputPort"/> is null.</exception>
         public Task InvokeAsync<TOutputPort>(
             IInputPort<TOutputPort> inputPort,
             TOutputPort outputPort,
             CancellationToken cancellationToken)
-            => this.GetInvoker(inputPort, outputPort)
-                .InvokePipelineAsync(this.m_ServiceFactory, cancellationToken);
+            => inputPort == null
+                ? throw new ArgumentNullException(nameof(inputPort))
+                : outputPort == null
+                    ? throw new ArgumentNullException(nameof(outputPort))
+                    : this.GetInvoker(inputPort, outputPort)
+                        .InvokePipelineAsync(this.m_ServiceFactory, cancellationToken);
 
         #endregion Methods
 
