@@ -25,7 +25,7 @@ var _VerificationPipeline = _ScopedProvider.GetService<VerificationPipeline>()!;
 Console.WriteLine("Welcome to the CLAM (CleanArchitecture.Mediator) sample project.");
 Console.WriteLine("In this sample, we've defined 2 pipelines that can be invoked:");
 Console.WriteLine("    - The default pipeline, consisting of Authentication, Authorisation, Validation, and Interactor Invocation.");
-Console.WriteLine("    - The verification pipeline, consisting of Authentication, Authorisation, and Validation.");
+Console.WriteLine("    - The verification pipeline, consisting of Authentication, Authorisation, Validation, and Verification Success.");
 Console.WriteLine();
 Console.WriteLine("We've also defined 2 Use Cases that can be invoked:");
 Console.WriteLine("    - The GetProduct Use Case, which only supports outputting a successful response.");
@@ -36,7 +36,6 @@ Console.WriteLine("This means that if we invoke the CreateProduct Use Case, we s
 Console.WriteLine("However, since GetProduct doesn't support Authentication, we can't get an Authentication failure.");
 Console.WriteLine();
 Console.WriteLine("Now we're up to invoking the Pipelines. ");
-Console.WriteLine("Since the verification pipeline doesn't have an Interactor Invocation Pipe, it won't invoke the Interactor.");
 Console.WriteLine();
 Console.WriteLine("[GET PRODUCT]");
 Console.WriteLine();
@@ -44,7 +43,7 @@ Console.WriteLine();
 // Get Product - Not Authenticated. Output Port doesn't support Authentication, so we expect to invoke the Interactor.
 await _DefaultPipeline.InvokeAsync(new GetProductInputPort(), new GetProductPresenter(), default);
 
-// Get Product - Not Authenticated. Output Port doesn't support Authentication, so we don't expect to invoke anything.
+// Get Product - Not Authenticated. Output Port doesn't support Authentication, so we expect to have verification success.
 await _VerificationPipeline.InvokeAsync(new GetProductInputPort(), new GetProductPresenter(), default);
 
 Console.WriteLine();
@@ -95,13 +94,12 @@ Console.WriteLine();
 Console.Write("Let's make our Input Port valid...");
 _CreateProductInputPort.FailValidation = false;
 Console.WriteLine(" Done!");
-Console.WriteLine("As a reminder, the verification pipeline doesn't have an Interactor Invocation Pipe so it won't invoke the Interactor.");
 Console.WriteLine();
 
 // Create Product - Interactor Invoked.
 await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
 
-// Create Product - No services Invoked.
+// Create Product - Verification Success.
 await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
 
 Console.WriteLine("Press 'enter' to finish.");
