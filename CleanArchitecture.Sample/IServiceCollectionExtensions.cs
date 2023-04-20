@@ -43,7 +43,8 @@ namespace CleanArchitecture.Sample
                         })
                         .AddAuthentication()
                         .AddAuthorisation<AuthorisationResult>()
-                        .AddValidation<ValidationResult>());
+                        .AddValidation<ValidationResult>()
+                        .AddPipe<VerificationSuccessPipe>());
             });
 
             _ = serviceCollection.AddSingleton(_PackageConfiguration.GetType(), _PackageConfiguration);
@@ -59,6 +60,7 @@ namespace CleanArchitecture.Sample
             _ = serviceCollection.AddScoped<IPipe, AuthorisationPipe<AuthorisationResult>>();
             _ = serviceCollection.AddScoped<IPipe, InteractorInvocationPipe>();
             _ = serviceCollection.AddScoped<IPipe, ValidationPipe<ValidationResult>>();
+            _ = serviceCollection.AddScoped<IPipe, VerificationSuccessPipe>();
             _ = serviceCollection.AddScoped<IValidator<CreateProductInputPort, ValidationResult>, CreateProductInputPortValidator>();
             _ = serviceCollection.AddScoped<VerificationPipeline>();
             _ = serviceCollection.AddSingleton<IPipelineHandleFactory, PipelineHandleFactory>();
