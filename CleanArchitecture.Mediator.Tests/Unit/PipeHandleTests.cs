@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Mediator.Tests
+namespace CleanArchitecture.Mediator.Tests.Unit
 {
 
     public class PipeHandleTests
