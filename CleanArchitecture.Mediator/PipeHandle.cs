@@ -43,8 +43,10 @@ namespace CleanArchitecture.Mediator
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
             CancellationToken cancellationToken) where TInputPort : IInputPort<TOutputPort>
-            => this.m_Pipe?.InvokeAsync(inputPort, outputPort, serviceFactory, this.m_NextPipeHandle, cancellationToken)
-                ?? Task.CompletedTask;
+            => cancellationToken.IsCancellationRequested
+                ? Task.FromCanceled(cancellationToken)
+                : this.m_Pipe?.InvokeAsync(inputPort, outputPort, serviceFactory, this.m_NextPipeHandle, cancellationToken)
+                    ?? Task.CompletedTask;
 
         #endregion Methods
 
