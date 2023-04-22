@@ -44,7 +44,7 @@ namespace CleanArchitecture.Mediator.Pipes
                 }
             }
 
-            await nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, default).ConfigureAwait(false);
+            await nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
         }
 
         #endregion Methods
