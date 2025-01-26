@@ -1,4 +1,5 @@
 ﻿using CleanArchitecture.Mediator;
+using CleanArchitecture.Mediator.Internal;
 
 namespace CleanArchitecture.Sample.Pipelines
 {
@@ -8,7 +9,7 @@ namespace CleanArchitecture.Sample.Pipelines
 
         #region - - - - - - Constructors - - - - - -
 
-        public VerificationPipeline(ServiceFactory serviceFactory) : base(serviceFactory) { }
+        public VerificationPipeline(IPipelineHandleFactory pipelineHandleFactory) : base(pipelineHandleFactory) { }
 
         #endregion Constructors
 

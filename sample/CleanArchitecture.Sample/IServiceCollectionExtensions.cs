@@ -51,19 +51,19 @@ namespace CleanArchitecture.Sample
             _ = serviceCollection.AddScoped<ServiceFactory>(serviceProvider => serviceProvider.GetService);
 
             // The following services will be handled via ServiceRegistrations (returned in place of _PackageConfiguration)
-            _ = serviceCollection.AddScoped<DefaultPipeline>();
             _ = serviceCollection.AddScoped<IAuthenticatedClaimsPrincipalProvider, AuthenticatedClaimsPrincipalProvider>();
             _ = serviceCollection.AddScoped<IAuthorisationEnforcer<CreateProductInputPort, AuthorisationResult>, CreateProductAuthorisationEnforcer>();
             _ = serviceCollection.AddScoped<IInteractor<CreateProductInputPort, ICreateProductOutputPort>, CreateProductInteractor>();
             _ = serviceCollection.AddScoped<IInteractor<GetProductInputPort, IGetProductOutputPort>, GetProductInteractor>();
-            _ = serviceCollection.AddScoped<IPipe, AuthenticationPipe>();
-            _ = serviceCollection.AddScoped<IPipe, AuthorisationPipe<AuthorisationResult>>();
-            _ = serviceCollection.AddScoped<IPipe, InteractorInvocationPipe>();
-            _ = serviceCollection.AddScoped<IPipe, ValidationPipe<ValidationResult>>();
-            _ = serviceCollection.AddScoped<IPipe, VerificationSuccessPipe>();
             _ = serviceCollection.AddScoped<IValidator<CreateProductInputPort, ValidationResult>, CreateProductInputPortValidator>();
-            _ = serviceCollection.AddScoped<VerificationPipeline>();
+            _ = serviceCollection.AddSingleton<DefaultPipeline>();
+            _ = serviceCollection.AddSingleton<IPipe, AuthenticationPipe>();
+            _ = serviceCollection.AddSingleton<IPipe, AuthorisationPipe<AuthorisationResult>>();
+            _ = serviceCollection.AddSingleton<IPipe, InteractorInvocationPipe>();
+            _ = serviceCollection.AddSingleton<IPipe, ValidationPipe<ValidationResult>>();
+            _ = serviceCollection.AddSingleton<IPipe, VerificationSuccessPipe>();
             _ = serviceCollection.AddSingleton<IPipelineHandleFactory, PipelineHandleFactory>();
+            _ = serviceCollection.AddSingleton<VerificationPipeline>();
 
             return serviceCollection;
         }

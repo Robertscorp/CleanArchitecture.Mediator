@@ -14,7 +14,7 @@ namespace CleanArchitecture.Mediator
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly ServiceFactory m_ServiceFactory;
+        private readonly PipeHandle m_PipelineHandle;
 
         #endregion Fields
 
@@ -23,9 +23,9 @@ namespace CleanArchitecture.Mediator
         /// <summary>
         /// Initialises a new instance of the <see cref="Pipeline"/> class.
         /// </summary>
-        /// <param name="serviceFactory">The factory used to get the service object of the specified type.</param>
-        public Pipeline(ServiceFactory serviceFactory)
-            => this.m_ServiceFactory = serviceFactory ?? throw new ArgumentNullException(nameof(serviceFactory));
+        /// <param name="pipelineHandleFactory">The factory used to get a <see cref="PipeHandle"/> for the <see cref="Pipeline"/>.</param>
+        public Pipeline(IPipelineHandleFactory pipelineHandleFactory)
+            => this.m_PipelineHandle = (pipelineHandleFactory ?? throw new ArgumentNullException(nameof(pipelineHandleFactory))).GetPipelineHandle(this);
 
         #endregion Constructors
 
@@ -33,7 +33,7 @@ namespace CleanArchitecture.Mediator
 
         private Invoker GetInvoker<TOutputPort>(IInputPort<TOutputPort> inputPort, TOutputPort outputPort)
             => (Invoker)Activator.CreateInstance(
-                typeof(Invoker<,,>).MakeGenericType(this.GetType(), inputPort.GetType(), typeof(TOutputPort)),
+                typeof(Invoker<,>).MakeGenericType(inputPort.GetType(), typeof(TOutputPort)),
                 inputPort,
                 outputPort);
 
@@ -43,19 +43,21 @@ namespace CleanArchitecture.Mediator
         /// <typeparam name="TOutputPort">The type of output port.</typeparam>
         /// <param name="inputPort">The input to the pipeline.</param>
         /// <param name="outputPort">The output mechanism for the pipeline.</param>
+        /// <param name="serviceFactory">The factory used to get service instances.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         /// <exception cref="ArgumentNullException"><paramref name="inputPort"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="outputPort"/> is null.</exception>
         public Task InvokeAsync<TOutputPort>(
             IInputPort<TOutputPort> inputPort,
             TOutputPort outputPort,
+            ServiceFactory serviceFactory,
             CancellationToken cancellationToken)
             => inputPort == null
                 ? throw new ArgumentNullException(nameof(inputPort))
                 : outputPort == null
                     ? throw new ArgumentNullException(nameof(outputPort))
                     : this.GetInvoker(inputPort, outputPort)
-                        .InvokePipelineAsync(this.m_ServiceFactory, cancellationToken);
+                        .InvokePipelineAsync(this.m_PipelineHandle, serviceFactory, cancellationToken);
 
         #endregion Methods
 
@@ -66,15 +68,13 @@ namespace CleanArchitecture.Mediator
 
             #region - - - - - - Methods - - - - - -
 
-            public abstract Task InvokePipelineAsync(ServiceFactory serviceFactory, CancellationToken cancellationToken);
+            public abstract Task InvokePipelineAsync(PipeHandle pipelineHandle, ServiceFactory serviceFactory, CancellationToken cancellationToken);
 
             #endregion Methods
 
         }
 
-        private class Invoker<TPipeline, TInputPort, TOutputPort> : Invoker
-            where TPipeline : IPipeline
-            where TInputPort : IInputPort<TOutputPort>
+        private class Invoker<TInputPort, TOutputPort> : Invoker where TInputPort : IInputPort<TOutputPort>
         {
 
             #region - - - - - - Fields - - - - - -
@@ -96,11 +96,8 @@ namespace CleanArchitecture.Mediator
 
             #region - - - - - - Methods - - - - - -
 
-            public override Task InvokePipelineAsync(ServiceFactory serviceFactory, CancellationToken cancellationToken)
-                => serviceFactory
-                    .GetService<IPipelineHandleFactory>()
-                    .GetPipelineHandle<TPipeline>()
-                    .InvokePipeAsync(this.m_InputPort, this.m_OutputPort, serviceFactory, cancellationToken);
+            public override Task InvokePipelineAsync(PipeHandle pipelineHandle, ServiceFactory serviceFactory, CancellationToken cancellationToken)
+                => pipelineHandle.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, serviceFactory, cancellationToken);
 
             #endregion Methods
 

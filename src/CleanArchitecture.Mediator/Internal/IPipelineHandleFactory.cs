@@ -12,9 +12,9 @@
         /// <summary>
         /// Gets an invokable handle for the pipeline.
         /// </summary>
-        /// <typeparam name="TPipeline">The type of pipeline.</typeparam>
+        /// <param name="pipeline">The pipeline to get the <see cref="PipeHandle"/> for.</param>
         /// <returns>The invokable handle for the pipeline.</returns>
-        PipeHandle GetPipelineHandle<TPipeline>() where TPipeline : IPipeline;
+        PipeHandle GetPipelineHandle(IPipeline pipeline);
 
         #endregion Methods
 

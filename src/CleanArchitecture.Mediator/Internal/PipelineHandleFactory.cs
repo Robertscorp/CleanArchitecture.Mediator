@@ -30,12 +30,14 @@ namespace CleanArchitecture.Mediator.Internal
 
         #region - - - - - - Methods - - - - - -
 
-        PipeHandle IPipelineHandleFactory.GetPipelineHandle<TPipeline>()
-            => this.m_ServiceFactory
-                .GetService<PackageConfiguration>()
-                .PipelineConfigurations
-                .SingleOrDefault(c => Equals(c.PipelineType, typeof(TPipeline)))?
-                .GetPipeHandle(this.m_ServiceFactory);
+        PipeHandle IPipelineHandleFactory.GetPipelineHandle(IPipeline pipeline)
+            => pipeline != null
+                ? this.m_ServiceFactory
+                    .GetService<PackageConfiguration>()
+                    .PipelineConfigurations
+                    .SingleOrDefault(c => Equals(c.PipelineType, pipeline.GetType()))?
+                    .GetPipeHandle(this.m_ServiceFactory)
+                : throw new ArgumentNullException(nameof(pipeline));
 
         #endregion Methods
 
