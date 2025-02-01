@@ -10,13 +10,13 @@ namespace CleanArchitecture.Mediator.Pipes
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Func<object, object, ServiceFactory, Func<Task>, CancellationToken, Task> m_InlineBehaviourAsync;
+        private readonly Func<object, object, ServiceFactory, NextPipeHandleAsync, CancellationToken, Task> m_InlineBehaviourAsync;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        public InlinePipe(Func<object, object, ServiceFactory, Func<Task>, CancellationToken, Task> inlineBehaviourAsync)
+        public InlinePipe(Func<object, object, ServiceFactory, NextPipeHandleAsync, CancellationToken, Task> inlineBehaviourAsync)
             => this.m_InlineBehaviourAsync = inlineBehaviourAsync ?? throw new ArgumentNullException(nameof(inlineBehaviourAsync));
 
         #endregion Constructors

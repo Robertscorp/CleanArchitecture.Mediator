@@ -66,7 +66,7 @@ namespace CleanArchitecture.Mediator.Configuration
         /// <param name="inlineBehaviourAsync">The behaviour of the pipe.</param>
         /// <returns>Itself.</returns>
         public PipelineConfigurationBuilder AddPipe(
-            Func<(object InputPort, object OutputPort, ServiceFactory ServiceFactory, NextPipeHandle NextPipeHandle, CancellationToken CancellationToken), Task> inlineBehaviourAsync)
+            Func<object, object, ServiceFactory, NextPipeHandleAsync, CancellationToken, Task> inlineBehaviourAsync)
         {
             if (inlineBehaviourAsync is null) throw new ArgumentNullException(nameof(inlineBehaviourAsync));
 

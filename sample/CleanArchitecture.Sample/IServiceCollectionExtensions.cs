@@ -22,10 +22,10 @@ namespace CleanArchitecture.Sample
             {
                 _ = builder.AddPipeline<DefaultPipeline>(pipeline
                     => pipeline
-                        .AddPipe(async (inputPort, outputPort, serviceFactory, invokeNextPipeAsync, cancellationToken) =>
+                        .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
                         {
                             Console.Write("Invoking Default Pipeline...");
-                            await invokeNextPipeAsync();
+                            await nextPipeHandleAsync();
                             Console.WriteLine(" ...Done!");
                         })
                         .AddAuthentication()
@@ -35,10 +35,10 @@ namespace CleanArchitecture.Sample
 
                 _ = builder.AddPipeline<VerificationPipeline>(pipeline
                     => pipeline
-                        .AddPipe(async (inputPort, outputPort, serviceFactory, invokeNextPipeAsync, cancellationToken) =>
+                        .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
                         {
                             Console.Write("Invoking Verification Pipeline...");
-                            await invokeNextPipeAsync();
+                            await nextPipeHandleAsync();
                             Console.WriteLine(" ...Done!");
                         })
                         .AddAuthentication()
