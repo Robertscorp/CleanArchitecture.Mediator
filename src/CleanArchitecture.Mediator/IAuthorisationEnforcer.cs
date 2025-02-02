@@ -8,10 +8,8 @@ namespace CleanArchitecture.Mediator
     /// A service used to determine if the pipeline is allowed to continue.
     /// </summary>
     /// <typeparam name="TInputPort">The type of input port.</typeparam>
-    /// <typeparam name="TAuthorisationResult">The type of authorisation result for the pipeline.</typeparam>
-    public interface IAuthorisationEnforcer<TInputPort, TAuthorisationResult>
-        where TInputPort : IInputPort<IAuthorisationOutputPort<TAuthorisationResult>>
-        where TAuthorisationResult : IAuthorisationResult
+    /// <typeparam name="TOutputPort">The type of output port.</typeparam>
+    public interface IAuthorisationEnforcer<TInputPort, TOutputPort> where TInputPort : IInputPort<TOutputPort>
     {
 
         #region - - - - - - Methods - - - - - -
@@ -20,9 +18,10 @@ namespace CleanArchitecture.Mediator
         /// Determines if the pipeline is allowed to continue.
         /// </summary>
         /// <param name="inputPort">The input to the pipeline.</param>
+        /// <param name="outputPort">The output mechanism for the pipeline.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
-        /// <returns>An authorisation result indicating if the pipeline is allowed to continue.</returns>
-        Task<TAuthorisationResult> CheckAuthorisationAsync(TInputPort inputPort, CancellationToken cancellationToken);
+        /// <returns>A result indicating if the pipeline is allowed to continue.</returns>
+        Task<bool> HandleAuthorisationAsync(TInputPort inputPort, TOutputPort outputPort, CancellationToken cancellationToken);
 
         #endregion Methods
 

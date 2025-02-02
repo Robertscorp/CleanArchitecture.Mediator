@@ -37,10 +37,9 @@ namespace CleanArchitecture.Mediator.Configuration
         /// <summary>
         /// Adds authorisation to the pipeline.
         /// </summary>
-        /// <typeparam name="TAuthorisationResult">The type of authorisation result for the pipeline.</typeparam>
         /// <returns>Itself.</returns>
-        public PipelineConfigurationBuilder AddAuthorisation<TAuthorisationResult>() where TAuthorisationResult : IAuthorisationResult
-            => this.AddPipe<AuthorisationPipe<TAuthorisationResult>>();
+        public PipelineConfigurationBuilder AddAuthorisation()
+            => this.AddPipe<AuthorisationPipe>();
 
         /// <summary>
         /// Adds interactor invocation to the pipeline.

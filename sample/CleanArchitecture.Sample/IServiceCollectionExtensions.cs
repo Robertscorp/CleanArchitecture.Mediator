@@ -29,7 +29,7 @@ namespace CleanArchitecture.Sample
                             Console.WriteLine(" ...Done!");
                         })
                         .AddAuthentication()
-                        .AddAuthorisation<AuthorisationResult>()
+                        .AddAuthorisation()
                         .AddValidation<ValidationResult>()
                         .AddInteractorInvocation());
 
@@ -42,7 +42,7 @@ namespace CleanArchitecture.Sample
                             Console.WriteLine(" ...Done!");
                         })
                         .AddAuthentication()
-                        .AddAuthorisation<AuthorisationResult>()
+                        .AddAuthorisation()
                         .AddValidation<ValidationResult>()
                         .AddPipe<VerificationSuccessPipe>());
             });
@@ -52,13 +52,13 @@ namespace CleanArchitecture.Sample
 
             // The following services will be handled via ServiceRegistrations (returned in place of _PackageConfiguration)
             _ = serviceCollection.AddScoped<IAuthenticatedClaimsPrincipalProvider, AuthenticatedClaimsPrincipalProvider>();
-            _ = serviceCollection.AddScoped<IAuthorisationEnforcer<CreateProductInputPort, AuthorisationResult>, CreateProductAuthorisationEnforcer>();
+            _ = serviceCollection.AddScoped<IAuthorisationEnforcer<CreateProductInputPort, ICreateProductOutputPort>, CreateProductAuthorisationEnforcer>();
             _ = serviceCollection.AddScoped<IInteractor<CreateProductInputPort, ICreateProductOutputPort>, CreateProductInteractor>();
             _ = serviceCollection.AddScoped<IInteractor<GetProductInputPort, IGetProductOutputPort>, GetProductInteractor>();
             _ = serviceCollection.AddScoped<IValidator<CreateProductInputPort, ValidationResult>, CreateProductInputPortValidator>();
             _ = serviceCollection.AddSingleton<DefaultPipeline>();
             _ = serviceCollection.AddSingleton<IPipe, AuthenticationPipe>();
-            _ = serviceCollection.AddSingleton<IPipe, AuthorisationPipe<AuthorisationResult>>();
+            _ = serviceCollection.AddSingleton<IPipe, AuthorisationPipe>();
             _ = serviceCollection.AddSingleton<IPipe, InteractorInvocationPipe>();
             _ = serviceCollection.AddSingleton<IPipe, ValidationPipe<ValidationResult>>();
             _ = serviceCollection.AddSingleton<IPipe, VerificationSuccessPipe>();
