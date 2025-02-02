@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Mediator.Internal;
-using System;
+﻿using System;
 
 namespace CleanArchitecture.Mediator.Configuration
 {
@@ -25,7 +24,7 @@ namespace CleanArchitecture.Mediator.Configuration
         /// <param name="configurationAction">An action used to configure the pipeline.</param>
         /// <returns>Itself.</returns>
         public PackageConfigurationBuilder AddPipeline<TPipeline>(Action<PipelineConfigurationBuilder> configurationAction)
-            where TPipeline : IPipeline
+            where TPipeline : Pipeline
         {
             var _ConfigurationBuilder = new PipelineConfigurationBuilder(typeof(TPipeline));
 

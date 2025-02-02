@@ -14,7 +14,7 @@
         /// </summary>
         /// <param name="pipeline">The pipeline to get the <see cref="PipeHandle"/> for.</param>
         /// <returns>The invokable handle for the pipeline.</returns>
-        PipeHandle GetPipelineHandle(IPipeline pipeline);
+        PipeHandle GetPipelineHandle(Pipeline pipeline);
 
         #endregion Methods
 

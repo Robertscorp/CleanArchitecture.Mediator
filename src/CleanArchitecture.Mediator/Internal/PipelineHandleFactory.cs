@@ -30,7 +30,7 @@ namespace CleanArchitecture.Mediator.Internal
 
         #region - - - - - - Methods - - - - - -
 
-        PipeHandle IPipelineHandleFactory.GetPipelineHandle(IPipeline pipeline)
+        PipeHandle IPipelineHandleFactory.GetPipelineHandle(Pipeline pipeline)
             => pipeline != null
                 ? this.m_ServiceFactory
                     .GetService<PackageConfiguration>()
