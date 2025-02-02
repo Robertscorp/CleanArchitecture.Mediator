@@ -77,10 +77,9 @@ namespace CleanArchitecture.Mediator.Configuration
         /// <summary>
         /// Adds validation to the pipeline.
         /// </summary>
-        /// <typeparam name="TValidationResult">The type of validation result for the pipeline.</typeparam>
         /// <returns>Itself.</returns>
-        public PipelineConfigurationBuilder AddValidation<TValidationResult>() where TValidationResult : IValidationResult
-            => this.AddPipe<ValidationPipe<TValidationResult>>();
+        public PipelineConfigurationBuilder AddValidation()
+            => this.AddPipe<ValidationPipe>();
 
         #endregion Methods
 

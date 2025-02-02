@@ -30,7 +30,7 @@ namespace CleanArchitecture.Sample
                         })
                         .AddAuthentication()
                         .AddAuthorisation()
-                        .AddValidation<ValidationResult>()
+                        .AddValidation()
                         .AddInteractorInvocation());
 
                 _ = builder.AddPipeline<VerificationPipeline>(pipeline
@@ -43,7 +43,7 @@ namespace CleanArchitecture.Sample
                         })
                         .AddAuthentication()
                         .AddAuthorisation()
-                        .AddValidation<ValidationResult>()
+                        .AddValidation()
                         .AddPipe<VerificationSuccessPipe>());
             });
 
@@ -55,12 +55,12 @@ namespace CleanArchitecture.Sample
             _ = serviceCollection.AddScoped<IAuthorisationEnforcer<CreateProductInputPort, ICreateProductOutputPort>, CreateProductAuthorisationEnforcer>();
             _ = serviceCollection.AddScoped<IInteractor<CreateProductInputPort, ICreateProductOutputPort>, CreateProductInteractor>();
             _ = serviceCollection.AddScoped<IInteractor<GetProductInputPort, IGetProductOutputPort>, GetProductInteractor>();
-            _ = serviceCollection.AddScoped<IValidator<CreateProductInputPort, ValidationResult>, CreateProductInputPortValidator>();
+            _ = serviceCollection.AddScoped<IValidator<CreateProductInputPort, ICreateProductOutputPort>, CreateProductValidator>();
             _ = serviceCollection.AddSingleton<DefaultPipeline>();
             _ = serviceCollection.AddSingleton<IPipe, AuthenticationPipe>();
             _ = serviceCollection.AddSingleton<IPipe, AuthorisationPipe>();
             _ = serviceCollection.AddSingleton<IPipe, InteractorInvocationPipe>();
-            _ = serviceCollection.AddSingleton<IPipe, ValidationPipe<ValidationResult>>();
+            _ = serviceCollection.AddSingleton<IPipe, ValidationPipe>();
             _ = serviceCollection.AddSingleton<IPipe, VerificationSuccessPipe>();
             _ = serviceCollection.AddSingleton<IPipelineHandleFactory, PipelineHandleFactory>();
             _ = serviceCollection.AddSingleton<VerificationPipeline>();
