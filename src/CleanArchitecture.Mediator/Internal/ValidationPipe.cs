@@ -1,13 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Mediator.Pipes
+namespace CleanArchitecture.Mediator.Internal
 {
 
-    /// <summary>
-    /// Handles invocation of the authorisation enforcer service.
-    /// </summary>
-    public class AuthorisationPipe : IPipe
+    internal class ValidationPipe : IPipe
     {
 
         #region - - - - - - Methods - - - - - -
@@ -19,8 +16,8 @@ namespace CleanArchitecture.Mediator.Pipes
             PipeHandle nextPipeHandle,
             CancellationToken cancellationToken)
         {
-            var _AuthEnforcer = serviceFactory.GetService<IAuthorisationEnforcer<TInputPort, TOutputPort>>();
-            if (_AuthEnforcer == null || await _AuthEnforcer.HandleAuthorisationAsync(inputPort, outputPort, cancellationToken).ConfigureAwait(false))
+            var _Validator = serviceFactory.GetService<IValidator<TInputPort, TOutputPort>>();
+            if (_Validator == null || await _Validator.HandleValidationAsync(inputPort, outputPort, cancellationToken).ConfigureAwait(false))
                 await nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
         }
 

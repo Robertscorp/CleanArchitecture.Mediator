@@ -1,13 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Mediator.Pipes
+namespace CleanArchitecture.Mediator.Internal
 {
 
-    /// <summary>
-    /// Handles invocation of the interactor service.
-    /// </summary>
-    public class InteractorInvocationPipe : IPipe
+    internal class InteractorInvocationPipe : IPipe
     {
 
         #region - - - - - - Methods - - - - - -

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Mediator.Pipes
+namespace CleanArchitecture.Mediator.Internal
 {
 
     internal class InlinePipe : IPipe
