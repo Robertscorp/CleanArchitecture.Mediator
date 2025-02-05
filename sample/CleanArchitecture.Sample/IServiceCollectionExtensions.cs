@@ -1,7 +1,5 @@
 ﻿using CleanArchitecture.Mediator;
 using CleanArchitecture.Mediator.Configuration;
-using CleanArchitecture.Mediator.Internal;
-using CleanArchitecture.Mediator.Pipes;
 using CleanArchitecture.Sample.Infrastructure;
 using CleanArchitecture.Sample.Pipelines;
 using CleanArchitecture.Sample.UseCases.CreateProduct;
@@ -18,7 +16,7 @@ namespace CleanArchitecture.Sample
 
         public static IServiceCollection AddCleanArchitectureMediator(this IServiceCollection serviceCollection)
         {
-            var _PackageConfiguration = CleanArchitectureMediator.Configure(builder =>
+            CleanArchitectureMediator.Configure(builder =>
             {
                 _ = builder.AddPipeline<DefaultPipeline>(pipeline
                     => pipeline
@@ -45,9 +43,10 @@ namespace CleanArchitecture.Sample
                         .AddAuthorisation()
                         .AddValidation()
                         .AddPipe<VerificationSuccessPipe>());
-            });
+            },
+            registerSingletonServiceAction: serviceType => serviceCollection.AddSingleton(serviceType),
+            registerSingletonFactoryAction: (serviceType, getServiceFunc) => serviceCollection.AddSingleton(serviceType, serviceProvider => getServiceFunc(serviceProvider.GetRequiredService<ServiceFactory>())));
 
-            _ = serviceCollection.AddSingleton(_PackageConfiguration.GetType(), _PackageConfiguration);
             _ = serviceCollection.AddScoped<ServiceFactory>(serviceProvider => serviceProvider.GetService);
 
             // The following services will be handled via ServiceRegistrations (returned in place of _PackageConfiguration)
@@ -56,14 +55,6 @@ namespace CleanArchitecture.Sample
             _ = serviceCollection.AddScoped<IInteractor<CreateProductInputPort, ICreateProductOutputPort>, CreateProductInteractor>();
             _ = serviceCollection.AddScoped<IInteractor<GetProductInputPort, IGetProductOutputPort>, GetProductInteractor>();
             _ = serviceCollection.AddScoped<IValidator<CreateProductInputPort, ICreateProductOutputPort>, CreateProductValidator>();
-            _ = serviceCollection.AddSingleton<DefaultPipeline>();
-            _ = serviceCollection.AddSingleton<IPipe, AuthenticationPipe>();
-            _ = serviceCollection.AddSingleton<IPipe, AuthorisationPipe>();
-            _ = serviceCollection.AddSingleton<IPipe, InteractorInvocationPipe>();
-            _ = serviceCollection.AddSingleton<IPipe, ValidationPipe>();
-            _ = serviceCollection.AddSingleton<IPipe, VerificationSuccessPipe>();
-            _ = serviceCollection.AddSingleton<IPipelineHandleFactory, PipelineHandleFactory>();
-            _ = serviceCollection.AddSingleton<VerificationPipeline>();
 
             return serviceCollection;
         }

@@ -1,8 +1,6 @@
 ﻿using CleanArchitecture.Mediator.Configuration;
-using CleanArchitecture.Mediator.Internal;
-using CleanArchitecture.Mediator.Pipes;
 using Moq;
-using System.Collections.Generic;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
@@ -35,16 +33,6 @@ namespace CleanArchitecture.Mediator.Tests.Integration
 
         public PipelineTests()
         {
-            var _PackageConfiguration = CleanArchitectureMediator.Configure(builder
-                => builder.AddPipeline<Pipeline>(pipeline
-                    => pipeline
-                        .AddAuthentication()
-                        .AddAuthorisation()
-                        .AddValidation()
-                        .AddInteractorInvocation()));
-
-            var _PipelineHandleFactory = new PipelineHandleFactory(this.m_MockServiceFactory.Object);
-
             _ = this.m_MockAuthEnforcer
                     .Setup(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default))
                     .Returns(() => Task.FromResult(this.m_AuthResult));
@@ -56,20 +44,6 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             _ = this.m_MockValidator
                     .Setup(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default))
                     .Returns(() => Task.FromResult(this.m_ValidationResult));
-
-            _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IEnumerable<IPipe>)))
-                    .Returns(new List<IPipe>()
-                    {
-                        new AuthenticationPipe(),
-                        new AuthorisationPipe(),
-                        new ValidationPipe(),
-                        new InteractorInvocationPipe()
-                    });
-
-            _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IPipelineHandleFactory)))
-                    .Returns(_PipelineHandleFactory);
 
             _ = this.m_MockServiceFactory
                     .Setup(mock => mock.Invoke(typeof(IAuthorisationEnforcer<InputPort, IEverythingOutputPort>)))
@@ -87,11 +61,18 @@ namespace CleanArchitecture.Mediator.Tests.Integration
                     .Setup(mock => mock.Invoke(typeof(IValidator<InputPort, IEverythingOutputPort>)))
                     .Returns(this.m_MockValidator.Object);
 
-            _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(PackageConfiguration)))
-                    .Returns(_PackageConfiguration);
+            CleanArchitectureMediator.Configure(builder
+                => builder.AddPipeline<Pipeline>(pipeline
+                    => pipeline
+                        .AddAuthentication()
+                        .AddAuthorisation()
+                        .AddValidation()
+                        .AddInteractorInvocation()),
+                        type => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns((Type t) => Activator.CreateInstance(t)!),
+                        (type, factory) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns(factory(this.m_MockServiceFactory.Object)));
 
-            this.m_Pipeline = new Pipeline(_PipelineHandleFactory);
+
+            this.m_Pipeline = new Pipeline(this.m_MockServiceFactory.Object);
         }
 
         #endregion Constructors

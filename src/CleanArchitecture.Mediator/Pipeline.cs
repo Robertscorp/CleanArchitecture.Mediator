@@ -24,9 +24,16 @@ namespace CleanArchitecture.Mediator
         /// <summary>
         /// Initialises a new instance of the <see cref="Pipeline"/> class.
         /// </summary>
-        /// <param name="pipelineHandleFactory">The factory used to get a <see cref="PipeHandle"/> for the <see cref="Pipeline"/>.</param>
-        public Pipeline(IPipelineHandleFactory pipelineHandleFactory)
-            => this.m_PipelineHandle = (pipelineHandleFactory ?? throw new ArgumentNullException(nameof(pipelineHandleFactory))).GetPipelineHandle(this);
+        /// <param name="serviceFactory">The factory used to get service instances.</param>
+        public Pipeline(ServiceFactory serviceFactory)
+        {
+            if (serviceFactory == null)
+                throw new ArgumentNullException(nameof(serviceFactory));
+
+            var _PipelineHandleAccessor = (IPipelineHandleAccessor)serviceFactory(typeof(PipelineHandleAccessor<>).MakeGenericType(this.GetType()));
+
+            this.m_PipelineHandle = _PipelineHandleAccessor.PipeHandle;
+        }
 
         #endregion Constructors
 
