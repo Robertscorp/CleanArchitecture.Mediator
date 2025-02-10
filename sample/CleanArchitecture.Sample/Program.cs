@@ -11,6 +11,7 @@ using System.Security.Claims;
 using var _ServiceProvider
     = new ServiceCollection()
             .AddCleanArchitectureMediator()
+            .AddSingleton<VerificationPipelineInvoker>()
             .BuildServiceProvider();
 
 using var _Scope = _ServiceProvider.CreateScope();
@@ -21,7 +22,7 @@ var _ServiceFactory = _ScopedProvider.GetRequiredService<ServiceFactory>();
 var _ClaimsPrincipalProvider = (AuthenticatedClaimsPrincipalProvider)_ScopedProvider.GetService<IAuthenticatedClaimsPrincipalProvider>()!;
 
 var _DefaultPipeline = _ScopedProvider.GetService<DefaultPipeline>()!;
-var _VerificationPipeline = _ScopedProvider.GetService<VerificationPipeline>()!;
+var _VerificationPipeline = _ScopedProvider.GetService<VerificationPipelineInvoker>()!;
 
 Console.WriteLine("Welcome to the CLAM (CleanArchitecture.Mediator) sample project.");
 Console.WriteLine("In this sample, we've defined 2 pipelines that can be invoked:");
