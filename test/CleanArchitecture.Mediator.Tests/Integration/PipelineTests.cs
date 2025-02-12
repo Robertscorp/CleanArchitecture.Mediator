@@ -71,7 +71,6 @@ namespace CleanArchitecture.Mediator.Tests.Integration
                         type => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns((Type t) => Activator.CreateInstance(t)!),
                         (type, factory) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns(factory(this.m_MockServiceFactory.Object)));
 
-
             this.m_Pipeline = new Pipeline(this.m_MockServiceFactory.Object);
         }
 
