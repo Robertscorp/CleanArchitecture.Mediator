@@ -24,10 +24,10 @@ namespace CleanArchitecture.Sample.Pipelines
 
         public Task InvokeAsync<TOutputPort, TPresenter>(
             IInputPort<TOutputPort> inputPort,
-            TPresenter outputPort,
+            TPresenter presenter,
             ServiceFactory serviceFactory,
             CancellationToken cancellationToken) where TPresenter : IVerificationSuccessOutputPort, TOutputPort
-            => this.m_Pipeline.InvokeAsync(inputPort, outputPort, serviceFactory, cancellationToken);
+            => this.m_Pipeline.InvokeAsync(inputPort, presenter, serviceFactory, cancellationToken);
 
         #endregion Methods
 
