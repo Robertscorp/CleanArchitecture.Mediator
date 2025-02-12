@@ -1,6 +1,5 @@
 ﻿using CleanArchitecture.Mediator.Internal;
 using System;
-using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -61,53 +60,6 @@ namespace CleanArchitecture.Mediator
                     : PipelineInvoker.Instance(inputPort.GetType(), typeof(TOutputPort)).InvokePipelineAsync(inputPort, outputPort, this.m_PipelineHandle, serviceFactory, cancellationToken);
 
         #endregion Methods
-
-        #region - - - - - - Nested Classes - - - - - -
-
-        internal abstract class PipelineInvoker
-        {
-
-            #region - - - - - - Fields - - - - - -
-
-            private static readonly ConcurrentDictionary<(Type, Type), PipelineInvoker> s_Cache = new ConcurrentDictionary<(Type, Type), PipelineInvoker>();
-
-            #endregion Fields
-
-            #region - - - - - - Methods - - - - - -
-
-            public static PipelineInvoker Instance(Type inputPortType, Type outputPortType)
-            {
-                var _Key = (inputPortType, outputPortType);
-                if (!s_Cache.TryGetValue(_Key, out var _Invoker))
-                    _Invoker = s_Cache.GetOrAdd(_Key, (PipelineInvoker)Activator.CreateInstance(typeof(PipelineInvoker<,>).MakeGenericType(inputPortType, outputPortType)));
-
-                return _Invoker;
-            }
-
-            public abstract Task InvokePipelineAsync(
-                object inputPort,
-                object outputPort,
-                PipeHandle pipelineHandle,
-                ServiceFactory serviceFactory,
-                CancellationToken cancellationToken);
-
-            #endregion Methods
-
-        }
-
-        internal class PipelineInvoker<TInputPort, TOutputPort> : PipelineInvoker where TInputPort : IInputPort<TOutputPort>
-        {
-
-            #region - - - - - - Methods - - - - - -
-
-            public override Task InvokePipelineAsync(object inputPort, object outputPort, PipeHandle pipelineHandle, ServiceFactory serviceFactory, CancellationToken cancellationToken)
-                => pipelineHandle.InvokePipeAsync((TInputPort)inputPort, (TOutputPort)outputPort, serviceFactory, cancellationToken);
-
-            #endregion Methods
-
-        }
-
-        #endregion Nested Classes
 
     }
 
