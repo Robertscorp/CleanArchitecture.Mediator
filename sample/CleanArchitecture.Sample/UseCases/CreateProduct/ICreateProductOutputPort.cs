@@ -1,19 +1,19 @@
 ﻿using CleanArchitecture.Mediator;
 using CleanArchitecture.Sample.Dtos;
-using CleanArchitecture.Sample.Pipelines;
 
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {
 
-    public interface ICreateProductOutputPort :
-        IAuthenticationOutputPort,
-        IAuthorisationOutputPort<AuthorisationResult>,
-        IValidationOutputPort<ValidationResult>
+    public interface ICreateProductOutputPort : IAuthenticationOutputPort
     {
 
         #region - - - - - - Methods - - - - - -
 
         Task PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken);
+
+        Task PresentUnauthorisedAsync(CancellationToken cancellationToken);
+
+        Task PresentValidationFailureAsync(CancellationToken cancellationToken);
 
         #endregion Methods
 

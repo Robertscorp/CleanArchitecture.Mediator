@@ -1,10 +1,10 @@
-﻿using CleanArchitecture.Mediator.Pipes;
+﻿using CleanArchitecture.Mediator.Internal;
 using Moq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Mediator.Tests.Unit.Pipes
+namespace CleanArchitecture.Mediator.Tests.Unit.Internal
 {
 
     public class AuthenticationPipeTests

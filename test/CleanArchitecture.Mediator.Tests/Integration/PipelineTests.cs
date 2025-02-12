@@ -1,8 +1,6 @@
 ﻿using CleanArchitecture.Mediator.Configuration;
-using CleanArchitecture.Mediator.Internal;
-using CleanArchitecture.Mediator.Pipes;
 using Moq;
-using System.Collections.Generic;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
@@ -15,18 +13,19 @@ namespace CleanArchitecture.Mediator.Tests.Integration
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<IAuthorisationEnforcer<InputPort, AuthorisationResult>> m_MockAuthEnforcer = new();
+        private readonly Mock<IAuthorisationEnforcer<InputPort, IEverythingOutputPort>> m_MockAuthEnforcer = new();
         private readonly Mock<IAuthenticatedClaimsPrincipalProvider> m_MockClaimsPrincipalProvider = new();
         private readonly Mock<IEmptyOutputPort> m_MockEmptyOutputPort = new();
         private readonly Mock<IInteractor<InputPort, IEmptyOutputPort>> m_MockEmptyOutputPortInteractor = new();
         private readonly Mock<IEverythingOutputPort> m_MockEverythingOutputPort = new();
-        private readonly Mock<IValidator<InputPort, ValidationResult>> m_MockInputPortValidator = new();
         private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
+        private readonly Mock<IValidator<InputPort, IEverythingOutputPort>> m_MockValidator = new();
 
-        private readonly AuthorisationResult m_AuthResult = new() { IsAuthorised = true };
         private readonly InputPort m_InputPort = new();
         private readonly Pipeline m_Pipeline;
-        private readonly ValidationResult m_ValidationResult = new() { IsValid = true };
+
+        private bool m_AuthResult = true;
+        private bool m_ValidationResult = true;
 
         #endregion Fields
 
@@ -34,46 +33,20 @@ namespace CleanArchitecture.Mediator.Tests.Integration
 
         public PipelineTests()
         {
-            var _PackageConfiguration = CleanArchitectureMediator.Configure(builder
-                => builder.AddPipeline<Pipeline>(pipeline
-                    => pipeline
-                        .AddAuthentication()
-                        .AddAuthorisation<AuthorisationResult>()
-                        .AddValidation<ValidationResult>()
-                        .AddInteractorInvocation()));
-
-            var _PipelineHandleFactory = new PipelineHandleFactory(this.m_MockServiceFactory.Object);
-
-            this.m_Pipeline = new Pipeline(this.m_MockServiceFactory.Object);
-
             _ = this.m_MockAuthEnforcer
-                    .Setup(mock => mock.CheckAuthorisationAsync(this.m_InputPort, default))
-                    .Returns(Task.FromResult(this.m_AuthResult));
+                    .Setup(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default))
+                    .Returns(() => Task.FromResult(this.m_AuthResult));
 
             _ = this.m_MockClaimsPrincipalProvider
                     .Setup(mock => mock.AuthenticatedClaimsPrincipal)
                     .Returns(new ClaimsPrincipal());
 
-            _ = this.m_MockInputPortValidator
-                    .Setup(mock => mock.ValidateAsync(this.m_InputPort, default))
-                    .Returns(Task.FromResult(this.m_ValidationResult));
+            _ = this.m_MockValidator
+                    .Setup(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default))
+                    .Returns(() => Task.FromResult(this.m_ValidationResult));
 
             _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IEnumerable<IPipe>)))
-                    .Returns(new List<IPipe>()
-                    {
-                        new AuthenticationPipe(),
-                        new AuthorisationPipe<AuthorisationResult>(),
-                        new ValidationPipe<ValidationResult>(),
-                        new InteractorInvocationPipe()
-                    });
-
-            _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IPipelineHandleFactory)))
-                    .Returns(_PipelineHandleFactory);
-
-            _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IAuthorisationEnforcer<InputPort, AuthorisationResult>)))
+                    .Setup(mock => mock.Invoke(typeof(IAuthorisationEnforcer<InputPort, IEverythingOutputPort>)))
                     .Returns(this.m_MockAuthEnforcer.Object);
 
             _ = this.m_MockServiceFactory
@@ -85,12 +58,20 @@ namespace CleanArchitecture.Mediator.Tests.Integration
                     .Returns(this.m_MockEmptyOutputPortInteractor.Object);
 
             _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(IValidator<InputPort, ValidationResult>)))
-                    .Returns(this.m_MockInputPortValidator.Object);
+                    .Setup(mock => mock.Invoke(typeof(IValidator<InputPort, IEverythingOutputPort>)))
+                    .Returns(this.m_MockValidator.Object);
 
-            _ = this.m_MockServiceFactory
-                    .Setup(mock => mock.Invoke(typeof(PackageConfiguration)))
-                    .Returns(_PackageConfiguration);
+            CleanArchitectureMediator.Configure(builder
+                => builder.AddPipeline<Pipeline>(pipeline
+                    => pipeline
+                        .AddAuthentication()
+                        .AddAuthorisation()
+                        .AddValidation()
+                        .AddInteractorInvocation()),
+                        type => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns((Type t) => Activator.CreateInstance(t)!),
+                        (type, factory) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns(factory(this.m_MockServiceFactory.Object)));
+
+            this.m_Pipeline = new Pipeline(this.m_MockServiceFactory.Object);
         }
 
         #endregion Constructors
@@ -103,7 +84,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             // Arrange
 
             // Act
-            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEmptyOutputPort.Object, default);
+            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEmptyOutputPort.Object, this.m_MockServiceFactory.Object, default);
 
             // Assert
             this.m_MockEmptyOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEmptyOutputPort.Object, default), Times.Once());
@@ -116,12 +97,12 @@ namespace CleanArchitecture.Mediator.Tests.Integration
             this.m_MockClaimsPrincipalProvider.Reset();
 
             // Act
-            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default);
+            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default);
 
             // Assert
-            this.m_MockAuthEnforcer.Verify(mock => mock.CheckAuthorisationAsync(this.m_InputPort, default), Times.Never());
+            this.m_MockAuthEnforcer.Verify(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default), Times.Never());
             this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal, Times.Once());
-            this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, default), Times.Never());
+            this.m_MockValidator.Verify(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default), Times.Never());
 
             this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
             this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -131,17 +112,16 @@ namespace CleanArchitecture.Mediator.Tests.Integration
         public async Task InvokeAsync_EverythingOutputPortWithAuthorisationFailure_StopsWithAuthorisationFailure()
         {
             // Arrange
-            this.m_AuthResult.IsAuthorised = false;
+            this.m_AuthResult = false;
 
             // Act
-            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default);
+            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default);
 
             // Assert
-            this.m_MockAuthEnforcer.Verify(mock => mock.CheckAuthorisationAsync(this.m_InputPort, default), Times.Once());
+            this.m_MockAuthEnforcer.Verify(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default), Times.Once());
             this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal, Times.Once());
-            this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, default), Times.Never());
+            this.m_MockValidator.Verify(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default), Times.Never());
 
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthorisedAsync(this.m_AuthResult, default), Times.Once());
             this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
         }
 
@@ -149,17 +129,16 @@ namespace CleanArchitecture.Mediator.Tests.Integration
         public async Task InvokeAsync_EverythingOutputPortWithValidationFailure_StopsWithValidationFailure()
         {
             // Arrange
-            this.m_ValidationResult.IsValid = false;
+            this.m_ValidationResult = false;
 
             // Act
-            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default);
+            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default);
 
             // Assert
-            this.m_MockAuthEnforcer.Verify(mock => mock.CheckAuthorisationAsync(this.m_InputPort, default), Times.Once());
+            this.m_MockAuthEnforcer.Verify(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default), Times.Once());
             this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal, Times.Once());
-            this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, default), Times.Once());
+            this.m_MockValidator.Verify(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, default), Times.Once());
 
-            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentValidationFailureAsync(this.m_ValidationResult, default), Times.Once());
             this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
         }
 
@@ -167,40 +146,11 @@ namespace CleanArchitecture.Mediator.Tests.Integration
 
         #region - - - - - - Nested Classes - - - - - -
 
-        public class AuthorisationResult : IAuthorisationResult
-        {
-
-            #region - - - - - - Properties - - - - - -
-
-            public bool IsAuthorised { get; set; }
-
-            #endregion Properties
-
-        }
-
         public interface IEmptyOutputPort { }
 
-        public interface IEverythingOutputPort :
-            IAuthenticationOutputPort,
-            IAuthorisationOutputPort<AuthorisationResult>,
-            IValidationOutputPort<ValidationResult>
-        { }
+        public interface IEverythingOutputPort : IAuthenticationOutputPort { }
 
-        public class InputPort :
-            IInputPort<IEmptyOutputPort>,
-            IInputPort<IEverythingOutputPort>
-        { }
-
-        public class ValidationResult : IValidationResult
-        {
-
-            #region - - - - - - Properties - - - - - -
-
-            public bool IsValid { get; set; }
-
-            #endregion Properties
-
-        }
+        public class InputPort : IInputPort<IEmptyOutputPort>, IInputPort<IEverythingOutputPort> { }
 
         #endregion Nested Classes
 

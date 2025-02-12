@@ -1,18 +1,23 @@
 ﻿using CleanArchitecture.Mediator;
-using CleanArchitecture.Sample.Pipelines;
 
 namespace CleanArchitecture.Sample.UseCases.CreateProduct
 {
 
-    public class CreateProductAuthorisationEnforcer : IAuthorisationEnforcer<CreateProductInputPort, AuthorisationResult>
+    public class CreateProductAuthorisationEnforcer : IAuthorisationEnforcer<CreateProductInputPort, ICreateProductOutputPort>
     {
 
         #region - - - - - - Methods - - - - - -
 
-        Task<AuthorisationResult> IAuthorisationEnforcer<CreateProductInputPort, AuthorisationResult>.CheckAuthorisationAsync(
-            CreateProductInputPort inputPort,
-            CancellationToken cancellationToken)
-            => Task.FromResult(new AuthorisationResult { IsAuthorised = !inputPort.FailAuthorisation });
+        public async Task<bool> HandleAuthorisationAsync(CreateProductInputPort inputPort, ICreateProductOutputPort outputPort, CancellationToken cancellationToken)
+        {
+            if (inputPort.FailAuthorisation)
+            {
+                await outputPort.PresentUnauthorisedAsync(cancellationToken).ConfigureAwait(false);
+                return false;
+            }
+
+            return true;
+        }
 
         #endregion Methods
 

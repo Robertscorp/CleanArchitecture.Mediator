@@ -1,7 +1,6 @@
 ﻿using CleanArchitecture.Mediator;
 using CleanArchitecture.Sample.Dtos;
 using CleanArchitecture.Sample.OutputPorts;
-using CleanArchitecture.Sample.Pipelines;
 using CleanArchitecture.Sample.UseCases.CreateProduct;
 
 namespace CleanArchitecture.Sample.Presenters
@@ -12,25 +11,25 @@ namespace CleanArchitecture.Sample.Presenters
 
         #region - - - - - - Methods - - - - - -
 
-        Task ICreateProductOutputPort.PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken)
-        {
-            Console.Write($" CreateProductPresenter.PresentCreatedProductAsync('{product.Name}')");
-            return Task.CompletedTask;
-        }
-
         Task IAuthenticationOutputPort.PresentUnauthenticatedAsync(CancellationToken cancellationToken)
         {
             Console.Write(" CreateProductPresenter.PresentUnauthenticatedAsync");
             return Task.CompletedTask;
         }
 
-        Task IAuthorisationOutputPort<AuthorisationResult>.PresentUnauthorisedAsync(AuthorisationResult authorisationFailure, CancellationToken cancellationToken)
+        Task ICreateProductOutputPort.PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken)
+        {
+            Console.Write($" CreateProductPresenter.PresentCreatedProductAsync('{product.Name}')");
+            return Task.CompletedTask;
+        }
+
+        Task ICreateProductOutputPort.PresentUnauthorisedAsync(CancellationToken cancellationToken)
         {
             Console.Write(" CreateProductPresenter.PresentUnauthorisedAsync");
             return Task.CompletedTask;
         }
 
-        Task IValidationOutputPort<ValidationResult>.PresentValidationFailureAsync(ValidationResult validationFailure, CancellationToken cancellationToken)
+        Task ICreateProductOutputPort.PresentValidationFailureAsync(CancellationToken cancellationToken)
         {
             Console.Write(" CreateProductPresenter.PresentValidationFailureAsync");
             return Task.CompletedTask;

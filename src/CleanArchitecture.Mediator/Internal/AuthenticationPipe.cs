@@ -1,13 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Mediator.Pipes
+namespace CleanArchitecture.Mediator.Internal
 {
 
-    /// <summary>
-    /// Handles authentication verification and presenting authentication failures.
-    /// </summary>
-    public class AuthenticationPipe : IPipe
+    internal class AuthenticationPipe : IPipe
     {
 
         #region - - - - - - Methods - - - - - -

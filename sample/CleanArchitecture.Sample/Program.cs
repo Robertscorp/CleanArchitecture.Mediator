@@ -11,16 +11,18 @@ using System.Security.Claims;
 using var _ServiceProvider
     = new ServiceCollection()
             .AddCleanArchitectureMediator()
+            .AddSingleton<VerificationPipelineInvoker>()
             .BuildServiceProvider();
 
 using var _Scope = _ServiceProvider.CreateScope();
 var _ScopedProvider = _Scope.ServiceProvider;
+var _ServiceFactory = _ScopedProvider.GetRequiredService<ServiceFactory>();
 
 // Currently Unauthenticated.
 var _ClaimsPrincipalProvider = (AuthenticatedClaimsPrincipalProvider)_ScopedProvider.GetService<IAuthenticatedClaimsPrincipalProvider>()!;
 
 var _DefaultPipeline = _ScopedProvider.GetService<DefaultPipeline>()!;
-var _VerificationPipeline = _ScopedProvider.GetService<VerificationPipeline>()!;
+var _VerificationPipeline = _ScopedProvider.GetService<VerificationPipelineInvoker>()!;
 
 Console.WriteLine("Welcome to the CLAM (CleanArchitecture.Mediator) sample project.");
 Console.WriteLine("In this sample, we've defined 2 pipelines that can be invoked:");
@@ -41,10 +43,10 @@ Console.WriteLine("[GET PRODUCT]");
 Console.WriteLine();
 
 // Get Product - Not Authenticated. Output Port doesn't support Authentication, so we expect to invoke the Interactor.
-await _DefaultPipeline.InvokeAsync(new GetProductInputPort(), new GetProductPresenter(), default);
+await _DefaultPipeline.InvokeAsync(new GetProductInputPort(), new GetProductPresenter(), _ServiceFactory, default);
 
 // Get Product - Not Authenticated. Output Port doesn't support Authentication, so we expect to have verification success.
-await _VerificationPipeline.InvokeAsync(new GetProductInputPort(), new GetProductPresenter(), default);
+await _VerificationPipeline.InvokeAsync(new GetProductInputPort(), new GetProductPresenter(), _ServiceFactory, default);
 
 Console.WriteLine();
 Console.WriteLine("[CREATE PRODUCT]");
@@ -58,10 +60,10 @@ var _CreateProductInputPort = new CreateProductInputPort
 };
 
 // Create Product - Not Authenticated.
-await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
+await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
 
 // Create Product - Not Authenticated.
-await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
+await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
 
 Console.WriteLine();
 Console.Write("Let's Authenticate so we stop getting Authentication failures...");
@@ -73,10 +75,10 @@ Console.WriteLine(" Done!");
 Console.WriteLine();
 
 // Create Product - Not Authorised.
-await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
+await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
 
 // Create Product - Not Authorised.
-await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
+await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
 
 Console.WriteLine();
 Console.Write("Let's stop getting Authorisation failures...");
@@ -85,10 +87,10 @@ Console.WriteLine(" Done!");
 Console.WriteLine();
 
 // Create Product - Validation Failure.
-await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
+await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
 
 // Create Product - Validation Failure.
-await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
+await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
 
 Console.WriteLine();
 Console.Write("Let's make our Input Port valid...");
@@ -97,10 +99,10 @@ Console.WriteLine(" Done!");
 Console.WriteLine();
 
 // Create Product - Interactor Invoked.
-await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
+await _DefaultPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
 
 // Create Product - Verification Success.
-await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, default);
+await _VerificationPipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
 
 Console.WriteLine("Press 'enter' to finish.");
 _ = Console.ReadLine();
