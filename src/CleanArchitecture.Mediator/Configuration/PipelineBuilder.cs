@@ -66,7 +66,7 @@ namespace CleanArchitecture.Mediator.Configuration
         /// <summary>
         /// Adds inline behaviour to the pipeline.
         /// </summary>
-        /// <param name="inlineBehaviourAsync">The behaviour of the pipe.</param>
+        /// <param name="inlineBehaviourAsync">The behaviour of the pipe. The parameters are (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken).</param>
         /// <returns>Itself.</returns>
         public PipelineBuilder<TPipeline> AddPipe(
             Func<object, object, ServiceFactory, NextPipeHandleAsync, CancellationToken, Task> inlineBehaviourAsync)
