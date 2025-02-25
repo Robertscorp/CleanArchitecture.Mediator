@@ -12,13 +12,13 @@ namespace CleanArchitecture.Sample.Presenters
 
         Task IGetProductOutputPort.PresentProductAsync(ProductDto product, CancellationToken cancellationToken)
         {
-            Console.Write($" GetProductPresenter.PresentProductAsync('{product.Name}')");
+            Console.WriteLine($"\t- GetProductPresenter.PresentProductAsync('{product.Name}')");
             return Task.CompletedTask;
         }
 
         Task IVerificationSuccessOutputPort.PresentVerificationSuccessAsync(CancellationToken cancellationToken)
         {
-            Console.Write($" GetProductPresenter.PresentVerificationSuccessAsync");
+            Console.WriteLine($"\t- GetProductPresenter.PresentVerificationSuccessAsync");
             return Task.CompletedTask;
         }
 
