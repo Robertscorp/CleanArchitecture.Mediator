@@ -13,31 +13,31 @@ namespace CleanArchitecture.Sample.Presenters
 
         Task IAuthenticationOutputPort.PresentUnauthenticatedAsync(CancellationToken cancellationToken)
         {
-            Console.Write(" CreateProductPresenter.PresentUnauthenticatedAsync");
+            Console.WriteLine("\t- CreateProductPresenter.PresentUnauthenticatedAsync");
             return Task.CompletedTask;
         }
 
         Task ICreateProductOutputPort.PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken)
         {
-            Console.Write($" CreateProductPresenter.PresentCreatedProductAsync('{product.Name}')");
+            Console.WriteLine($"\t- CreateProductPresenter.PresentCreatedProductAsync('{product.Name}')");
             return Task.CompletedTask;
         }
 
         Task ICreateProductOutputPort.PresentUnauthorisedAsync(CancellationToken cancellationToken)
         {
-            Console.Write(" CreateProductPresenter.PresentUnauthorisedAsync");
+            Console.WriteLine("\t- CreateProductPresenter.PresentUnauthorisedAsync");
             return Task.CompletedTask;
         }
 
         Task ICreateProductOutputPort.PresentValidationFailureAsync(CancellationToken cancellationToken)
         {
-            Console.Write(" CreateProductPresenter.PresentValidationFailureAsync");
+            Console.WriteLine("\t- CreateProductPresenter.PresentValidationFailureAsync");
             return Task.CompletedTask;
         }
 
         Task IVerificationSuccessOutputPort.PresentVerificationSuccessAsync(CancellationToken cancellationToken)
         {
-            Console.Write(" CreateProductPresenter.PresentVerificationSuccessAsync");
+            Console.WriteLine("\t- CreateProductPresenter.PresentVerificationSuccessAsync");
             return Task.CompletedTask;
         }
 
