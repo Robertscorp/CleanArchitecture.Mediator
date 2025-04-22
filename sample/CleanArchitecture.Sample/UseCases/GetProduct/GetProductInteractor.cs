@@ -12,6 +12,7 @@ namespace CleanArchitecture.Sample.UseCases.GetProduct
         Task IInteractor<GetProductInputPort, IGetProductOutputPort>.HandleAsync(
             GetProductInputPort inputPort,
             IGetProductOutputPort outputPort,
+            ServiceFactory serviceFactory,
             CancellationToken cancellationToken)
             => outputPort.PresentProductAsync(new ProductDto { Name = "Hat" }, cancellationToken);
 

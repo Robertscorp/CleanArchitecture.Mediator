@@ -11,6 +11,7 @@ namespace CleanArchitecture.Sample.UseCases.CreateProduct
         Task IInteractor<CreateProductInputPort, ICreateProductOutputPort>.HandleAsync(
             CreateProductInputPort inputPort,
             ICreateProductOutputPort outputPort,
+            ServiceFactory serviceFactory,
             CancellationToken cancellationToken)
             => outputPort.PresentCreatedProductAsync(new() { Name = $"Created - {DateTime.Now}" }, cancellationToken);
 

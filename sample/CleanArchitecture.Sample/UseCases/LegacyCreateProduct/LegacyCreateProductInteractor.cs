@@ -11,6 +11,7 @@ namespace CleanArchitecture.Sample.UseCases.LegacyCreateProduct
         Task IInteractor<LegacyCreateProductInputPort, ILegacyCreateProductOutputPort>.HandleAsync(
             LegacyCreateProductInputPort inputPort,
             ILegacyCreateProductOutputPort outputPort,
+            ServiceFactory serviceFactory,
             CancellationToken cancellationToken)
             => outputPort.PresentCreatedProductAsync(new() { Name = $"Created - {DateTime.Now}" }, cancellationToken);
 
