@@ -33,7 +33,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
             this.m_PipeHandle = new(this.m_MockPipe.Object, this.m_NextPipeHandle);
 
             _ = this.m_MockAuthorisationEnforcer
-                    .Setup(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockOutputPort.Object, default))
+                    .Setup(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default))
                     .Returns(() => Task.FromResult(this.m_AuthResult));
 
             _ = this.m_MockServiceFactory

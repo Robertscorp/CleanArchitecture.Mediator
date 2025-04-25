@@ -37,7 +37,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
                     .Returns(this.m_MockValidator.Object);
 
             _ = this.m_MockValidator
-                    .Setup(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockOutputPort.Object, default))
+                    .Setup(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default))
                     .Returns(() => Task.FromResult(this.m_ValidationResult));
         }
 
