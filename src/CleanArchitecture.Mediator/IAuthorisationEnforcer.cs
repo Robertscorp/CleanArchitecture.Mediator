@@ -19,9 +19,10 @@ namespace CleanArchitecture.Mediator
         /// </summary>
         /// <param name="inputPort">The input to the pipeline.</param>
         /// <param name="outputPort">The output mechanism for the pipeline.</param>
+        /// <param name="serviceFactory">The factory used to get service instances.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         /// <returns>A result indicating if the pipeline is allowed to continue.</returns>
-        Task<bool> HandleAuthorisationAsync(TInputPort inputPort, TOutputPort outputPort, CancellationToken cancellationToken);
+        Task<bool> HandleAuthorisationAsync(TInputPort inputPort, TOutputPort outputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken);
 
         #endregion Methods
 

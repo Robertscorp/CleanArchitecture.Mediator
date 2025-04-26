@@ -17,7 +17,7 @@ namespace CleanArchitecture.Mediator.Internal
             CancellationToken cancellationToken)
         {
             var _AuthEnforcer = serviceFactory.GetService<IAuthorisationEnforcer<TInputPort, TOutputPort>>();
-            if (_AuthEnforcer == null || await _AuthEnforcer.HandleAuthorisationAsync(inputPort, outputPort, cancellationToken).ConfigureAwait(false))
+            if (_AuthEnforcer == null || await _AuthEnforcer.HandleAuthorisationAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false))
                 await nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
         }
 

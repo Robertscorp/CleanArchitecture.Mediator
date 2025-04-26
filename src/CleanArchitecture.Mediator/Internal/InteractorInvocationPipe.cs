@@ -17,7 +17,7 @@ namespace CleanArchitecture.Mediator.Internal
             CancellationToken cancellationToken)
             => serviceFactory
                 .GetService<IInteractor<TInputPort, TOutputPort>>()?
-                .HandleAsync(inputPort, outputPort, cancellationToken)
+                .HandleAsync(inputPort, outputPort, serviceFactory, cancellationToken)
                     ?? Task.CompletedTask;
 
         #endregion Methods

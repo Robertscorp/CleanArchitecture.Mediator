@@ -17,7 +17,7 @@ namespace CleanArchitecture.Mediator.Internal
             CancellationToken cancellationToken)
         {
             var _Validator = serviceFactory.GetService<IValidator<TInputPort, TOutputPort>>();
-            if (_Validator == null || await _Validator.HandleValidationAsync(inputPort, outputPort, cancellationToken).ConfigureAwait(false))
+            if (_Validator == null || await _Validator.HandleValidationAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false))
                 await nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
         }
 

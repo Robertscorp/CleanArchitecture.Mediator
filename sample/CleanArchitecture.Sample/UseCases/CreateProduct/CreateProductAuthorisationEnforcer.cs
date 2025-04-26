@@ -8,7 +8,7 @@ namespace CleanArchitecture.Sample.UseCases.CreateProduct
 
         #region - - - - - - Methods - - - - - -
 
-        public async Task<bool> HandleAuthorisationAsync(CreateProductInputPort inputPort, ICreateProductOutputPort outputPort, CancellationToken cancellationToken)
+        public async Task<bool> HandleAuthorisationAsync(CreateProductInputPort inputPort, ICreateProductOutputPort outputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken)
         {
             if (inputPort.FailAuthorisation)
             {
