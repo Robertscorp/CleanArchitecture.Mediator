@@ -34,7 +34,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
         public PipelineTests()
         {
             _ = this.m_MockAuthEnforcer
-                    .Setup(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default))
+                    .Setup(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default))
                     .Returns(() => Task.FromResult(this.m_AuthResult));
 
             _ = this.m_MockClaimsPrincipalProvider
@@ -42,7 +42,7 @@ namespace CleanArchitecture.Mediator.Tests.Integration
                     .Returns(new ClaimsPrincipal());
 
             _ = this.m_MockValidator
-                    .Setup(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default))
+                    .Setup(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default))
                     .Returns(() => Task.FromResult(this.m_ValidationResult));
 
             _ = this.m_MockServiceFactory
@@ -143,6 +143,93 @@ namespace CleanArchitecture.Mediator.Tests.Integration
         }
 
         #endregion InvokeAsync Tests
+
+        #region - - - - - - InvokeAsync (w/ InvocationServiceCollection) Tests - - - - - -
+
+        [Fact]
+        public async Task InvokeAsync_WithInvocationServiceCollection_EmptyOutputPort_InvokesInteractor()
+        {
+            // Arrange
+
+            // Act
+            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEmptyOutputPort.Object, this.m_MockServiceFactory.Object, services => { }, default);
+
+            // Assert
+            this.m_MockEmptyOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEmptyOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Once());
+        }
+
+        [Fact]
+        public async Task InvokeAsync_WithInvocationServiceCollection_OverridenService_UsesOverridenService()
+        {
+            // Arrange
+            var _MockInteractor = new Mock<IInteractor<InputPort, IEmptyOutputPort>>();
+
+            // Act
+            await this.m_Pipeline.InvokeAsync(
+                this.m_InputPort,
+                this.m_MockEmptyOutputPort.Object,
+                this.m_MockServiceFactory.Object,
+                services => services.WithService<IInteractor<InputPort, IEmptyOutputPort>>(_MockInteractor.Object),
+                default);
+
+            // Assert
+            _MockInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEmptyOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Once());
+            this.m_MockEmptyOutputPortInteractor.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task InvokeAsync_WithInvocationServiceCollection_EverythingOutputPortWithAuthenticationFailure_StopsWithAuthenticationFailure()
+        {
+            // Arrange
+            this.m_MockClaimsPrincipalProvider.Reset();
+
+            // Act
+            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, services => { }, default);
+
+            // Assert
+            this.m_MockAuthEnforcer.Verify(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Never());
+            this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal, Times.Once());
+            this.m_MockValidator.Verify(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Never());
+
+            this.m_MockEverythingOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
+            this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task InvokeAsync_WithInvocationServiceCollection_EverythingOutputPortWithAuthorisationFailure_StopsWithAuthorisationFailure()
+        {
+            // Arrange
+            this.m_AuthResult = false;
+
+            // Act
+            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, services => { }, default);
+
+            // Assert
+            this.m_MockAuthEnforcer.Verify(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Once());
+            this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal, Times.Once());
+            this.m_MockValidator.Verify(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Never());
+
+            this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task InvokeAsync_WithInvocationServiceCollection_EverythingOutputPortWithValidationFailure_StopsWithValidationFailure()
+        {
+            // Arrange
+            this.m_ValidationResult = false;
+
+            // Act
+            await this.m_Pipeline.InvokeAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, services => { }, default);
+
+            // Assert
+            this.m_MockAuthEnforcer.Verify(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Once());
+            this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal, Times.Once());
+            this.m_MockValidator.Verify(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Once());
+
+            this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
+        }
+
+        #endregion InvokeAsync (w/ InvocationServiceCollection) Tests
 
         #region - - - - - - Nested Classes - - - - - -
 
