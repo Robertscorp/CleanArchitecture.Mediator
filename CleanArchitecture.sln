@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Mediator"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Mediator.Tests", "test\CleanArchitecture.Mediator.Tests\CleanArchitecture.Mediator.Tests.csproj", "{B1AE0006-AC17-4F5B-805C-435089711558}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Sample", "sample\CleanArchitecture.Sample\CleanArchitecture.Sample.csproj", "{5DF69658-7412-4316-A378-E08CADD72A0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.Mediator.Sample", "sample\CleanArchitecture.Mediator.Sample\CleanArchitecture.Mediator.Sample.csproj", "{5DF69658-7412-4316-A378-E08CADD72A0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
