@@ -1,9 +1,9 @@
 ﻿using CleanArchitecture.Mediator;
-using CleanArchitecture.Mediator.Configuration;
 using CleanArchitecture.Mediator.Sample.Legacy.Authorisation;
 using CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
 using CleanArchitecture.Mediator.Sample.Legacy.InputPortValidation;
 using CleanArchitecture.Mediator.Sample.Pipelines;
+using CleanArchitecture.Mediator.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CleanArchitecture.Mediator.Sample
@@ -16,9 +16,9 @@ namespace CleanArchitecture.Mediator.Sample
 
         public static IServiceCollection AddCleanArchitectureMediator(this IServiceCollection serviceCollection)
         {
-            CleanArchitectureMediator.Configure(builder =>
+            CleanArchitectureMediator.Setup(config =>
             {
-                _ = builder.AddPipeline<DefaultPipeline>(pipeline
+                _ = config.AddPipeline<DefaultPipeline>(pipeline
                     => pipeline
                         .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
                         {
@@ -26,12 +26,12 @@ namespace CleanArchitecture.Mediator.Sample
                             await nextPipeHandleAsync();
                             Console.WriteLine("\t- Completed invocation of DefaultPipeline.");
                         })
-                        .AddAuthentication()
+                        .AddSingleTenantAuthentication()
                         .AddAuthorisation()
                         .AddValidation()
                         .AddInteractorInvocation());
 
-                _ = builder.AddPipeline<LegacyPipeline>(pipeline
+                _ = config.AddPipeline<LegacyPipeline>(pipeline
                     => pipeline
                         .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
                         {
@@ -40,12 +40,12 @@ namespace CleanArchitecture.Mediator.Sample
                             Console.WriteLine("\t- Completed invocation of LegacyPipeline.");
                         })
                         .AddAuthentication()
-                        .AddPipe<AuthorisationPipe<AuthorisationResult>>(typeof(Legacy.Authorisation.IAuthorisationEnforcer<,>))
-                        .AddPipe<InputPortValidationPipe<InputPortValidationResult>>(typeof(IInputPortValidator<,>))
-                        .AddPipe<BusinessRuleValidationPipe<BusinessRuleValidationResult>>(typeof(IBusinessRuleValidator<,>))
+                        .AddPipe<AuthorisationPipe<AuthorisationResult>>(config => config.AddSingletonService(typeof(Legacy.Authorisation.IAuthorisationEnforcer<,>)))
+                        .AddPipe<InputPortValidationPipe<InputPortValidationResult>>(config => config.AddSingletonService(typeof(IInputPortValidator<,>)))
+                        .AddPipe<BusinessRuleValidationPipe<BusinessRuleValidationResult>>(config => config.AddSingletonService(typeof(IBusinessRuleValidator<,>)))
                         .AddInteractorInvocation());
 
-                _ = builder.AddPipeline<VerificationPipeline>(pipeline
+                _ = config.AddPipeline<VerificationPipeline>(pipeline
                     => pipeline
                         .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
                         {
@@ -57,10 +57,11 @@ namespace CleanArchitecture.Mediator.Sample
                         .AddAuthorisation()
                         .AddValidation()
                         .AddPipe<VerificationSuccessPipe>());
-            },
-            registerSingletonServiceAction: (serviceType, implementationType) => serviceCollection.AddSingleton(serviceType, implementationType),
-            registerSingletonFactoryAction: (serviceType, getServiceFunc) => serviceCollection.AddSingleton(serviceType, serviceProvider => getServiceFunc(serviceProvider.GetRequiredService<ServiceFactory>())),
-            assembliesContainingServiceImplementations: typeof(Program).Assembly);
+            }, registration =>
+                registration
+                    .AddAssemblies(typeof(Program).Assembly)
+                    .WithSingletonFactoryRegistrationAction((serviceType, getServiceFunc) => serviceCollection.AddSingleton(serviceType, serviceProvider => getServiceFunc(serviceProvider.GetRequiredService<ServiceFactory>())))
+                    .WithSingletonServiceRegistrationAction((serviceType, implementationType) => serviceCollection.AddSingleton(serviceType, implementationType)));
 
             _ = serviceCollection.AddScoped<ServiceFactory>(serviceProvider => serviceProvider.GetService);
 
