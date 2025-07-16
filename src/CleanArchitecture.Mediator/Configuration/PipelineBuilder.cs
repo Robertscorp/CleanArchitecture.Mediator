@@ -84,7 +84,7 @@ namespace CleanArchitecture.Mediator.Configuration
         {
             if (inlineBehaviourAsync is null) throw new ArgumentNullException(nameof(inlineBehaviourAsync));
 
-            this.m_PipeHandleProviders.Add((serviceFactory, nextPipeHandle) => new NonGenericPipeHandle(new InlinePipe(inlineBehaviourAsync), nextPipeHandle));
+            this.m_PipeHandleProviders.Add((_, nextPipeHandle) => new InlinePipe(inlineBehaviourAsync, nextPipeHandle));
 
             return this;
         }
