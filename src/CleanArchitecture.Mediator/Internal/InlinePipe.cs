@@ -27,7 +27,7 @@ namespace CleanArchitecture.Mediator.Internal
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            PipeHandle nextPipeHandle,
+            IPipeHandle nextPipeHandle,
             CancellationToken cancellationToken)
             => this.m_InlineBehaviourAsync(
                 inputPort,

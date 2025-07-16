@@ -9,7 +9,7 @@ namespace CleanArchitecture.Mediator
     /// </summary>
     /// <remarks>
     /// Pipe implementations are registered as singletons, which means that only singleton and transient services should be resolved in their constructors.<br/>
-    /// Scoped services can be resolved in the <see cref="InvokeAsync{TInputPort, TOutputPort}(TInputPort, TOutputPort, ServiceFactory, PipeHandle, CancellationToken)"/>
+    /// Scoped services can be resolved in the <see cref="InvokeAsync{TInputPort, TOutputPort}(TInputPort, TOutputPort, ServiceFactory, IPipeHandle, CancellationToken)"/>
     /// method by using the <see cref="ServiceFactory"/> parameter.
     /// </remarks>
     public interface IPipe
@@ -31,7 +31,7 @@ namespace CleanArchitecture.Mediator
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            PipeHandle nextPipeHandle,
+            IPipeHandle nextPipeHandle,
             CancellationToken cancellationToken) where TInputPort : IInputPort<TOutputPort>;
 
         #endregion Methods

@@ -18,7 +18,7 @@ namespace CleanArchitecture.Mediator.Configuration
 
         private readonly Action<Type> m_OnPipeAdded;
         private readonly Action<Type> m_OnServiceAdded;
-        private readonly List<object> m_RegisteredPipes = new List<object>();
+        private readonly List<Func<ServiceFactory, IPipeHandle, IPipeHandle>> m_PipeHandleProviders = new List<Func<ServiceFactory, IPipeHandle, IPipeHandle>>();
 
         #endregion Fields
 
@@ -66,7 +66,7 @@ namespace CleanArchitecture.Mediator.Configuration
             if (serviceTypes is null) throw new ArgumentNullException(nameof(serviceTypes));
 
             this.m_OnPipeAdded(typeof(TPipe));
-            this.m_RegisteredPipes.Add(typeof(TPipe));
+            this.m_PipeHandleProviders.Add((serviceFactory, nextPipeHandle) => new NonGenericPipeHandle(serviceFactory.GetService<TPipe>(), nextPipeHandle));
 
             foreach (var _ServiceType in serviceTypes)
                 this.m_OnServiceAdded(_ServiceType);
@@ -84,7 +84,7 @@ namespace CleanArchitecture.Mediator.Configuration
         {
             if (inlineBehaviourAsync is null) throw new ArgumentNullException(nameof(inlineBehaviourAsync));
 
-            this.m_RegisteredPipes.Add(new InlinePipe(inlineBehaviourAsync));
+            this.m_PipeHandleProviders.Add((serviceFactory, nextPipeHandle) => new NonGenericPipeHandle(new InlinePipe(inlineBehaviourAsync), nextPipeHandle));
 
             return this;
         }
@@ -99,12 +99,12 @@ namespace CleanArchitecture.Mediator.Configuration
         internal Func<ServiceFactory, PipelineHandleAccessor<TPipeline>> GetPipelineHandleAccessorFactory()
             => serviceFactory
                 => new PipelineHandleAccessor<TPipeline>(
-                    this.m_RegisteredPipes
-                        .Select(p => p as IPipe ?? (IPipe)serviceFactory((Type)p))
+                    this.m_PipeHandleProviders
+                        .AsEnumerable()
                         .Reverse()
                         .Aggregate(
-                            new PipeHandle(null, null),
-                            (nextPipeHandle, pipe) => new PipeHandle(pipe, nextPipeHandle)));
+                            (IPipeHandle)new TerminalPipeHandle(),
+                            (nextPipeHandle, pipeHandleProvider) => pipeHandleProvider(serviceFactory, nextPipeHandle)));
 
         #endregion Methods
 
