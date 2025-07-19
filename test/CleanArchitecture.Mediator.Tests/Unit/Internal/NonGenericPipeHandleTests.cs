@@ -33,7 +33,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
         #region - - - - - - InvokePipeAsync Tests - - - - - -
 
         [Fact]
-        public async Task InvokePipeAsync_NotCancelled_InvokesPipe()
+        public async Task InvokePipeAsync_OperationIsNotCancelled_InvokesPipe()
         {
             // Arrange
 
@@ -47,7 +47,7 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
         }
 
         [Fact]
-        public async Task InvokePipeAsync_Cancelled_CancelsImmediately()
+        public async Task InvokePipeAsync_OperationIsCancelled_CancelsImmediately()
         {
             // Arrange
             var _CancellationTokenSource = new CancellationTokenSource();
