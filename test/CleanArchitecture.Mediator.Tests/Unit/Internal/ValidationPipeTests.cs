@@ -11,8 +11,8 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly Mock<ITestOutputPort> m_MockOutputPort = new();
         private readonly Mock<IPipeHandle> m_MockNextPipeHandle = new();
+        private readonly Mock<ITestOutputPort> m_MockOutputPort = new();
         private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
         private readonly Mock<IValidator<TestInputPort, ITestOutputPort>> m_MockValidator = new();
 

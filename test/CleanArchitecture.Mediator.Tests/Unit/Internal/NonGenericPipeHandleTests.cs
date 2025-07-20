@@ -16,8 +16,8 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
         private readonly Mock<IPipe> m_MockPipe = new();
 
         private readonly IInputPort<object> m_InputPort = new Mock<IInputPort<object>>().Object;
-        private readonly object m_OutputPort = new();
         private readonly IPipeHandle m_NextPipeHandle = new Mock<IPipeHandle>().Object;
+        private readonly object m_OutputPort = new();
         private readonly IPipeHandle m_PipeHandle;
         private readonly ServiceFactory m_ServiceFactory = new Mock<ServiceFactory>().Object;
 
