@@ -1,8 +1,6 @@
 ﻿using CleanArchitecture.Mediator.Internal;
 using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -17,11 +15,11 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
 
         private readonly Mock<IPipeHandle> m_MockNextPipeHandle = new();
         private readonly Mock<IPipe<IInputPort<object>, object>> m_MockPipe = new();
+        private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
         private readonly IInputPort<object> m_InputPort = new Mock<IInputPort<object>>().Object;
         private readonly object m_OutputPort = new();
         private readonly IPipeHandle m_PipeHandle;
-        private readonly ServiceFactory m_ServiceFactory;
 
         #endregion Fields
 
@@ -29,14 +27,11 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
 
         public OpenGenericPipeHandleTests()
         {
-            this.m_PipeHandle = new OpenGenericPipeHandle(typeof(IPipe<,>), (inputPort, outputPort) => new Type[] { inputPort, outputPort }, this.m_MockNextPipeHandle.Object);
-
-            var _MockServiceFactory = new Mock<ServiceFactory>();
-            _ = _MockServiceFactory
+            _ = this.m_MockServiceFactory
                     .Setup(mock => mock(typeof(IPipe<IInputPort<object>, object>)))
                     .Returns(this.m_MockPipe.Object);
 
-            this.m_ServiceFactory = _MockServiceFactory.Object;
+            this.m_PipeHandle = new OpenGenericPipeHandle(new PipeProvider(), this.m_MockNextPipeHandle.Object);
         }
 
         #endregion Constructors
@@ -59,39 +54,58 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
             _ = _Actual.Status.Should().Be(TaskStatus.Canceled);
             _ = _Exception.Should().BeOfType<TaskCanceledException>();
 
+            this.m_MockNextPipeHandle.VerifyNoOtherCalls();
             this.m_MockPipe.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task InvokePipeAsync_PipeDoesNotImplementGenericIPipeInterface_MovesToNextPipe()
+        public async Task InvokePipeAsync_OperationIsNotCancelledAndNoPipeProvided_MovesToNextPipe()
         {
             // Arrange
-            var _PipeHandle = (IPipeHandle)new OpenGenericPipeHandle(typeof(List<>), (inputPort, outputPort) => new Type[] { typeof(object) }, this.m_MockNextPipeHandle.Object);
+            this.m_MockServiceFactory.Reset();
 
             // Act
-            await _PipeHandle.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, this.m_ServiceFactory, default);
+            await this.m_PipeHandle.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, default);
 
             // Assert
-            this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, this.m_ServiceFactory, default), Times.Once());
+            this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, default), Times.Once());
 
+            this.m_MockNextPipeHandle.VerifyNoOtherCalls();
             this.m_MockPipe.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task InvokePipeAsync_PipeImplementsGenericIPipeInterfaceAndOperationIsNotCancelled_InvokesPipe()
+        public async Task InvokePipeAsync_OperationIsNotCancelledAndPipeProvided_InvokesPipe()
         {
             // Arrange
 
             // Act
-            await this.m_PipeHandle.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, this.m_ServiceFactory, default);
+            await this.m_PipeHandle.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, default);
 
             // Assert
-            this.m_MockPipe.Verify(mock => mock.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_ServiceFactory, this.m_MockNextPipeHandle.Object, default), Times.Once());
+            this.m_MockPipe.Verify(mock => mock.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default), Times.Once());
 
+            this.m_MockNextPipeHandle.VerifyNoOtherCalls();
             this.m_MockPipe.VerifyNoOtherCalls();
         }
 
         #endregion InvokePipeAsync Tests
+
+        #region - - - - - - Nested Classes - - - - - -
+
+        private class PipeProvider : IClosedGenericPipeProvider
+        {
+
+            #region - - - - - - Methods - - - - - -
+
+            IPipe<TInputPort, TOutputPort> IClosedGenericPipeProvider.GetPipe<TInputPort, TOutputPort>(ServiceFactory serviceFactory)
+                => (IPipe<TInputPort, TOutputPort>)serviceFactory(typeof(IPipe<TInputPort, TOutputPort>));
+
+            #endregion Methods
+
+        }
+
+        #endregion Nested Classes
 
     }
 

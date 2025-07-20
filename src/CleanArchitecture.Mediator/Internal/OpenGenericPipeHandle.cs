@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace CleanArchitecture.Mediator.Internal
@@ -12,30 +10,16 @@ namespace CleanArchitecture.Mediator.Internal
         #region - - - - - - Fields - - - - - -
 
         private readonly IPipeHandle m_NextPipeHandle;
-        private readonly Func<Type, Type, ServiceFactory, object> m_PipeProvider;
+        private readonly IClosedGenericPipeProvider m_PipeProvider;
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
-        internal OpenGenericPipeHandle(Type openGenericPipeType, Func<Type, Type, Type[]> getClosedGenericParameters, IPipeHandle nextPipeHandle)
+        internal OpenGenericPipeHandle(IClosedGenericPipeProvider pipeProvider, IPipeHandle nextPipeHandle)
         {
             this.m_NextPipeHandle = nextPipeHandle;
-
-            var _PipeCache = new ConcurrentDictionary<Type, object>();
-
-            this.m_PipeProvider = (inputPort, outputPort, serviceFactory)
-                => _PipeCache.GetOrAdd(inputPort, _ =>
-                {
-                    try // Try-Catch is the easiest way of determining if all generic constraints are met.
-                    {
-                        return serviceFactory(openGenericPipeType.MakeGenericType(getClosedGenericParameters(inputPort, outputPort)));
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                });
+            this.m_PipeProvider = pipeProvider;
         }
 
         #endregion Constructors
@@ -49,7 +33,7 @@ namespace CleanArchitecture.Mediator.Internal
             CancellationToken cancellationToken)
             => cancellationToken.IsCancellationRequested
                 ? Task.FromCanceled(cancellationToken)
-                : ((IPipe<TInputPort, TOutputPort>)this.m_PipeProvider(typeof(TInputPort), typeof(TOutputPort), serviceFactory))?
+                : this.m_PipeProvider.GetPipe<TInputPort, TOutputPort>(serviceFactory)?
                     .InvokeAsync(inputPort, outputPort, serviceFactory, this.m_NextPipeHandle, cancellationToken)
                         ?? this.m_NextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken);
 
