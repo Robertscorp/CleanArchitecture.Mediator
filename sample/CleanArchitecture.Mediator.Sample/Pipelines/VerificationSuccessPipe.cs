@@ -12,7 +12,7 @@ namespace CleanArchitecture.Mediator.Sample.Pipelines
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            PipeHandle nextPipeHandle,
+            IPipeHandle nextPipeHandle,
             CancellationToken cancellationToken)
             => outputPort is IVerificationSuccessOutputPort _OutputPort
                 ? _OutputPort.PresentVerificationSuccessAsync(cancellationToken)

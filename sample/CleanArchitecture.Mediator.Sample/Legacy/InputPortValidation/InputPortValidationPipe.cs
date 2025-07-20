@@ -22,7 +22,7 @@
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            PipeHandle nextPipeHandle,
+            IPipeHandle nextPipeHandle,
             CancellationToken cancellationToken)
         {
             if (outputPort is IInputPortValidationOutputPort<TValidationResult> _OutputPort)

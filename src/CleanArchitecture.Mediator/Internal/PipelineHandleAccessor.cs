@@ -6,7 +6,7 @@
 
         #region - - - - - - Properties - - - - - -
 
-        PipeHandle PipeHandle { get; }
+        IPipeHandle PipeHandle { get; }
 
         #endregion Properties
 
@@ -17,14 +17,14 @@
 
         #region - - - - - - Constructors - - - - - -
 
-        public PipelineHandleAccessor(PipeHandle pipeHandle)
+        public PipelineHandleAccessor(IPipeHandle pipeHandle)
             => this.PipeHandle = pipeHandle ?? throw new System.ArgumentNullException(nameof(pipeHandle));
 
         #endregion Constructors
 
         #region - - - - - - Properties - - - - - -
 
-        public PipeHandle PipeHandle { get; }
+        public IPipeHandle PipeHandle { get; }
 
         #endregion Properties
 
