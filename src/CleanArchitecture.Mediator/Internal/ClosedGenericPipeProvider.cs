@@ -5,7 +5,18 @@ using System.Linq;
 namespace CleanArchitecture.Mediator.Internal
 {
 
-    internal class ClosedGenericPipeProvider
+    internal interface IClosedGenericPipeProvider
+    {
+
+        #region - - - - - - Methods - - - - - -
+
+        IPipe<TInputPort, TOutputPort> GetPipe<TInputPort, TOutputPort>(ServiceFactory serviceFactory) where TInputPort : IInputPort<TOutputPort>;
+
+        #endregion Methods
+
+    }
+
+    internal class ClosedGenericPipeProvider : IClosedGenericPipeProvider
     {
 
         #region - - - - - - Fields - - - - - -
@@ -80,7 +91,7 @@ namespace CleanArchitecture.Mediator.Internal
 
         #region - - - - - - Methods - - - - - -
 
-        public IPipe<TInputPort, TOutputPort> GetPipe<TInputPort, TOutputPort>(ServiceFactory serviceFactory) where TInputPort : IInputPort<TOutputPort>
+        IPipe<TInputPort, TOutputPort> IClosedGenericPipeProvider.GetPipe<TInputPort, TOutputPort>(ServiceFactory serviceFactory)
             => this.m_PipeProvider(typeof(TInputPort), typeof(TOutputPort), serviceFactory) as IPipe<TInputPort, TOutputPort>;
 
         #endregion Methods

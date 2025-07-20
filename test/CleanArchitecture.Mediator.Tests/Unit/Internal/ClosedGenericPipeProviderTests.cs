@@ -72,28 +72,28 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
 
         [Fact]
         public void GetPipe_GenericConstraintsAreNotMet_NoPipeReturned()
-            => new ClosedGenericPipeProvider(typeof(ConstrainedPipe<,>), Array.Empty<Type>())
+            => ((IClosedGenericPipeProvider)new ClosedGenericPipeProvider(typeof(ConstrainedPipe<,>), Array.Empty<Type>()))
                 .GetPipe<IInputPort<object>, object>(this.m_ServiceFactory)
                 .Should()
                 .BeNull();
 
         [Fact]
         public void GetPipe_ServiceFactoryDoesNotContainRegisteredPipe_NoPipeReturned()
-            => new ClosedGenericPipeProvider(typeof(ConstrainedPipe<,>), Array.Empty<Type>())
+            => ((IClosedGenericPipeProvider)new ClosedGenericPipeProvider(typeof(ConstrainedPipe<,>), Array.Empty<Type>()))
                 .GetPipe<DisposableInputPort2, IDisposable>(this.m_ServiceFactory)
                 .Should()
                 .BeNull();
 
         [Fact]
         public void GetPipe_GenericConstraintsAreMet_GetsPipeFromServiceFactory()
-            => new ClosedGenericPipeProvider(typeof(ConstrainedPipe<,>), Array.Empty<Type>())
+            => ((IClosedGenericPipeProvider)new ClosedGenericPipeProvider(typeof(ConstrainedPipe<,>), Array.Empty<Type>()))
                     .GetPipe<DisposableInputPort, IDisposable>(this.m_ServiceFactory)
                     .Should()
                     .BeOfType<ConstrainedPipe<DisposableInputPort, IDisposable>>();
 
         [Fact]
         public void GetPipe_InputAndOutputPortParametersAreBetweenGenericParameters_ResolvesGenericsProperlyAndGetsPipeFromServiceFactory()
-            => new ClosedGenericPipeProvider(typeof(ValidPipe<,,,,>), new Type[] { typeof(object), typeof(string), typeof(int) })
+            => ((IClosedGenericPipeProvider)new ClosedGenericPipeProvider(typeof(ValidPipe<,,,,>), new Type[] { typeof(object), typeof(string), typeof(int) }))
                 .GetPipe<IInputPort<DateTime>, DateTime>(this.m_ServiceFactory)
                 .Should()
                 .BeOfType<ValidPipe<object, IInputPort<DateTime>, string, DateTime, int>>();
