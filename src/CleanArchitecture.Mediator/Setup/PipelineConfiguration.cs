@@ -120,6 +120,7 @@ namespace CleanArchitecture.Mediator.Setup
             var _PipeProvider = new ClosedGenericPipeProvider(openGenericPipeType, closedGenericTypes);
 
             this.m_PipeHandleProviders.Add((_, nextPipeHandle) => new OpenGenericPipeHandle(_PipeProvider, nextPipeHandle));
+            _ = this.m_PackageRegistration.AddSingletonServiceImplementation(openGenericPipeType, openGenericPipeType);
             registrationConfigurationAction?.Invoke(this.m_PackageRegistration);
 
             return this;
