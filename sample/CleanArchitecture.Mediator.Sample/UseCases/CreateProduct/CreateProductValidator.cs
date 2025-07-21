@@ -1,24 +1,21 @@
-﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct
+﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
+
+public class CreateProductValidator : IValidator<CreateProductInputPort, ICreateProductOutputPort>
 {
 
-    public class CreateProductValidator : IValidator<CreateProductInputPort, ICreateProductOutputPort>
+    #region - - - - - - Methods - - - - - -
+
+    public async Task<bool> HandleValidationAsync(CreateProductInputPort inputPort, ICreateProductOutputPort outputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken)
     {
-
-        #region - - - - - - Methods - - - - - -
-
-        public async Task<bool> HandleValidationAsync(CreateProductInputPort inputPort, ICreateProductOutputPort outputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken)
+        if (inputPort.FailValidation)
         {
-            if (inputPort.FailValidation)
-            {
-                await outputPort.PresentValidationFailureAsync(cancellationToken).ConfigureAwait(false);
-                return false;
-            }
-
-            return true;
+            await outputPort.PresentValidationFailureAsync(cancellationToken).ConfigureAwait(false);
+            return false;
         }
 
-        #endregion Methods
-
+        return true;
     }
+
+    #endregion Methods
 
 }

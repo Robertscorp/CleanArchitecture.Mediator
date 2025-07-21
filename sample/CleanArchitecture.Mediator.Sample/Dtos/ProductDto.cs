@@ -1,15 +1,12 @@
-﻿namespace CleanArchitecture.Mediator.Sample.Dtos
+﻿namespace CleanArchitecture.Mediator.Sample.Dtos;
+
+public class ProductDto
 {
 
-    public class ProductDto
-    {
+    #region - - - - - - Properties - - - - - -
 
-        #region - - - - - - Properties - - - - - -
+    public string Name { get; set; } = string.Empty;
 
-        public string Name { get; set; } = string.Empty;
-
-        #endregion Properties
-
-    }
+    #endregion Properties
 
 }

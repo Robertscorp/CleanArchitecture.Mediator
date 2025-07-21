@@ -1,15 +1,12 @@
-﻿namespace CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation
+﻿namespace CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
+
+public class BusinessRuleValidationResult : IBusinessRuleValidationResult
 {
 
-    public class BusinessRuleValidationResult : IBusinessRuleValidationResult
-    {
+    #region - - - - - - Properties - - - - - -
 
-        #region - - - - - - Properties - - - - - -
+    public bool IsValid { get; set; }
 
-        public bool IsValid { get; set; }
-
-        #endregion Properties
-
-    }
+    #endregion Properties
 
 }

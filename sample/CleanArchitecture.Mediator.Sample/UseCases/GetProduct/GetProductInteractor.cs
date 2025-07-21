@@ -1,22 +1,19 @@
 ﻿using CleanArchitecture.Mediator.Sample.Dtos;
 
-namespace CleanArchitecture.Mediator.Sample.UseCases.GetProduct
+namespace CleanArchitecture.Mediator.Sample.UseCases.GetProduct;
+
+public class GetProductInteractor : IInteractor<GetProductInputPort, IGetProductOutputPort>
 {
 
-    public class GetProductInteractor : IInteractor<GetProductInputPort, IGetProductOutputPort>
-    {
+    #region - - - - - - Methods - - - - - -
 
-        #region - - - - - - Methods - - - - - -
+    Task IInteractor<GetProductInputPort, IGetProductOutputPort>.HandleAsync(
+        GetProductInputPort inputPort,
+        IGetProductOutputPort outputPort,
+        ServiceFactory serviceFactory,
+        CancellationToken cancellationToken)
+        => outputPort.PresentProductAsync(new ProductDto { Name = "Hat" }, cancellationToken);
 
-        Task IInteractor<GetProductInputPort, IGetProductOutputPort>.HandleAsync(
-            GetProductInputPort inputPort,
-            IGetProductOutputPort outputPort,
-            ServiceFactory serviceFactory,
-            CancellationToken cancellationToken)
-            => outputPort.PresentProductAsync(new ProductDto { Name = "Hat" }, cancellationToken);
-
-        #endregion Methods
-
-    }
+    #endregion Methods
 
 }

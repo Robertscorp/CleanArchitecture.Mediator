@@ -1,19 +1,17 @@
-﻿namespace CleanArchitecture.Mediator.Sample.UseCases.LegacyCreateProduct
+﻿namespace CleanArchitecture.Mediator.Sample.UseCases.LegacyCreateProduct;
+
+
+public class LegacyCreateProductInputPort : IInputPort<ILegacyCreateProductOutputPort>
 {
 
-    public class LegacyCreateProductInputPort : IInputPort<ILegacyCreateProductOutputPort>
-    {
+    #region - - - - - - Properties - - - - - -
 
-        #region - - - - - - Properties - - - - - -
+    public bool FailAuthorisation { get; set; }
 
-        public bool FailAuthorisation { get; set; }
+    public bool FailBusinessRuleValidation { get; set; }
 
-        public bool FailBusinessRuleValidation { get; set; }
+    public bool FailInputPortValidation { get; set; }
 
-        public bool FailInputPortValidation { get; set; }
-
-        #endregion Properties
-
-    }
+    #endregion Properties
 
 }

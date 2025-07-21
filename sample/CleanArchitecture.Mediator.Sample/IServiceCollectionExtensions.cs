@@ -6,70 +6,67 @@ using CleanArchitecture.Mediator.Sample.Pipelines;
 using CleanArchitecture.Mediator.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CleanArchitecture.Mediator.Sample
+namespace CleanArchitecture.Mediator.Sample;
+
+public static class IServiceCollectionExtensions
 {
 
-    public static class IServiceCollectionExtensions
+    #region - - - - - - Methods - - - - - -
+
+    public static IServiceCollection AddCleanArchitectureMediator(this IServiceCollection serviceCollection)
     {
-
-        #region - - - - - - Methods - - - - - -
-
-        public static IServiceCollection AddCleanArchitectureMediator(this IServiceCollection serviceCollection)
+        CleanArchitectureMediator.Setup(config =>
         {
-            CleanArchitectureMediator.Setup(config =>
-            {
-                _ = config.AddPipeline<DefaultPipeline>(pipeline
-                    => pipeline
-                        .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
-                        {
-                            Console.WriteLine("\t- Beginning invocation of DefaultPipeline.");
-                            await nextPipeHandleAsync();
-                            Console.WriteLine("\t- Completed invocation of DefaultPipeline.");
-                        })
-                        .AddSingleTenantAuthentication()
-                        .AddAuthorisation()
-                        .AddValidation()
-                        .AddInteractorInvocation());
+            _ = config.AddPipeline<DefaultPipeline>(pipeline
+                => pipeline
+                    .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
+                    {
+                        Console.WriteLine("\t- Beginning invocation of DefaultPipeline.");
+                        await nextPipeHandleAsync();
+                        Console.WriteLine("\t- Completed invocation of DefaultPipeline.");
+                    })
+                    .AddSingleTenantAuthentication()
+                    .AddAuthorisation()
+                    .AddValidation()
+                    .AddInteractorInvocation());
 
-                _ = config.AddPipeline<LegacyPipeline>(pipeline
-                    => pipeline
-                        .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
-                        {
-                            Console.WriteLine("\t- Beginning invocation of LegacyPipeline.");
-                            await nextPipeHandleAsync();
-                            Console.WriteLine("\t- Completed invocation of LegacyPipeline.");
-                        })
-                        .AddAuthentication()
-                        .AddPipe<AuthorisationPipe<AuthorisationResult>>(config => config.AddSingletonService(typeof(Legacy.Authorisation.IAuthorisationEnforcer<,>)))
-                        .AddPipe<InputPortValidationPipe<InputPortValidationResult>>(config => config.AddSingletonService(typeof(IInputPortValidator<,>)))
-                        .AddPipe<BusinessRuleValidationPipe<BusinessRuleValidationResult>>(config => config.AddSingletonService(typeof(IBusinessRuleValidator<,>)))
-                        .AddInteractorInvocation());
+            _ = config.AddPipeline<LegacyPipeline>(pipeline
+                => pipeline
+                    .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
+                    {
+                        Console.WriteLine("\t- Beginning invocation of LegacyPipeline.");
+                        await nextPipeHandleAsync();
+                        Console.WriteLine("\t- Completed invocation of LegacyPipeline.");
+                    })
+                    .AddAuthentication()
+                    .AddPipe<AuthorisationPipe<AuthorisationResult>>(config => config.AddSingletonService(typeof(Legacy.Authorisation.IAuthorisationEnforcer<,>)))
+                    .AddPipe<InputPortValidationPipe<InputPortValidationResult>>(config => config.AddSingletonService(typeof(IInputPortValidator<,>)))
+                    .AddPipe<BusinessRuleValidationPipe<BusinessRuleValidationResult>>(config => config.AddSingletonService(typeof(IBusinessRuleValidator<,>)))
+                    .AddInteractorInvocation());
 
-                _ = config.AddPipeline<VerificationPipeline>(pipeline
-                    => pipeline
-                        .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
-                        {
-                            Console.WriteLine("\t- Beginning invocation of VerificationPipeline.");
-                            await nextPipeHandleAsync();
-                            Console.WriteLine("\t- Completed invocation of VerificationPipeline.");
-                        })
-                        .AddAuthentication()
-                        .AddAuthorisation()
-                        .AddValidation()
-                        .AddPipe<VerificationSuccessPipe>());
-            }, registration =>
-                registration
-                    .AddAssemblies(typeof(Program).Assembly)
-                    .WithSingletonFactoryRegistrationAction((serviceType, getServiceFunc) => serviceCollection.AddSingleton(serviceType, serviceProvider => getServiceFunc(serviceProvider.GetRequiredService<ServiceFactory>())))
-                    .WithSingletonServiceRegistrationAction((serviceType, implementationType) => serviceCollection.AddSingleton(serviceType, implementationType)));
+            _ = config.AddPipeline<VerificationPipeline>(pipeline
+                => pipeline
+                    .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
+                    {
+                        Console.WriteLine("\t- Beginning invocation of VerificationPipeline.");
+                        await nextPipeHandleAsync();
+                        Console.WriteLine("\t- Completed invocation of VerificationPipeline.");
+                    })
+                    .AddAuthentication()
+                    .AddAuthorisation()
+                    .AddValidation()
+                    .AddPipe<VerificationSuccessPipe>());
+        }, registration =>
+            registration
+                .AddAssemblies(typeof(Program).Assembly)
+                .WithSingletonFactoryRegistrationAction((serviceType, getServiceFunc) => serviceCollection.AddSingleton(serviceType, serviceProvider => getServiceFunc(serviceProvider.GetRequiredService<ServiceFactory>())))
+                .WithSingletonServiceRegistrationAction((serviceType, implementationType) => serviceCollection.AddSingleton(serviceType, implementationType)));
 
-            _ = serviceCollection.AddScoped<ServiceFactory>(serviceProvider => serviceProvider.GetService);
+        _ = serviceCollection.AddScoped<ServiceFactory>(serviceProvider => serviceProvider.GetService);
 
-            return serviceCollection;
-        }
-
-        #endregion Methods
-
+        return serviceCollection;
     }
+
+    #endregion Methods
 
 }

@@ -1,21 +1,18 @@
-﻿namespace CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation
+﻿namespace CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
+
+/// <summary>
+/// A validation result from a business rule validator.
+/// </summary>
+public interface IBusinessRuleValidationResult
 {
 
+    #region - - - - - - Properties - - - - - -
+
     /// <summary>
-    /// A validation result from a business rule validator.
+    /// Determines if a validation failure should be presented.
     /// </summary>
-    public interface IBusinessRuleValidationResult
-    {
+    bool IsValid { get; }
 
-        #region - - - - - - Properties - - - - - -
-
-        /// <summary>
-        /// Determines if a validation failure should be presented.
-        /// </summary>
-        bool IsValid { get; }
-
-        #endregion Properties
-
-    }
+    #endregion Properties
 
 }

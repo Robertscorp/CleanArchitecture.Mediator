@@ -1,15 +1,12 @@
-﻿namespace CleanArchitecture.Mediator.Sample.Legacy.InputPortValidation
+﻿namespace CleanArchitecture.Mediator.Sample.Legacy.InputPortValidation;
+
+public class InputPortValidationResult : IInputPortValidationResult
 {
 
-    public class InputPortValidationResult : IInputPortValidationResult
-    {
+    #region - - - - - - Properties - - - - - -
 
-        #region - - - - - - Properties - - - - - -
+    public bool IsValid { get; set; }
 
-        public bool IsValid { get; set; }
-
-        #endregion Properties
-
-    }
+    #endregion Properties
 
 }
