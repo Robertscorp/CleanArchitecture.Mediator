@@ -22,13 +22,13 @@ namespace CleanArchitecture.Mediator.Setup
         private readonly HashSet<Type> m_SingletonServicesToScan = new HashSet<Type>();
 
         private Action<Type, Type> m_ScopedServiceRegistrationAction
-            = (x, y) => throw new InvalidOperationException($"Must specify a scoped service registration action by calling '{nameof(WithScopedServiceRegistrationAction)}' prior to calling '{nameof(Register)}'.");
+            = (_, __) => throw new InvalidOperationException($"Must specify a scoped service registration action by calling '{nameof(WithScopedServiceRegistrationAction)}' prior to calling '{nameof(Register)}'.");
 
         private Action<Type, Func<ServiceFactory, object>> m_SingletonFactoryRegistrationAction
-            = (x, y) => throw new InvalidOperationException($"Must specify a singleton factory registration action by calling '{nameof(WithSingletonFactoryRegistrationAction)}' prior to calling '{nameof(Register)}'.");
+            = (_, __) => throw new InvalidOperationException($"Must specify a singleton factory registration action by calling '{nameof(WithSingletonFactoryRegistrationAction)}' prior to calling '{nameof(Register)}'.");
 
         private Action<Type, Type> m_SingletonServiceRegistrationAction
-            = (x, y) => throw new InvalidOperationException($"Must specify a singleton service registration action by calling '{nameof(WithSingletonServiceRegistrationAction)}' prior to calling '{nameof(Register)}'.");
+            = (_, __) => throw new InvalidOperationException($"Must specify a singleton service registration action by calling '{nameof(WithSingletonServiceRegistrationAction)}' prior to calling '{nameof(Register)}'.");
 
         #endregion Fields
 
@@ -81,7 +81,6 @@ namespace CleanArchitecture.Mediator.Setup
         {
             this.m_ScopedServiceImplementations[serviceType ?? throw new ArgumentNullException(nameof(serviceType))]
                 = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
-
             return this;
         }
 
@@ -125,7 +124,6 @@ namespace CleanArchitecture.Mediator.Setup
         {
             this.m_SingletonServiceImplementations[serviceType ?? throw new ArgumentNullException(nameof(serviceType))]
                 = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
-
             return this;
         }
 
