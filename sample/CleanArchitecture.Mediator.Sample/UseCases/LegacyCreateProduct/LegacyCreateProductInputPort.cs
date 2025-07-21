@@ -1,6 +1,5 @@
 ﻿namespace CleanArchitecture.Mediator.Sample.UseCases.LegacyCreateProduct;
 
-
 public class LegacyCreateProductInputPort : IInputPort<ILegacyCreateProductOutputPort>
 {
 
