@@ -40,7 +40,7 @@ namespace CleanArchitecture.Mediator.Internal
         public abstract Task InvokePipelineAsync(
             object inputPort,
             object outputPort,
-            PipeHandle pipelineHandle,
+            IPipeHandle pipelineHandle,
             ServiceFactory serviceFactory,
             CancellationToken cancellationToken);
 
@@ -53,7 +53,7 @@ namespace CleanArchitecture.Mediator.Internal
 
         #region - - - - - - Methods - - - - - -
 
-        public override Task InvokePipelineAsync(object inputPort, object outputPort, PipeHandle pipelineHandle, ServiceFactory serviceFactory, CancellationToken cancellationToken)
+        public override Task InvokePipelineAsync(object inputPort, object outputPort, IPipeHandle pipelineHandle, ServiceFactory serviceFactory, CancellationToken cancellationToken)
             => pipelineHandle.InvokePipeAsync((TInputPort)inputPort, (TOutputPort)outputPort, serviceFactory, cancellationToken);
 
         #endregion Methods

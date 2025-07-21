@@ -1,5 +1,4 @@
 ﻿using CleanArchitecture.Mediator.Internal;
-using FluentAssertions;
 using Moq;
 using System.Threading.Tasks;
 using Xunit;
@@ -13,27 +12,21 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
         #region - - - - - - Fields - - - - - -
 
         private readonly Mock<IInteractor<IInputPort<object>, object>> m_MockInteractor = new();
-        private readonly Mock<IPipe> m_MockPipe = new();
+        private readonly Mock<IPipeHandle> m_MockNextPipeHandle = new();
         private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
         private readonly IInputPort<object> m_InputPort = new Mock<IInputPort<object>>().Object;
         private readonly object m_OutputPort = new();
-        private readonly IPipe m_Pipe;
-        private readonly PipeHandle m_PipeHandle;
+        private readonly IPipe m_Pipe = new InteractorInvocationPipe();
 
         #endregion Fields
 
         #region - - - - - - Constructors - - - - - -
 
         public InteractorInvocationPipeTests()
-        {
-            this.m_Pipe = new InteractorInvocationPipe();
-            this.m_PipeHandle = new(this.m_MockPipe.Object, null);
-
-            _ = this.m_MockServiceFactory
+            => _ = this.m_MockServiceFactory
                     .Setup(mock => mock.Invoke(typeof(IInteractor<IInputPort<object>, object>)))
                     .Returns(this.m_MockInteractor.Object);
-        }
 
         #endregion Constructors
 
@@ -46,12 +39,11 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
             this.m_MockServiceFactory.Reset();
 
             // Act
-            var _Exception = await Record.ExceptionAsync(() => this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, this.m_PipeHandle, default));
+            await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
             // Assert
-            _ = _Exception.Should().BeNull();
-
-            this.m_MockPipe.VerifyNoOtherCalls();
+            this.m_MockInteractor.VerifyNoOtherCalls();
+            this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -60,11 +52,13 @@ namespace CleanArchitecture.Mediator.Tests.Unit.Internal
             // Arrange
 
             // Act
-            await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, this.m_PipeHandle, default);
+            await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
             // Assert
             this.m_MockInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, default), Times.Once());
-            this.m_MockPipe.VerifyNoOtherCalls();
+
+            this.m_MockInteractor.VerifyNoOtherCalls();
+            this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         }
 
         #endregion InvokeAsync Tests

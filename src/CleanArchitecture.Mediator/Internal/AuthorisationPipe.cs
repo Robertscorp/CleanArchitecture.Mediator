@@ -13,7 +13,7 @@ namespace CleanArchitecture.Mediator.Internal
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            PipeHandle nextPipeHandle,
+            IPipeHandle nextPipeHandle,
             CancellationToken cancellationToken)
         {
             var _AuthEnforcer = serviceFactory.GetService<IAuthorisationEnforcer<TInputPort, TOutputPort>>();

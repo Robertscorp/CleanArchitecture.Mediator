@@ -14,7 +14,7 @@ namespace CleanArchitecture.Mediator
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly PipeHandle m_PipelineHandle;
+        private readonly IPipeHandle m_PipelineHandle;
 
         #endregion Fields
 
