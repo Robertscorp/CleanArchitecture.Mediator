@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Mediator.Configuration;
+﻿using CleanArchitecture.Mediator.Setup;
 using Moq;
 using System;
 using System.Security.Claims;
@@ -61,15 +61,19 @@ namespace CleanArchitecture.Mediator.Tests.Integration
                     .Setup(mock => mock.Invoke(typeof(IValidator<InputPort, IEverythingOutputPort>)))
                     .Returns(this.m_MockValidator.Object);
 
-            CleanArchitectureMediator.Configure(builder
-                => builder.AddPipeline<Pipeline>(pipeline
-                    => pipeline
-                        .AddAuthentication()
-                        .AddAuthorisation()
-                        .AddValidation()
-                        .AddInteractorInvocation()),
-                        (type, implementationType) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns((Type t) => Activator.CreateInstance(implementationType)!),
-                        (type, factory) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns(factory(this.m_MockServiceFactory.Object)));
+            CleanArchitectureMediator.Setup(
+                config =>
+                    config.AddPipeline<Pipeline>(
+                        pipeline =>
+                            pipeline
+                                .AddAuthentication()
+                                .AddAuthorisation()
+                                .AddValidation()
+                                .AddInteractorInvocation()),
+                registration =>
+                    registration
+                        .WithSingletonFactoryRegistrationAction((type, factory) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns(factory(this.m_MockServiceFactory.Object)))
+                        .WithSingletonServiceRegistrationAction((type, implementationType) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns((Type t) => Activator.CreateInstance(implementationType)!)));
 
             this.m_Pipeline = new Pipeline(this.m_MockServiceFactory.Object);
         }
