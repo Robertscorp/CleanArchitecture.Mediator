@@ -1,15 +1,12 @@
-﻿namespace CleanArchitecture.Mediator.Sample.OutputPorts
+﻿namespace CleanArchitecture.Mediator.Sample.OutputPorts;
+
+public interface IVerificationSuccessOutputPort
 {
 
-    public interface IVerificationSuccessOutputPort
-    {
+    #region - - - - - - Methods - - - - - -
 
-        #region - - - - - - Methods - - - - - -
+    Task PresentVerificationSuccessAsync(CancellationToken cancellationToken);
 
-        Task PresentVerificationSuccessAsync(CancellationToken cancellationToken);
-
-        #endregion Methods
-
-    }
+    #endregion Methods
 
 }

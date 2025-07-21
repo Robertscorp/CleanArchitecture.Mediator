@@ -1,17 +1,14 @@
 ﻿using CleanArchitecture.Mediator.Sample.Dtos;
 
-namespace CleanArchitecture.Mediator.Sample.UseCases.GetProduct
+namespace CleanArchitecture.Mediator.Sample.UseCases.GetProduct;
+
+public interface IGetProductOutputPort
 {
 
-    public interface IGetProductOutputPort
-    {
+    #region - - - - - - Methods - - - - - -
 
-        #region - - - - - - Methods - - - - - -
+    Task PresentProductAsync(ProductDto product, CancellationToken cancellationToken);
 
-        Task PresentProductAsync(ProductDto product, CancellationToken cancellationToken);
-
-        #endregion Methods
-
-    }
+    #endregion Methods
 
 }

@@ -1,25 +1,22 @@
 ﻿using CleanArchitecture.Mediator.Sample.OutputPorts;
 
-namespace CleanArchitecture.Mediator.Sample.Pipelines
+namespace CleanArchitecture.Mediator.Sample.Pipelines;
+
+public class VerificationSuccessPipe : IPipe
 {
 
-    public class VerificationSuccessPipe : IPipe
-    {
+    #region - - - - - - Methods - - - - - -
 
-        #region - - - - - - Methods - - - - - -
+    Task IPipe.InvokeAsync<TInputPort, TOutputPort>(
+        TInputPort inputPort,
+        TOutputPort outputPort,
+        ServiceFactory serviceFactory,
+        IPipeHandle nextPipeHandle,
+        CancellationToken cancellationToken)
+        => outputPort is IVerificationSuccessOutputPort _OutputPort
+            ? _OutputPort.PresentVerificationSuccessAsync(cancellationToken)
+            : Task.CompletedTask;
 
-        Task IPipe.InvokeAsync<TInputPort, TOutputPort>(
-            TInputPort inputPort,
-            TOutputPort outputPort,
-            ServiceFactory serviceFactory,
-            IPipeHandle nextPipeHandle,
-            CancellationToken cancellationToken)
-            => outputPort is IVerificationSuccessOutputPort _OutputPort
-                ? _OutputPort.PresentVerificationSuccessAsync(cancellationToken)
-                : Task.CompletedTask;
-
-        #endregion Methods
-
-    }
+    #endregion Methods
 
 }

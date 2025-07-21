@@ -1,17 +1,14 @@
-﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct
+﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
+
+public class CreateProductInputPort : IInputPort<ICreateProductOutputPort>
 {
 
-    public class CreateProductInputPort : IInputPort<ICreateProductOutputPort>
-    {
+    #region - - - - - - Properties - - - - - -
 
-        #region - - - - - - Properties - - - - - -
+    public bool FailAuthorisation { get; set; }
 
-        public bool FailAuthorisation { get; set; }
+    public bool FailValidation { get; set; }
 
-        public bool FailValidation { get; set; }
-
-        #endregion Properties
-
-    }
+    #endregion Properties
 
 }

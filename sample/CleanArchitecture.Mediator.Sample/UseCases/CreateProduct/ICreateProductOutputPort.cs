@@ -1,21 +1,18 @@
 ﻿using CleanArchitecture.Mediator.Sample.Dtos;
 
-namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct
+namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
+
+public interface ICreateProductOutputPort : IAuthenticationOutputPort
 {
 
-    public interface ICreateProductOutputPort : IAuthenticationOutputPort
-    {
+    #region - - - - - - Methods - - - - - -
 
-        #region - - - - - - Methods - - - - - -
+    Task PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken);
 
-        Task PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken);
+    Task PresentUnauthorisedAsync(CancellationToken cancellationToken);
 
-        Task PresentUnauthorisedAsync(CancellationToken cancellationToken);
+    Task PresentValidationFailureAsync(CancellationToken cancellationToken);
 
-        Task PresentValidationFailureAsync(CancellationToken cancellationToken);
-
-        #endregion Methods
-
-    }
+    #endregion Methods
 
 }

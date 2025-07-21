@@ -1,17 +1,14 @@
 ﻿using System.Security.Claims;
 
-namespace CleanArchitecture.Mediator.Sample.Infrastructure
+namespace CleanArchitecture.Mediator.Sample.Infrastructure;
+
+public class AuthenticatedClaimsPrincipalProvider : IAuthenticatedClaimsPrincipalProvider
 {
 
-    public class AuthenticatedClaimsPrincipalProvider : IAuthenticatedClaimsPrincipalProvider
-    {
+    #region - - - - - - Properties - - - - - -
 
-        #region - - - - - - Properties - - - - - -
+    public ClaimsPrincipal? AuthenticatedClaimsPrincipal { get; set; }
 
-        public ClaimsPrincipal? AuthenticatedClaimsPrincipal { get; set; }
-
-        #endregion Properties
-
-    }
+    #endregion Properties
 
 }

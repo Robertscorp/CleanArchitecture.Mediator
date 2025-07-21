@@ -1,15 +1,12 @@
-﻿namespace CleanArchitecture.Mediator.Sample.Legacy.Authorisation
+﻿namespace CleanArchitecture.Mediator.Sample.Legacy.Authorisation;
+
+public class AuthorisationResult : IAuthorisationResult
 {
 
-    public class AuthorisationResult : IAuthorisationResult
-    {
+    #region - - - - - - Properties - - - - - -
 
-        #region - - - - - - Properties - - - - - -
+    public bool IsAuthorised { get; set; }
 
-        public bool IsAuthorised { get; set; }
-
-        #endregion Properties
-
-    }
+    #endregion Properties
 
 }

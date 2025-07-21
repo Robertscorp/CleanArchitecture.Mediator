@@ -1,20 +1,17 @@
-﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct
+﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
+
+public class CreateProductInteractor : IInteractor<CreateProductInputPort, ICreateProductOutputPort>
 {
 
-    public class CreateProductInteractor : IInteractor<CreateProductInputPort, ICreateProductOutputPort>
-    {
+    #region - - - - - - Methods - - - - - -
 
-        #region - - - - - - Methods - - - - - -
+    Task IInteractor<CreateProductInputPort, ICreateProductOutputPort>.HandleAsync(
+        CreateProductInputPort inputPort,
+        ICreateProductOutputPort outputPort,
+        ServiceFactory serviceFactory,
+        CancellationToken cancellationToken)
+        => outputPort.PresentCreatedProductAsync(new() { Name = $"Created - {DateTime.Now}" }, cancellationToken);
 
-        Task IInteractor<CreateProductInputPort, ICreateProductOutputPort>.HandleAsync(
-            CreateProductInputPort inputPort,
-            ICreateProductOutputPort outputPort,
-            ServiceFactory serviceFactory,
-            CancellationToken cancellationToken)
-            => outputPort.PresentCreatedProductAsync(new() { Name = $"Created - {DateTime.Now}" }, cancellationToken);
-
-        #endregion Methods
-
-    }
+    #endregion Methods
 
 }
