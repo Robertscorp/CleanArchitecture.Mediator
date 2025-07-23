@@ -1,4 +1,4 @@
-﻿namespace CleanArchitecture.Mediator.Sample.Legacy.InputPortValidation;
+﻿namespace CleanArchitecture.Mediator.Sample.Services;
 
 public class InputPortValidationResult : IInputPortValidationResult
 {

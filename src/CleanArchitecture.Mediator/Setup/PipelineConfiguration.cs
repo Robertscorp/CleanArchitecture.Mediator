@@ -49,6 +49,16 @@ namespace CleanArchitecture.Mediator.Setup
             => this.AddPipe<AuthorisationPipe>(config => config.AddSingletonService(typeof(IAuthorisationEnforcer<,>)));
 
         /// <summary>
+        /// Adds input port validation to the pipeline.
+        /// </summary>
+        /// <returns>Itself.</returns>
+        public PipelineConfiguration<TPipeline> AddInputPortValidation<TValidationResult>() where TValidationResult : IInputPortValidationResult
+            => this.AddOpenGenericPipe(
+                typeof(InputPortValidationPipe<,,>),
+                new Type[] { typeof(TValidationResult) },
+                config => config.AddSingletonService(typeof(IInputPortValidator<,>)));
+
+        /// <summary>
         /// Adds interactor invocation to the pipeline.
         /// </summary>
         public void AddInteractorInvocation()
