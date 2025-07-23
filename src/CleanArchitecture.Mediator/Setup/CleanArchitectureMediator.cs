@@ -24,9 +24,9 @@ namespace CleanArchitecture.Mediator.Setup
             if (registrationAction is null) throw new ArgumentNullException(nameof(registrationAction));
 
             var _PackageRegistration = new PackageRegistration();
-            configurationAction(new PackageConfiguration(_PackageRegistration));
             registrationAction(_PackageRegistration);
-            _PackageRegistration.Register();
+            configurationAction(new PackageConfiguration(_PackageRegistration));
+            _PackageRegistration.ScanForImplementations();
         }
 
         #endregion Methods

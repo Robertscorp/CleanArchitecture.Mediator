@@ -16,19 +16,16 @@ namespace CleanArchitecture.Mediator.Setup
 
         private readonly HashSet<Assembly> m_AssembliesToScan = new HashSet<Assembly>();
         private readonly HashSet<Type> m_ScopedServicesToScan = new HashSet<Type>();
-        private readonly Dictionary<Type, Type> m_ScopedServiceImplementations = new Dictionary<Type, Type>();
-        private readonly Dictionary<Type, Func<ServiceFactory, object>> m_SingletonFactories = new Dictionary<Type, Func<ServiceFactory, object>>();
-        private readonly Dictionary<Type, Type> m_SingletonServiceImplementations = new Dictionary<Type, Type>();
         private readonly HashSet<Type> m_SingletonServicesToScan = new HashSet<Type>();
 
         private Action<Type, Type> m_ScopedServiceRegistrationAction
-            = (_, __) => throw new InvalidOperationException($"Must specify a scoped service registration action by calling '{nameof(WithScopedServiceRegistrationAction)}' prior to calling '{nameof(Register)}'.");
+            = (_, __) => throw new InvalidOperationException($"Must specify a scoped service registration action by calling '{nameof(WithScopedServiceRegistrationAction)}' prior to calling '{nameof(AddScopedServiceImplementation)}'.");
 
         private Action<Type, Func<ServiceFactory, object>> m_SingletonFactoryRegistrationAction
-            = (_, __) => throw new InvalidOperationException($"Must specify a singleton factory registration action by calling '{nameof(WithSingletonFactoryRegistrationAction)}' prior to calling '{nameof(Register)}'.");
+            = (_, __) => throw new InvalidOperationException($"Must specify a singleton factory registration action by calling '{nameof(WithSingletonFactoryRegistrationAction)}' prior to calling '{nameof(AddSingletonFactory)}'.");
 
         private Action<Type, Type> m_SingletonServiceRegistrationAction
-            = (_, __) => throw new InvalidOperationException($"Must specify a singleton service registration action by calling '{nameof(WithSingletonServiceRegistrationAction)}' prior to calling '{nameof(Register)}'.");
+            = (_, __) => throw new InvalidOperationException($"Must specify a singleton service registration action by calling '{nameof(WithSingletonServiceRegistrationAction)}' prior to calling '{nameof(AddSingletonServiceImplementation)}'.");
 
         #endregion Fields
 
@@ -79,8 +76,10 @@ namespace CleanArchitecture.Mediator.Setup
         /// <exception cref="ArgumentNullException"><paramref name="serviceType"/> is null.</exception>
         public PackageRegistration AddScopedServiceImplementation(Type serviceType, Type implementationType)
         {
-            this.m_ScopedServiceImplementations[serviceType ?? throw new ArgumentNullException(nameof(serviceType))]
-                = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
+            this.m_ScopedServiceRegistrationAction(
+                serviceType ?? throw new ArgumentNullException(nameof(serviceType)),
+                implementationType ?? throw new ArgumentNullException(nameof(implementationType)));
+
             return this;
         }
 
@@ -94,8 +93,10 @@ namespace CleanArchitecture.Mediator.Setup
         /// <exception cref="ArgumentNullException"><paramref name="serviceType"/> is null.</exception>
         public PackageRegistration AddSingletonFactory(Type serviceType, Func<ServiceFactory, object> serviceFactory)
         {
-            this.m_SingletonFactories[serviceType ?? throw new ArgumentNullException(nameof(serviceType))]
-                = serviceFactory ?? throw new ArgumentNullException(nameof(serviceFactory));
+            this.m_SingletonFactoryRegistrationAction(
+                serviceType ?? throw new ArgumentNullException(nameof(serviceType)),
+                serviceFactory ?? throw new ArgumentNullException(nameof(serviceFactory)));
+
             return this;
         }
 
@@ -122,8 +123,10 @@ namespace CleanArchitecture.Mediator.Setup
         /// <exception cref="ArgumentNullException"><paramref name="serviceType"/> is null.</exception>
         public PackageRegistration AddSingletonServiceImplementation(Type serviceType, Type implementationType)
         {
-            this.m_SingletonServiceImplementations[serviceType ?? throw new ArgumentNullException(nameof(serviceType))]
-                = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
+            this.m_SingletonServiceRegistrationAction(
+                serviceType ?? throw new ArgumentNullException(nameof(serviceType)),
+                implementationType ?? throw new ArgumentNullException(nameof(implementationType)));
+
             return this;
         }
 
@@ -163,18 +166,8 @@ namespace CleanArchitecture.Mediator.Setup
             return this;
         }
 
-        internal void Register()
-        {
-            foreach (var _ScopedServiceImplementation in this.m_ScopedServiceImplementations)
-                this.m_ScopedServiceRegistrationAction(_ScopedServiceImplementation.Key, _ScopedServiceImplementation.Value);
-
-            foreach (var _SingletonServiceImplementation in this.m_SingletonServiceImplementations)
-                this.m_SingletonServiceRegistrationAction(_SingletonServiceImplementation.Key, _SingletonServiceImplementation.Value);
-
-            foreach (var _SingletonFactory in this.m_SingletonFactories)
-                this.m_SingletonFactoryRegistrationAction(_SingletonFactory.Key, _SingletonFactory.Value);
-
-            new ServiceFinder()
+        internal void ScanForImplementations()
+            => new ServiceFinder()
             {
                 OnServiceImplementationsFound = (service, implementations) =>
                 {
@@ -187,7 +180,6 @@ namespace CleanArchitecture.Mediator.Setup
                             this.m_ScopedServiceRegistrationAction(service, _Implementation);
                 }
             }.VisitAssemblyScan(AssemblyScan.FromAssemblies(this.m_AssembliesToScan));
-        }
 
         #endregion Methods
 
