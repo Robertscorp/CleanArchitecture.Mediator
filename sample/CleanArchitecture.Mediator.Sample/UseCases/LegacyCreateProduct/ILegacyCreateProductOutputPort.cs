@@ -1,7 +1,7 @@
 ﻿using CleanArchitecture.Mediator.Sample.Dtos;
 using CleanArchitecture.Mediator.Sample.Legacy.Authorisation;
 using CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
-using CleanArchitecture.Mediator.Sample.Legacy.InputPortValidation;
+using CleanArchitecture.Mediator.Sample.Services;
 
 namespace CleanArchitecture.Mediator.Sample.UseCases.LegacyCreateProduct;
 

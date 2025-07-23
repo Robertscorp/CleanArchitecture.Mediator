@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Mediator.Sample.Legacy.InputPortValidation;
+﻿using CleanArchitecture.Mediator.Sample.Services;
 
 namespace CleanArchitecture.Mediator.Sample.UseCases.LegacyCreateProduct;
 
@@ -7,7 +7,7 @@ public class LegacyCreateProductInputPortValidator : IInputPortValidator<LegacyC
 
     #region - - - - - - Methods - - - - - -
 
-    public Task<InputPortValidationResult> ValidateAsync(LegacyCreateProductInputPort inputPort, CancellationToken cancellationToken)
+    public Task<InputPortValidationResult> ValidateAsync(LegacyCreateProductInputPort inputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken)
         => Task.FromResult(new InputPortValidationResult() { IsValid = !inputPort.FailInputPortValidation });
 
     #endregion Methods
