@@ -10,7 +10,7 @@ public class ValidationPipeTests
 
     #region - - - - - - Fields - - - - - -
 
-    private readonly Mock<IPipeHandle> m_MockNextPipeHandle = new();
+    private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
     private readonly Mock<ITestOutputPort> m_MockOutputPort = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
     private readonly Mock<IValidator<TestInputPort, ITestOutputPort>> m_MockValidator = new();
@@ -49,7 +49,7 @@ public class ValidationPipeTests
         await this.m_Pipe.InvokeAsync(this.m_InputPort, _OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
-        this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, _OutputPort, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
@@ -66,7 +66,7 @@ public class ValidationPipeTests
         await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
-        this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
@@ -83,7 +83,7 @@ public class ValidationPipeTests
         await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
-        this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
         this.m_MockValidator.Verify(mock => mock.HandleValidationAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
 
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();

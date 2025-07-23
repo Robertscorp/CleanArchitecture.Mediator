@@ -11,7 +11,7 @@ public class VerificationSuccessPipe : IPipe
         TInputPort inputPort,
         TOutputPort outputPort,
         ServiceFactory serviceFactory,
-        IPipeHandle nextPipeHandle,
+        NextPipeHandleAsync nextPipeHandle,
         CancellationToken cancellationToken)
         => outputPort is IVerificationSuccessOutputPort _OutputPort
             ? _OutputPort.PresentVerificationSuccessAsync(cancellationToken)

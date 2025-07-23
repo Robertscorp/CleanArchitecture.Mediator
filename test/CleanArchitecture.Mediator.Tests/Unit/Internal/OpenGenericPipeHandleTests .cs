@@ -38,6 +38,24 @@ public class OpenGenericPipeHandleTests
     #region - - - - - - InvokePipeAsync Tests - - - - - -
 
     [Fact]
+    public async Task InvokePipeAsync_InvokingNextPipeHandle_InvokesCorrectly()
+    {
+        // Arrange
+        _ = this.m_MockPipe
+                .Setup(mock => mock.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, It.IsAny<NextPipeHandleAsync>(), default))
+                .Returns((IInputPort<object> ip, object op, ServiceFactory sf, NextPipeHandleAsync nextPipeHandle, CancellationToken ct)
+                    => nextPipeHandle());
+
+        // Act
+        await this.m_PipeHandle.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, default);
+
+        // Assert
+        this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, default), Times.Once());
+
+        this.m_MockNextPipeHandle.VerifyNoOtherCalls();
+    }
+
+    [Fact]
     public async Task InvokePipeAsync_OperationIsCancelled_CancelsImmediately()
     {
         // Arrange
@@ -82,7 +100,7 @@ public class OpenGenericPipeHandleTests
         await this.m_PipeHandle.InvokePipeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, default);
 
         // Assert
-        this.m_MockPipe.Verify(mock => mock.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default), Times.Once());
+        this.m_MockPipe.Verify(mock => mock.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, It.IsAny<NextPipeHandleAsync>(), default), Times.Once());
 
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockPipe.VerifyNoOtherCalls();

@@ -21,7 +21,7 @@ public class BusinessRuleValidationPipe<TValidationResult> : IPipe where TValida
         TInputPort inputPort,
         TOutputPort outputPort,
         ServiceFactory serviceFactory,
-        IPipeHandle nextPipeHandle,
+        NextPipeHandleAsync nextPipeHandle,
         CancellationToken cancellationToken)
     {
         if (outputPort is IBusinessRuleValidationOutputPort<TValidationResult> _OutputPort)
@@ -38,7 +38,7 @@ public class BusinessRuleValidationPipe<TValidationResult> : IPipe where TValida
             }
         }
 
-        await nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
+        await nextPipeHandle().ConfigureAwait(false);
     }
 
     #endregion Methods

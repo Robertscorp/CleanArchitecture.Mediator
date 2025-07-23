@@ -12,7 +12,7 @@ public class AuthenticationPipeTests
     #region - - - - - - Fields - - - - - -
 
     private readonly Mock<IAuthenticatedClaimsPrincipalProvider> m_MockClaimsPrincipalProvider = new();
-    private readonly Mock<IPipeHandle> m_MockNextPipeHandle = new();
+    private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
     private readonly Mock<IAuthenticationOutputPort> m_MockOutputPort = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
@@ -48,7 +48,7 @@ public class AuthenticationPipeTests
         await this.m_Pipe.InvokeAsync(this.m_InputPort, _OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
-        this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, _OutputPort, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
         this.m_MockClaimsPrincipalProvider.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
@@ -100,7 +100,7 @@ public class AuthenticationPipeTests
 
         // Assert
         this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal);
-        this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
         this.m_MockClaimsPrincipalProvider.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();

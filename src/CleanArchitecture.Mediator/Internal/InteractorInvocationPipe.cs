@@ -13,7 +13,7 @@ namespace CleanArchitecture.Mediator.Internal
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            IPipeHandle nextPipeHandle,
+            NextPipeHandleAsync nextPipeHandle,
             CancellationToken cancellationToken)
             => serviceFactory
                 .GetService<IInteractor<TInputPort, TOutputPort>>()?

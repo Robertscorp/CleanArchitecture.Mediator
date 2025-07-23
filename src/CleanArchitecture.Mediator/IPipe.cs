@@ -9,7 +9,7 @@ namespace CleanArchitecture.Mediator
     /// </summary>
     /// <remarks>
     /// Pipe implementations are registered as singletons, which means that only singleton and transient services should be resolved in their constructors.<br/>
-    /// Scoped services can be resolved in the <see cref="InvokeAsync{TInputPort, TOutputPort}(TInputPort, TOutputPort, ServiceFactory, IPipeHandle, CancellationToken)"/>
+    /// Scoped services can be resolved in the <see cref="InvokeAsync{TInputPort, TOutputPort}(TInputPort, TOutputPort, ServiceFactory, NextPipeHandleAsync, CancellationToken)"/>
     /// method by using the <see cref="ServiceFactory"/> parameter.
     /// </remarks>
     public interface IPipe
@@ -31,7 +31,7 @@ namespace CleanArchitecture.Mediator
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            IPipeHandle nextPipeHandle,
+            NextPipeHandleAsync nextPipeHandle,
             CancellationToken cancellationToken) where TInputPort : IInputPort<TOutputPort>;
 
         #endregion Methods
@@ -45,7 +45,7 @@ namespace CleanArchitecture.Mediator
     /// <typeparam name="TOutputPort">The type of output port.</typeparam>
     /// <remarks>
     /// Pipe implementations are registered as singletons, which means that only singleton and transient services should be resolved in their constructors.<br/>
-    /// Scoped services can be resolved in the <see cref="InvokeAsync(TInputPort, TOutputPort, ServiceFactory, IPipeHandle, CancellationToken)"/>
+    /// Scoped services can be resolved in the <see cref="InvokeAsync(TInputPort, TOutputPort, ServiceFactory, NextPipeHandleAsync, CancellationToken)"/>
     /// method by using the <see cref="ServiceFactory"/> parameter.
     /// </remarks>
     public interface IPipe<TInputPort, TOutputPort> where TInputPort : IInputPort<TOutputPort>
@@ -65,7 +65,7 @@ namespace CleanArchitecture.Mediator
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            IPipeHandle nextPipeHandle,
+            NextPipeHandleAsync nextPipeHandle,
             CancellationToken cancellationToken);
 
         #endregion Methods

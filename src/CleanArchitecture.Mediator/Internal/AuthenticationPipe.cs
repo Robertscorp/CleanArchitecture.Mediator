@@ -13,12 +13,12 @@ namespace CleanArchitecture.Mediator.Internal
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            IPipeHandle nextPipeHandle,
+            NextPipeHandleAsync nextPipeHandle,
             CancellationToken cancellationToken)
             => outputPort is IAuthenticationOutputPort _OutputPort
                 && serviceFactory.GetService<IAuthenticatedClaimsPrincipalProvider>()?.AuthenticatedClaimsPrincipal == null
                 ? _OutputPort.PresentUnauthenticatedAsync(cancellationToken)
-                : nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken);
+                : nextPipeHandle();
 
         #endregion Methods
 

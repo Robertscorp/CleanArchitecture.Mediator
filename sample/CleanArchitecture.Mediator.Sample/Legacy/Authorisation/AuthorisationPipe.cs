@@ -21,7 +21,7 @@ public class AuthorisationPipe<TAuthorisationResult> : IPipe where TAuthorisatio
         TInputPort inputPort,
         TOutputPort outputPort,
         ServiceFactory serviceFactory,
-        IPipeHandle nextPipeHandle,
+        NextPipeHandleAsync nextPipeHandle,
         CancellationToken cancellationToken)
     {
         if (outputPort is IAuthorisationOutputPort<TAuthorisationResult> _OutputPort)
@@ -38,7 +38,7 @@ public class AuthorisationPipe<TAuthorisationResult> : IPipe where TAuthorisatio
             }
         }
 
-        await nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
+        await nextPipeHandle().ConfigureAwait(false);
     }
 
     #endregion Methods

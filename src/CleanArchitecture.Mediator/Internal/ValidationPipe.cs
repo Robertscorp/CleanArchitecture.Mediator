@@ -13,12 +13,12 @@ namespace CleanArchitecture.Mediator.Internal
             TInputPort inputPort,
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
-            IPipeHandle nextPipeHandle,
+            NextPipeHandleAsync nextPipeHandle,
             CancellationToken cancellationToken)
         {
             var _Validator = serviceFactory.GetService<IValidator<TInputPort, TOutputPort>>();
             if (_Validator == null || await _Validator.HandleValidationAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false))
-                await nextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
+                await nextPipeHandle().ConfigureAwait(false);
         }
 
         #endregion Methods
