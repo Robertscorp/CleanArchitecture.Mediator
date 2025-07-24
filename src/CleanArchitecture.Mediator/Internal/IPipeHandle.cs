@@ -1,13 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Mediator
+namespace CleanArchitecture.Mediator.Internal
 {
 
     /// <summary>
     /// A handle to a pipe in the pipeline.
     /// </summary>
-    public interface IPipeHandle
+    internal interface IPipeHandle
     {
 
         #region - - - - - - Methods - - - - - -
