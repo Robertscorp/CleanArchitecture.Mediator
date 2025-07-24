@@ -11,7 +11,7 @@ public class AuthorisationPipeTests
     #region - - - - - - Fields - - - - - -
 
     private readonly Mock<IAuthorisationEnforcer<TestInputPort, ITestOutputPort>> m_MockAuthorisationEnforcer = new();
-    private readonly Mock<IPipeHandle> m_MockNextPipeHandle = new();
+    private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
     private readonly Mock<ITestOutputPort> m_MockOutputPort = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
@@ -49,7 +49,7 @@ public class AuthorisationPipeTests
         await this.m_Pipe.InvokeAsync(this.m_InputPort, _OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
-        this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, _OutputPort, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
         this.m_MockAuthorisationEnforcer.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
@@ -66,7 +66,7 @@ public class AuthorisationPipeTests
         await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
-        this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
         this.m_MockAuthorisationEnforcer.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
@@ -84,7 +84,7 @@ public class AuthorisationPipeTests
 
         // Assert
         this.m_MockAuthorisationEnforcer.Verify(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
-        this.m_MockNextPipeHandle.Verify(mock => mock.InvokePipeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
         this.m_MockAuthorisationEnforcer.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();

@@ -103,19 +103,19 @@ public class ClosedGenericPipeProviderTests
 
     private class ClosedGenericInputPort<T> : IPipe<IInputPort<T>, T>
     {
-        Task IPipe<IInputPort<T>, T>.InvokeAsync(IInputPort<T> inputPort, T outputPort, ServiceFactory serviceFactory, IPipeHandle nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
+        Task IPipe<IInputPort<T>, T>.InvokeAsync(IInputPort<T> inputPort, T outputPort, ServiceFactory serviceFactory, NextPipeHandleAsync nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     private class ClosedGenericOutputPort<T> : IPipe<T, object> where T : IInputPort<object>
     {
-        Task IPipe<T, object>.InvokeAsync(T inputPort, object outputPort, ServiceFactory serviceFactory, IPipeHandle nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
+        Task IPipe<T, object>.InvokeAsync(T inputPort, object outputPort, ServiceFactory serviceFactory, NextPipeHandleAsync nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     private class ConstrainedPipe<TInputPort, TOutputPort> : IPipe<TInputPort, TOutputPort>
         where TInputPort : IInputPort<TOutputPort>, IDisposable
         where TOutputPort : IDisposable
     {
-        Task IPipe<TInputPort, TOutputPort>.InvokeAsync(TInputPort inputPort, TOutputPort outputPort, ServiceFactory serviceFactory, IPipeHandle nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
+        Task IPipe<TInputPort, TOutputPort>.InvokeAsync(TInputPort inputPort, TOutputPort outputPort, ServiceFactory serviceFactory, NextPipeHandleAsync nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     private class DisposableInputPort : IInputPort<IDisposable>, IDisposable
@@ -132,19 +132,19 @@ public class ClosedGenericPipeProviderTests
 
     private class ImplementsGenericIPipeTwice<T> : IPipe<IInputPort<object>, object>, IPipe<IInputPort<int>, int>
     {
-        Task IPipe<IInputPort<object>, object>.InvokeAsync(IInputPort<object> inputPort, object outputPort, ServiceFactory serviceFactory, IPipeHandle nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
-        Task IPipe<IInputPort<int>, int>.InvokeAsync(IInputPort<int> inputPort, int outputPort, ServiceFactory serviceFactory, IPipeHandle nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
+        Task IPipe<IInputPort<object>, object>.InvokeAsync(IInputPort<object> inputPort, object outputPort, ServiceFactory serviceFactory, NextPipeHandleAsync nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
+        Task IPipe<IInputPort<int>, int>.InvokeAsync(IInputPort<int> inputPort, int outputPort, ServiceFactory serviceFactory, NextPipeHandleAsync nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     private class NonGenericPipe : IPipe<IInputPort<object>, object>
     {
-        Task IPipe<IInputPort<object>, object>.InvokeAsync(IInputPort<object> inputPort, object outputPort, ServiceFactory serviceFactory, IPipeHandle nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
+        Task IPipe<IInputPort<object>, object>.InvokeAsync(IInputPort<object> inputPort, object outputPort, ServiceFactory serviceFactory, NextPipeHandleAsync nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     private class ValidPipe<T1, TInputPort, T2, TOutputPort, T3> : IPipe<TInputPort, TOutputPort>
         where TInputPort : IInputPort<TOutputPort>
     {
-        Task IPipe<TInputPort, TOutputPort>.InvokeAsync(TInputPort inputPort, TOutputPort outputPort, ServiceFactory serviceFactory, IPipeHandle nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
+        Task IPipe<TInputPort, TOutputPort>.InvokeAsync(TInputPort inputPort, TOutputPort outputPort, ServiceFactory serviceFactory, NextPipeHandleAsync nextPipeHandle, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     #endregion Nested Classes

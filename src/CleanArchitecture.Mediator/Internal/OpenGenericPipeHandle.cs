@@ -34,8 +34,13 @@ namespace CleanArchitecture.Mediator.Internal
             => cancellationToken.IsCancellationRequested
                 ? Task.FromCanceled(cancellationToken)
                 : this.m_PipeProvider.GetPipe<TInputPort, TOutputPort>(serviceFactory)?
-                    .InvokeAsync(inputPort, outputPort, serviceFactory, this.m_NextPipeHandle, cancellationToken)
-                        ?? this.m_NextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken);
+                    .InvokeAsync(
+                        inputPort,
+                        outputPort,
+                        serviceFactory,
+                        () => this.m_NextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken),
+                        cancellationToken)
+                            ?? this.m_NextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken);
 
         #endregion Methods
 

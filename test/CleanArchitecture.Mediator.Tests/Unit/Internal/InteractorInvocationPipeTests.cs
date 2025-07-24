@@ -11,7 +11,7 @@ public class InteractorInvocationPipeTests
     #region - - - - - - Fields - - - - - -
 
     private readonly Mock<IInteractor<IInputPort<object>, object>> m_MockInteractor = new();
-    private readonly Mock<IPipeHandle> m_MockNextPipeHandle = new();
+    private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
     private readonly IInputPort<object> m_InputPort = new Mock<IInputPort<object>>().Object;

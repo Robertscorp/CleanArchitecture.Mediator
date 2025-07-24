@@ -33,7 +33,12 @@ namespace CleanArchitecture.Mediator.Internal
             CancellationToken cancellationToken)
             => cancellationToken.IsCancellationRequested
                 ? Task.FromCanceled(cancellationToken)
-                : this.m_Pipe.InvokeAsync(inputPort, outputPort, serviceFactory, this.m_NextPipeHandle, cancellationToken);
+                : this.m_Pipe.InvokeAsync(
+                    inputPort,
+                    outputPort,
+                    serviceFactory,
+                    () => this.m_NextPipeHandle.InvokePipeAsync(inputPort, outputPort, serviceFactory, cancellationToken),
+                    cancellationToken);
 
         #endregion Methods
 
