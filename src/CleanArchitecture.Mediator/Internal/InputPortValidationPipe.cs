@@ -4,10 +4,9 @@ using System.Threading.Tasks;
 namespace CleanArchitecture.Mediator.Internal
 {
 
-    internal class InputPortValidationPipe<TInputPort, TOutputPort, TValidationResult> : IPipe<TInputPort, TOutputPort>
-        where TInputPort : IInputPort<TOutputPort>, IInputPort<IInputPortValidationOutputPort<TValidationResult>>
-        where TOutputPort : IInputPortValidationOutputPort<TValidationResult>
-        where TValidationResult : IInputPortValidationResult
+    internal class InputPortValidationPipe<TInputPort, TOutputPort, TValidationFailure> : IPipe<TInputPort, TOutputPort>
+        where TInputPort : IInputPort<TOutputPort>, IInputPort<IInputPortValidationOutputPort<TValidationFailure>>
+        where TOutputPort : IInputPortValidationOutputPort<TValidationFailure>
     {
 
         #region - - - - - - Methods - - - - - -
@@ -19,16 +18,11 @@ namespace CleanArchitecture.Mediator.Internal
             NextPipeHandleAsync nextPipeHandle,
             CancellationToken cancellationToken)
         {
-            var _Validator = serviceFactory.GetService<IInputPortValidator<TInputPort, TValidationResult>>();
-            var _ValidationResultAsync = _Validator?.ValidateAsync(inputPort, serviceFactory, cancellationToken);
-            if (_ValidationResultAsync != null)
+            var _Validator = serviceFactory.GetService<IInputPortValidator<TInputPort, TValidationFailure>>();
+            if (_Validator != null && !await _Validator.ValidateAsync(inputPort, out var _ValidationFailure, serviceFactory, cancellationToken))
             {
-                var _ValidationResult = await _ValidationResultAsync.ConfigureAwait(false);
-                if (!_ValidationResult.IsValid)
-                {
-                    await outputPort.PresentInputPortValidationFailureAsync(_ValidationResult, cancellationToken).ConfigureAwait(false);
-                    return;
-                }
+                await outputPort.PresentInputPortValidationFailureAsync(_ValidationFailure, cancellationToken).ConfigureAwait(false);
+                return;
             }
 
             await nextPipeHandle().ConfigureAwait(false);

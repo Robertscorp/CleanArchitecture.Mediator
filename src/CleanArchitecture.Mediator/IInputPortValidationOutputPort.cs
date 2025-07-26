@@ -7,8 +7,8 @@ namespace CleanArchitecture.Mediator
     /// <summary>
     /// Provides a mechanism for outputting input port validation failures.
     /// </summary>
-    /// <typeparam name="TValidationResult">The type of input port validation result.</typeparam>
-    public interface IInputPortValidationOutputPort<TValidationResult> where TValidationResult : IInputPortValidationResult
+    /// <typeparam name="TValidationFailure">The type of input port validation failure.</typeparam>
+    public interface IInputPortValidationOutputPort<TValidationFailure>
     {
 
         #region - - - - - - Methods - - - - - -
@@ -16,9 +16,9 @@ namespace CleanArchitecture.Mediator
         /// <summary>
         /// Presents an input port validation failure.
         /// </summary>
-        /// <param name="validationResult">The result from an <see cref="IInputPortValidator{TInputPort, TValidationResult}"/>.</param>
+        /// <param name="validationFailure">The validation failure from an <see cref="IInputPortValidator{TInputPort, TValidationFailure}"/>.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
-        Task PresentInputPortValidationFailureAsync(TValidationResult validationResult, CancellationToken cancellationToken);
+        Task PresentInputPortValidationFailureAsync(TValidationFailure validationFailure, CancellationToken cancellationToken);
 
         #endregion Methods
 

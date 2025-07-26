@@ -1,7 +1,6 @@
 ﻿using CleanArchitecture.Mediator.Sample.Dtos;
 using CleanArchitecture.Mediator.Sample.Legacy.Authorisation;
 using CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
-using CleanArchitecture.Mediator.Sample.Services;
 
 namespace CleanArchitecture.Mediator.Sample.UseCases.LegacyCreateProduct;
 
@@ -9,7 +8,7 @@ public interface ILegacyCreateProductOutputPort :
     IAuthenticationOutputPort,
     IAuthorisationOutputPort<AuthorisationResult>,
     IBusinessRuleValidationOutputPort<BusinessRuleValidationResult>,
-    IInputPortValidationOutputPort<InputPortValidationResult>
+    IInputPortValidationOutputPort<object>
 {
 
     #region - - - - - - Methods - - - - - -

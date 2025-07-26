@@ -51,11 +51,12 @@ namespace CleanArchitecture.Mediator.Setup
         /// <summary>
         /// Adds input port validation to the pipeline.
         /// </summary>
+        /// <typeparam name="TValidationFailure">The type of input port validation failure.</typeparam>
         /// <returns>Itself.</returns>
-        public PipelineConfiguration<TPipeline> AddInputPortValidation<TValidationResult>() where TValidationResult : IInputPortValidationResult
+        public PipelineConfiguration<TPipeline> AddInputPortValidation<TValidationFailure>()
             => this.AddOpenGenericPipe(
                 typeof(InputPortValidationPipe<,,>),
-                new Type[] { typeof(TValidationResult) },
+                new Type[] { typeof(TValidationFailure) },
                 config => config.AddSingletonService(typeof(IInputPortValidator<,>)));
 
         /// <summary>
