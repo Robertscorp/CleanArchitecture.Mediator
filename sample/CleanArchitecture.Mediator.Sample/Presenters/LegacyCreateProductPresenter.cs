@@ -1,7 +1,6 @@
 ﻿using CleanArchitecture.Mediator.Sample.Dtos;
 using CleanArchitecture.Mediator.Sample.Legacy.Authorisation;
 using CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
-using CleanArchitecture.Mediator.Sample.Services;
 using CleanArchitecture.Mediator.Sample.UseCases.LegacyCreateProduct;
 
 namespace CleanArchitecture.Mediator.Sample.Presenters;
@@ -29,7 +28,7 @@ public class LegacyCreateProductPresenter : ILegacyCreateProductOutputPort
         return Task.CompletedTask;
     }
 
-    Task IInputPortValidationOutputPort<InputPortValidationResult>.PresentInputPortValidationFailureAsync(InputPortValidationResult validationFailure, CancellationToken cancellationToken)
+    Task IInputPortValidationOutputPort<object>.PresentInputPortValidationFailureAsync(object validationFailure, CancellationToken cancellationToken)
     {
         Console.WriteLine("\t- LegacyCreateProductPresenter.PresentInputPortValidationFailureAsync");
         return Task.CompletedTask;
