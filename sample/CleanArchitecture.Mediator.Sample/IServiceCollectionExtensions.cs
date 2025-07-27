@@ -1,5 +1,4 @@
 ﻿using CleanArchitecture.Mediator;
-using CleanArchitecture.Mediator.Sample.Legacy.Authorisation;
 using CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
 using CleanArchitecture.Mediator.Sample.Pipelines;
 using CleanArchitecture.Mediator.Setup;
@@ -25,7 +24,7 @@ public static class IServiceCollectionExtensions
                         Console.WriteLine("\t- Completed invocation of DefaultPipeline.");
                     })
                     .AddSingleTenantAuthentication()
-                    .AddAuthorisation()
+                    .AddAuthorisation<object>()
                     .AddValidation()
                     .AddInteractorInvocation());
 
@@ -38,7 +37,7 @@ public static class IServiceCollectionExtensions
                         Console.WriteLine("\t- Completed invocation of LegacyPipeline.");
                     })
                     .AddAuthentication()
-                    .AddPipe<AuthorisationPipe<AuthorisationResult>>(config => config.AddSingletonService(typeof(Legacy.Authorisation.IAuthorisationEnforcer<,>)))
+                    .AddAuthorisation<object>()
                     .AddInputPortValidation<object>()
                     .AddPipe<BusinessRuleValidationPipe<BusinessRuleValidationResult>>(config => config.AddSingletonService(typeof(IBusinessRuleValidator<,>)))
                     .AddInteractorInvocation());
@@ -52,7 +51,7 @@ public static class IServiceCollectionExtensions
                         Console.WriteLine("\t- Completed invocation of VerificationPipeline.");
                     })
                     .AddAuthentication()
-                    .AddAuthorisation()
+                    .AddAuthorisation<object>()
                     .AddValidation()
                     .AddPipe<VerificationSuccessPipe>());
         }, registration =>

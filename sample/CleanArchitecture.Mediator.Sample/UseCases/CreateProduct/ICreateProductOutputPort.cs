@@ -2,14 +2,12 @@
 
 namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
 
-public interface ICreateProductOutputPort : IAuthenticationOutputPort
+public interface ICreateProductOutputPort : IAuthenticationOutputPort, IAuthorisationOutputPort<object>
 {
 
     #region - - - - - - Methods - - - - - -
 
     Task PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken);
-
-    Task PresentUnauthorisedAsync(CancellationToken cancellationToken);
 
     Task PresentValidationFailureAsync(CancellationToken cancellationToken);
 

@@ -15,15 +15,15 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
         return Task.CompletedTask;
     }
 
-    Task ICreateProductOutputPort.PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken)
+    Task IAuthorisationOutputPort<object>.PresentAuthorisationFailureAsync(object authorisationFailure, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"\t- CreateProductPresenter.PresentCreatedProductAsync('{product.Name}')");
+        Console.WriteLine("\t- CreateProductPresenter.PresentAuthorisationFailureAsync");
         return Task.CompletedTask;
     }
 
-    Task ICreateProductOutputPort.PresentUnauthorisedAsync(CancellationToken cancellationToken)
+    Task ICreateProductOutputPort.PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken)
     {
-        Console.WriteLine("\t- CreateProductPresenter.PresentUnauthorisedAsync");
+        Console.WriteLine($"\t- CreateProductPresenter.PresentCreatedProductAsync('{product.Name}')");
         return Task.CompletedTask;
     }
 

@@ -1,20 +1,17 @@
 ﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
 
-public class CreateProductAuthorisationEnforcer : IAuthorisationEnforcer<CreateProductInputPort, ICreateProductOutputPort>
+public class CreateProductAuthorisationEnforcer : IAuthorisationEnforcer<CreateProductInputPort, object>
 {
 
     #region - - - - - - Methods - - - - - -
 
-    public async Task<bool> HandleAuthorisationAsync(CreateProductInputPort inputPort, ICreateProductOutputPort outputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken)
+    public Task<bool> IsAuthorisedAsync(CreateProductInputPort inputPort, out object authorisationFailure, ServiceFactory serviceFactory, CancellationToken cancellationToken)
     {
-        if (inputPort.FailAuthorisation)
-        {
-            await outputPort.PresentUnauthorisedAsync(cancellationToken).ConfigureAwait(false);
-            return false;
-        }
+        authorisationFailure = new();
 
-        return true;
+        return Task.FromResult(!inputPort.FailAuthorisation);
     }
+
 
     #endregion Methods
 

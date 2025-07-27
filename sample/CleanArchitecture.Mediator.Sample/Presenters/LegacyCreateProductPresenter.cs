@@ -1,5 +1,4 @@
 ﻿using CleanArchitecture.Mediator.Sample.Dtos;
-using CleanArchitecture.Mediator.Sample.Legacy.Authorisation;
 using CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
 using CleanArchitecture.Mediator.Sample.UseCases.LegacyCreateProduct;
 
@@ -16,9 +15,9 @@ public class LegacyCreateProductPresenter : ILegacyCreateProductOutputPort
         return Task.CompletedTask;
     }
 
-    Task IAuthorisationOutputPort<AuthorisationResult>.PresentUnauthorisedAsync(AuthorisationResult authorisationFailure, CancellationToken cancellationToken)
+    Task IAuthorisationOutputPort<object>.PresentAuthorisationFailureAsync(object authorisationFailure, CancellationToken cancellationToken)
     {
-        Console.WriteLine("\t- LegacyCreateProductPresenter.PresentUnauthorisedAsync");
+        Console.WriteLine("\t- LegacyCreateProductPresenter.PresentAuthorisationFailureAsync");
         return Task.CompletedTask;
     }
 

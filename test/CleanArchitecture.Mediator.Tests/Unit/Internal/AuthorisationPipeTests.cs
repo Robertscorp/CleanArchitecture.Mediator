@@ -10,15 +10,17 @@ public class AuthorisationPipeTests
 
     #region - - - - - - Fields - - - - - -
 
-    private readonly Mock<IAuthorisationEnforcer<TestInputPort, ITestOutputPort>> m_MockAuthorisationEnforcer = new();
+    private readonly Mock<IAuthorisationEnforcer<IInputPort<IAuthorisationOutputPort<object>>, object>> m_MockAuthorisationEnforcer = new();
     private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
-    private readonly Mock<ITestOutputPort> m_MockOutputPort = new();
+    private readonly Mock<IAuthorisationOutputPort<object>> m_MockOutputPort = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
-    private readonly TestInputPort m_InputPort = new();
-    private readonly IPipe m_Pipe = new AuthorisationPipe();
+    private readonly IInputPort<IAuthorisationOutputPort<object>> m_InputPort = new Mock<IInputPort<IAuthorisationOutputPort<object>>>().Object;
+    private readonly IPipe<IInputPort<IAuthorisationOutputPort<object>>, IAuthorisationOutputPort<object>> m_Pipe
+        = new AuthorisationPipe<IInputPort<IAuthorisationOutputPort<object>>, IAuthorisationOutputPort<object>, object>();
 
-    private bool m_AuthResult;
+    private object? m_AuthorisationFailure;
+    private bool m_IsAuthorised = true;
 
     #endregion Fields
 
@@ -26,35 +28,24 @@ public class AuthorisationPipeTests
 
     public AuthorisationPipeTests()
     {
+        var _AuthorisationFailure = new object();
+
         _ = this.m_MockAuthorisationEnforcer
-                .Setup(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default))
-                .Returns(() => Task.FromResult(this.m_AuthResult));
+                .Setup(mock => mock.IsAuthorisedAsync(this.m_InputPort, out _AuthorisationFailure, this.m_MockServiceFactory.Object, default))
+                .Returns(() =>
+                {
+                    this.m_AuthorisationFailure = _AuthorisationFailure;
+                    return Task.FromResult(this.m_IsAuthorised);
+                });
 
         _ = this.m_MockServiceFactory
-                .Setup(mock => mock.Invoke(typeof(IAuthorisationEnforcer<TestInputPort, ITestOutputPort>)))
+                .Setup(mock => mock.Invoke(typeof(IAuthorisationEnforcer<IInputPort<IAuthorisationOutputPort<object>>, object>)))
                 .Returns(this.m_MockAuthorisationEnforcer.Object);
     }
 
     #endregion Constructors
 
     #region - - - - - - InvokeAsync Tests - - - - - -
-
-    [Fact]
-    public async Task InvokeAsync_OutputPortDoesNotSupportAuthorisation_MovesToNextPipe()
-    {
-        // Arrange
-        var _OutputPort = new object();
-
-        // Act
-        await this.m_Pipe.InvokeAsync(this.m_InputPort, _OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
-
-        // Assert
-        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
-
-        this.m_MockAuthorisationEnforcer.VerifyNoOtherCalls();
-        this.m_MockNextPipeHandle.VerifyNoOtherCalls();
-        this.m_MockOutputPort.VerifyNoOtherCalls();
-    }
 
     [Fact]
     public async Task InvokeAsync_EnforcerHasNotBeenRegistered_MovesToNextPipe()
@@ -77,13 +68,12 @@ public class AuthorisationPipeTests
     public async Task InvokeAsync_AuthorisationSuccessful_MovesToNextPipe()
     {
         // Arrange
-        this.m_AuthResult = true;
 
         // Act
         await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
-        this.m_MockAuthorisationEnforcer.Verify(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockAuthorisationEnforcer.Verify(mock => mock.IsAuthorisedAsync(this.m_InputPort, out this.m_AuthorisationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
         this.m_MockAuthorisationEnforcer.VerifyNoOtherCalls();
@@ -95,12 +85,14 @@ public class AuthorisationPipeTests
     public async Task InvokeAsync_AuthorisationFails_StopsWithAuthorisationFailure()
     {
         // Arrange
+        this.m_IsAuthorised = false;
 
         // Act
         await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
-        this.m_MockAuthorisationEnforcer.Verify(mock => mock.HandleAuthorisationAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockAuthorisationEnforcer.Verify(mock => mock.IsAuthorisedAsync(this.m_InputPort, out this.m_AuthorisationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockOutputPort.Verify(mock => mock.PresentAuthorisationFailureAsync(this.m_AuthorisationFailure!, default));
 
         this.m_MockAuthorisationEnforcer.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
@@ -108,13 +100,5 @@ public class AuthorisationPipeTests
     }
 
     #endregion InvokeAsync Tests
-
-    #region - - - - - - Nested Classes - - - - - -
-
-    public class TestInputPort : IInputPort<ITestOutputPort> { }
-
-    public interface ITestOutputPort { }
-
-    #endregion Nested Classes
 
 }

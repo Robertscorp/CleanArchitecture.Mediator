@@ -1,12 +1,11 @@
 ﻿using CleanArchitecture.Mediator.Sample.Dtos;
-using CleanArchitecture.Mediator.Sample.Legacy.Authorisation;
 using CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
 
 namespace CleanArchitecture.Mediator.Sample.UseCases.LegacyCreateProduct;
 
 public interface ILegacyCreateProductOutputPort :
     IAuthenticationOutputPort,
-    IAuthorisationOutputPort<AuthorisationResult>,
+    IAuthorisationOutputPort<object>,
     IBusinessRuleValidationOutputPort<BusinessRuleValidationResult>,
     IInputPortValidationOutputPort<object>
 {
