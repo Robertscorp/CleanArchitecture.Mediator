@@ -12,7 +12,6 @@ public class CreateProductAuthorisationEnforcer : IAuthorisationEnforcer<CreateP
         return Task.FromResult(!inputPort.FailAuthorisation);
     }
 
-
     #endregion Methods
 
 }
