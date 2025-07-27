@@ -5,24 +5,24 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// A service used to determine if the pipeline is allowed to continue.
+    /// Provides the functionality to determine if the principal is authorised to perform this operation.
     /// </summary>
     /// <typeparam name="TInputPort">The type of input port.</typeparam>
-    /// <typeparam name="TOutputPort">The type of output port.</typeparam>
-    public interface IAuthorisationEnforcer<TInputPort, TOutputPort> where TInputPort : IInputPort<TOutputPort>
+    /// <typeparam name="TAuthorisationFailure">The type of authorisation failure.</typeparam>
+    public interface IAuthorisationEnforcer<TInputPort, TAuthorisationFailure> where TInputPort : IInputPort<IAuthorisationOutputPort<TAuthorisationFailure>>
     {
 
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Determines if the pipeline is allowed to continue.
+        /// Determines if the principal is authorised to perform this operation.
         /// </summary>
         /// <param name="inputPort">The input to the pipeline.</param>
-        /// <param name="outputPort">The output mechanism for the pipeline.</param>
+        /// <param name="authorisationFailure">The authorisation failure when the principal is not authorised to perform this operation.</param>
         /// <param name="serviceFactory">The factory used to get service instances.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
-        /// <returns>A result indicating if the pipeline is allowed to continue.</returns>
-        Task<bool> HandleAuthorisationAsync(TInputPort inputPort, TOutputPort outputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken);
+        /// <returns>A result indicating if the principal is authorised to perform this operation.</returns>
+        Task<bool> IsAuthorisedAsync(TInputPort inputPort, out TAuthorisationFailure authorisationFailure, ServiceFactory serviceFactory, CancellationToken cancellationToken);
 
         #endregion Methods
 
