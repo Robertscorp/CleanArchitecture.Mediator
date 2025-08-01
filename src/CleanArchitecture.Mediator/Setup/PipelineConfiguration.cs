@@ -36,7 +36,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// <returns>Itself.</returns>
         /// <remarks>
         /// This should only be used if a previously configured pipeline has already added either single-tenant or multi-tenant authentication,
-        /// or if <see cref="IAuthenticatedClaimsPrincipalProvider"/> is going to be manually registered.
+        /// or if <see cref="IPrincipalAccessor"/> is going to be manually registered.
         /// </remarks>
         public PipelineConfiguration<TPipeline> AddAuthentication()
             => this.AddPipe<AuthenticationPipe>();
@@ -109,7 +109,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// <returns>Itself.</returns>
         /// <remarks>Should not be used in conjunction with single-tenant authentication.</remarks>
         public PipelineConfiguration<TPipeline> AddMultiTenantAuthentication()
-            => this.AddPipe<AuthenticationPipe>(config => config.AddScopedService(typeof(IAuthenticatedClaimsPrincipalProvider)));
+            => this.AddPipe<AuthenticationPipe>(config => config.AddScopedService(typeof(IPrincipalAccessor)));
 
         /// <summary>
         /// Adds an open generic pipe to the pipeline.
@@ -149,7 +149,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// Should not be used in conjunction with multi-tenant authentication.
         /// </remarks>
         public PipelineConfiguration<TPipeline> AddSingleTenantAuthentication()
-            => this.AddPipe<AuthenticationPipe>(config => config.AddSingletonService(typeof(IAuthenticatedClaimsPrincipalProvider)));
+            => this.AddPipe<AuthenticationPipe>(config => config.AddSingletonService(typeof(IPrincipalAccessor)));
 
         /// <summary>
         /// Adds validation to the pipeline.

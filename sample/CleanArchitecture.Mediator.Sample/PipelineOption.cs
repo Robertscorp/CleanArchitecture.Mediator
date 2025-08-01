@@ -20,8 +20,8 @@ internal static class PipelineOption
 
     private static async Task InvokeCreateProductUseCaseAsync(Pipeline pipeline, IServiceProvider serviceProvider)
     {
-        var _ClaimsPrincipalProvider = (AuthenticatedClaimsPrincipalProvider)serviceProvider.GetService<IAuthenticatedClaimsPrincipalProvider>()!;
-        _ClaimsPrincipalProvider.AuthenticatedClaimsPrincipal = null;
+        var _PrincipalStore = (PrincipalStore)serviceProvider.GetService<IPrincipalAccessor>()!;
+        _PrincipalStore.Principal = null;
 
         var _ServiceFactory = serviceProvider.GetRequiredService<ServiceFactory>();
 
@@ -38,7 +38,7 @@ internal static class PipelineOption
         Console.WriteLine();
 
         // Create Product - Not Authorised.
-        _ClaimsPrincipalProvider.AuthenticatedClaimsPrincipal = new ClaimsPrincipal();
+        _PrincipalStore.Principal = new ClaimsPrincipal();
         Console.WriteLine("[Invoke Pipeline] Not Authorised - ");
         await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
         Console.WriteLine();
@@ -102,8 +102,8 @@ internal static class PipelineOption
         Console.WriteLine("-- Legacy Pipeline --");
         Console.WriteLine();
 
-        var _ClaimsPrincipalProvider = (AuthenticatedClaimsPrincipalProvider)serviceProvider.GetService<IAuthenticatedClaimsPrincipalProvider>()!;
-        _ClaimsPrincipalProvider.AuthenticatedClaimsPrincipal = null;
+        var _PrincipalStore = (PrincipalStore)serviceProvider.GetService<IPrincipalAccessor>()!;
+        _PrincipalStore.Principal = null;
 
         var _LegacyPipeline = serviceProvider.GetService<LegacyPipeline>()!;
         var _ServiceFactory = serviceProvider.GetRequiredService<ServiceFactory>();
@@ -122,7 +122,7 @@ internal static class PipelineOption
         Console.WriteLine();
 
         // Create Product - Not Authorised.
-        _ClaimsPrincipalProvider.AuthenticatedClaimsPrincipal = new ClaimsPrincipal();
+        _PrincipalStore.Principal = new ClaimsPrincipal();
         Console.WriteLine("[Invoke Pipeline] Not Authorised - ");
         await _LegacyPipeline.InvokeAsync(_LegacyCreateProductInputPort, _LegacyCreateProductPresenter, _ServiceFactory, default);
         Console.WriteLine();
