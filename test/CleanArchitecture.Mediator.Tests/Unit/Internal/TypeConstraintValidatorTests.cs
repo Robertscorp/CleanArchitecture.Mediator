@@ -29,10 +29,16 @@ public class TypeConstraintValidatorTests
     [InlineData(typeof(IClass<>), new Type[] { typeof(object) })]
     [InlineData(typeof(IClass<>), new Type[] { typeof(int) })]
     [InlineData(typeof(IStruct<>), new Type[] { typeof(int) })]
+    [InlineData(typeof(IStruct<>), new Type[] { typeof(int?) })]
     [InlineData(typeof(IStruct<>), new Type[] { typeof(object) })]
     [InlineData(typeof(IStructWrapper<,>), new Type[] { typeof(IStruct<int>), typeof(int) })]
     [InlineData(typeof(IStructWrapper<,>), new Type[] { typeof(IStruct<int>), typeof(object) })]
     [InlineData(typeof(IStructWrapper<,>), new Type[] { typeof(IStruct<>), typeof(int) })]
+    [InlineData(typeof(IStructWrapper2<,>), new Type[] { typeof(int), typeof(IStruct<int>) })]
+    [InlineData(typeof(IStructWrapper2<,>), new Type[] { typeof(decimal), typeof(IStruct<decimal>) })]
+    [InlineData(typeof(IStructWrapper2<,>), new Type[] { typeof(int?), typeof(IStruct<int>) })]
+    [InlineData(typeof(IStructWrapper2<,>), new Type[] { typeof(decimal?), typeof(IStruct<decimal>) })]
+    [InlineData(typeof(IStructWrapper2<,>), new Type[] { typeof(object), typeof(IStruct<int>) })]
     public void IsValid_VariousTypes_IsValidMatchesMakeGenericType(Type openGenericType, Type[] closedGenericTypes)
         => Assert.Equal(
             TypeConstraintValidator.IsValid(openGenericType, closedGenericTypes),
@@ -98,6 +104,8 @@ public class TypeConstraintValidatorTests
     private interface IStruct<T> where T : struct { }
 
     private interface IStructWrapper<T1, T2> where T1 : IStruct<T2> where T2 : struct { }
+
+    private interface IStructWrapper2<T1, T2> where T1 : struct where T2 : IStruct<T1> { }
 
 #pragma warning disable CS9113 // Parameter is unread.
     private class NoDefaultConstructor(object o) { }

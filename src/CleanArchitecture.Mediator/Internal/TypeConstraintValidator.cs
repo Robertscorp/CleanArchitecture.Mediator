@@ -7,6 +7,12 @@ namespace CleanArchitecture.Mediator.Internal
     internal static class TypeConstraintValidator
     {
 
+        #region - - - - - - Fields - - - - - -
+
+        private static Guid s_NullableTypeID = typeof(int?).GUID;
+
+        #endregion Fields
+
         #region - - - - - - Methods - - - - - -
 
         public static bool IsValid(Type openGenericType, Type[] closedGenericTypes)
@@ -27,6 +33,9 @@ namespace CleanArchitecture.Mediator.Internal
                 if (_ClosedGenericType.IsValueType)
                 {
                     if (_GenericParameterAttributes.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint))
+                        return false;
+
+                    if (_ClosedGenericType.GUID == s_NullableTypeID && _GenericParameterAttributes.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint))
                         return false;
                 }
                 else if (_GenericParameterAttributes.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint))
