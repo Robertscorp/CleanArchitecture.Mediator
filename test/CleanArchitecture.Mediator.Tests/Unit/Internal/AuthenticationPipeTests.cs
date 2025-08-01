@@ -73,7 +73,7 @@ public class AuthenticationPipeTests
     }
 
     [Fact]
-    public async Task InvokeAsync_NoAuthenticatedClaimsPrincipal_StopsWithAuthenticationFailure()
+    public async Task InvokeAsync_NoAuthenticatedPrincipal_StopsWithAuthenticationFailure()
     {
         // Arrange
         this.m_MockPrincipalAccessor.Reset();
@@ -91,7 +91,7 @@ public class AuthenticationPipeTests
     }
 
     [Fact]
-    public async Task InvokeAsync_ClaimsPrincipalIsAuthenticated_MovesToNextPipe()
+    public async Task InvokeAsync_PrincipalIsAuthenticated_MovesToNextPipe()
     {
         // Arrange
 
