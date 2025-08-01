@@ -56,7 +56,7 @@ public class AuthenticationPipeTests
     }
 
     [Fact]
-    public async Task InvokeAsync_ClaimsPrincipalProviderHasNotBeenRegistered_StopsWithAuthenticationFailure()
+    public async Task InvokeAsync_PrincipalAccessorHasNotBeenRegistered_StopsWithAuthenticationFailure()
     {
         // Arrange
         this.m_MockServiceFactory.Reset();

@@ -102,8 +102,8 @@ internal static class PipelineOption
         Console.WriteLine("-- Legacy Pipeline --");
         Console.WriteLine();
 
-        var _ClaimsPrincipalProvider = (PrincipalStore)serviceProvider.GetService<IPrincipalAccessor>()!;
-        _ClaimsPrincipalProvider.Principal = null;
+        var _PrincipalStore = (PrincipalStore)serviceProvider.GetService<IPrincipalAccessor>()!;
+        _PrincipalStore.Principal = null;
 
         var _LegacyPipeline = serviceProvider.GetService<LegacyPipeline>()!;
         var _ServiceFactory = serviceProvider.GetRequiredService<ServiceFactory>();
@@ -122,7 +122,7 @@ internal static class PipelineOption
         Console.WriteLine();
 
         // Create Product - Not Authorised.
-        _ClaimsPrincipalProvider.Principal = new ClaimsPrincipal();
+        _PrincipalStore.Principal = new ClaimsPrincipal();
         Console.WriteLine("[Invoke Pipeline] Not Authorised - ");
         await _LegacyPipeline.InvokeAsync(_LegacyCreateProductInputPort, _LegacyCreateProductPresenter, _ServiceFactory, default);
         Console.WriteLine();
