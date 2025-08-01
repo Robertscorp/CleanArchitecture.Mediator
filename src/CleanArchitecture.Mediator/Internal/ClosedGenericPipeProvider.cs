@@ -76,14 +76,15 @@ namespace CleanArchitecture.Mediator.Internal
                     _TypeArray[_InputPortIndex] = inputPort;
                     _TypeArray[_OutputPortIndex] = outputPort;
 
-                    try // Try-Catch is the easiest way of determining if all generic constraints are met.
+                    // Wrap the resolution of MakeGenericType in try-catch, in case TypeConstraintValidator returns a false positive.
+                    try
                     {
-                        return serviceFactory(openGenericPipeType.MakeGenericType(_TypeArray));
+                        if (TypeConstraintValidator.IsValid(openGenericPipeType, _TypeArray))
+                            return serviceFactory(openGenericPipeType.MakeGenericType(_TypeArray));
                     }
-                    catch
-                    {
-                        return null;
-                    }
+                    catch { }
+
+                    return null;
                 });
         }
 
