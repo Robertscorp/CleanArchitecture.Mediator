@@ -9,9 +9,9 @@ public class LegacyCreateProductPresenter : ILegacyCreateProductOutputPort
 
     #region - - - - - - Methods - - - - - -
 
-    Task IAuthenticationOutputPort.PresentUnauthenticatedAsync(CancellationToken cancellationToken)
+    Task IAuthenticationOutputPort.PresentAuthenticationFailureAsync(CancellationToken cancellationToken)
     {
-        Console.WriteLine("\t- LegacyCreateProductPresenter.PresentUnauthenticatedAsync");
+        Console.WriteLine("\t- LegacyCreateProductPresenter.PresentAuthenticationFailureAsync");
         return Task.CompletedTask;
     }
 

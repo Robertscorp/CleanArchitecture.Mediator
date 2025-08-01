@@ -65,7 +65,7 @@ public class AuthenticationPipeTests
         await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
-        this.m_MockOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
+        this.m_MockOutputPort.Verify(mock => mock.PresentAuthenticationFailureAsync(default), Times.Once());
 
         this.m_MockClaimsPrincipalProvider.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
@@ -83,7 +83,7 @@ public class AuthenticationPipeTests
 
         // Assert
         this.m_MockClaimsPrincipalProvider.Verify(mock => mock.AuthenticatedClaimsPrincipal);
-        this.m_MockOutputPort.Verify(mock => mock.PresentUnauthenticatedAsync(default), Times.Once());
+        this.m_MockOutputPort.Verify(mock => mock.PresentAuthenticationFailureAsync(default), Times.Once());
 
         this.m_MockClaimsPrincipalProvider.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
