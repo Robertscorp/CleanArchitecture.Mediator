@@ -25,6 +25,7 @@ public static class IServiceCollectionExtensions
                     })
                     .AddSingleTenantAuthentication()
                     .AddAuthorisation<object>()
+                    .AddLicenceEnforcement<object>()
                     .AddValidation()
                     .AddInteractorInvocation());
 

@@ -70,6 +70,17 @@ namespace CleanArchitecture.Mediator.Setup
             => this.AddPipe<InteractorInvocationPipe>(config => config.AddSingletonService(typeof(IInteractor<,>)));
 
         /// <summary>
+        /// Adds licence enforcement to the pipeline.
+        /// </summary>
+        /// <typeparam name="TLicenceFailure">The type of licence failure.</typeparam>
+        /// <returns>Itself.</returns>
+        public PipelineConfiguration<TPipeline> AddLicenceEnforcement<TLicenceFailure>()
+            => this.AddOpenGenericPipe(
+                typeof(LicencePipe<,,>),
+                new Type[] { typeof(TLicenceFailure) },
+                config => config.AddSingletonService(typeof(ILicenceVerifier<,>)));
+
+        /// <summary>
         /// Adds a pipe to the pipeline.
         /// </summary>
         /// <typeparam name="TPipe">The type of pipe to add to the pipeline.</typeparam>

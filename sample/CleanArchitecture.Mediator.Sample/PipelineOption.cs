@@ -29,6 +29,7 @@ internal static class PipelineOption
         var _CreateProductInputPort = new CreateProductInputPort
         {
             FailAuthorisation = true,
+            FailLicenceVerification = true,
             FailValidation = true
         };
 
@@ -36,21 +37,27 @@ internal static class PipelineOption
         Console.WriteLine("[Invoke Pipeline] Not Authenticated - ");
         await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
         Console.WriteLine();
+        _PrincipalStore.Principal = new ClaimsPrincipal();
 
         // Create Product - Not Authorised.
-        _PrincipalStore.Principal = new ClaimsPrincipal();
         Console.WriteLine("[Invoke Pipeline] Not Authorised - ");
         await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
         Console.WriteLine();
+        _CreateProductInputPort.FailAuthorisation = false;
+
+        // Create Product - Not Licenced.
+        Console.WriteLine("[Invoke Pipeline] Not Licenced - ");
+        await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
+        Console.WriteLine();
+        _CreateProductInputPort.FailLicenceVerification = false;
 
         // Create Product - Validation Failure.
-        _CreateProductInputPort.FailAuthorisation = false; // This should be handled through Claims.
         Console.WriteLine("[Invoke Pipeline] Validation Failure - ");
         await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
         Console.WriteLine();
+        _CreateProductInputPort.FailValidation = false;
 
         // Create Product - Interactor Invoked.
-        _CreateProductInputPort.FailValidation = false;
         Console.WriteLine("[Invoke Pipeline] Valid Request - ");
         await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
         Console.WriteLine();
