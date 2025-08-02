@@ -2,7 +2,7 @@
 
 namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
 
-public interface ICreateProductOutputPort : IAuthenticationOutputPort, IAuthorisationOutputPort<object>
+public interface ICreateProductOutputPort : IAuthenticationOutputPort, IAuthorisationOutputPort<object>, ILicenceEnforcementOutputPort<object>
 {
 
     #region - - - - - - Methods - - - - - -
