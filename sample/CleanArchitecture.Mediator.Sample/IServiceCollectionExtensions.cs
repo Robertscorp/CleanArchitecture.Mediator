@@ -1,5 +1,4 @@
 ﻿using CleanArchitecture.Mediator;
-using CleanArchitecture.Mediator.Sample.Legacy.BusinessRuleValidation;
 using CleanArchitecture.Mediator.Sample.Pipelines;
 using CleanArchitecture.Mediator.Setup;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +25,7 @@ public static class IServiceCollectionExtensions
                     .AddSingleTenantAuthentication()
                     .AddAuthorisation<object>()
                     .AddLicenceEnforcement<object>()
-                    .AddValidation()
+                    .AddBusinessRuleEvaluation()
                     .AddInteractorInvocation());
 
             _ = config.AddPipeline<LegacyPipeline>(pipeline
@@ -40,7 +39,6 @@ public static class IServiceCollectionExtensions
                     .AddAuthentication()
                     .AddAuthorisation<object>()
                     .AddInputPortValidation<object>()
-                    .AddPipe<BusinessRuleValidationPipe<BusinessRuleValidationResult>>(config => config.AddSingletonService(typeof(IBusinessRuleValidator<,>)))
                     .AddInteractorInvocation());
 
             _ = config.AddPipeline<VerificationPipeline>(pipeline
@@ -53,7 +51,7 @@ public static class IServiceCollectionExtensions
                     })
                     .AddAuthentication()
                     .AddAuthorisation<object>()
-                    .AddValidation()
+                    .AddBusinessRuleEvaluation()
                     .AddPipe<VerificationSuccessPipe>());
         }, registration =>
             registration

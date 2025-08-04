@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace CleanArchitecture.Mediator.Internal
 {
 
-    internal class ValidationPipe : IPipe
+    internal class BusinessRuleEvaluationPipe : IPipe
     {
 
         #region - - - - - - Methods - - - - - -
@@ -16,9 +16,15 @@ namespace CleanArchitecture.Mediator.Internal
             NextPipeHandleAsync nextPipeHandle,
             CancellationToken cancellationToken)
         {
-            var _Validator = serviceFactory.GetService<IValidator<TInputPort, TOutputPort>>();
-            if (_Validator == null || await _Validator.HandleValidationAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false))
+            var _Evaluator = serviceFactory.GetService<IBusinessRuleEvaluator<TInputPort, TOutputPort>>();
+            if (_Evaluator == null)
+            {
                 await nextPipeHandle().ConfigureAwait(false);
+                return;
+            }
+
+            var _Continuation = await _Evaluator.EvaluateAsync(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
+            await _Continuation.HandleAsync(nextPipeHandle, cancellationToken).ConfigureAwait(false);
         }
 
         #endregion Methods
