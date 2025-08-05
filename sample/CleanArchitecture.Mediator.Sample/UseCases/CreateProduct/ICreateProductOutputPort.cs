@@ -7,9 +7,11 @@ public interface ICreateProductOutputPort : IAuthenticationOutputPort, IAuthoris
 
     #region - - - - - - Methods - - - - - -
 
+    Task PresentCategoryDoesNotExistAsync(int categoryID, CancellationToken cancellationToken);
+
     Task PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken);
 
-    Task PresentValidationFailureAsync(CancellationToken cancellationToken);
+    Task PresentNameMustBeUniqueAsync(string name, CancellationToken cancellationToken);
 
     #endregion Methods
 

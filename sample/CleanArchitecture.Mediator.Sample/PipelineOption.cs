@@ -29,8 +29,9 @@ internal static class PipelineOption
         var _CreateProductInputPort = new CreateProductInputPort
         {
             FailAuthorisation = true,
+            FailInvalidCategoryBusinessRule = true,
             FailLicenceVerification = true,
-            FailValidation = true
+            FailUniqueNameBusinessRule = true
         };
 
         // Create Product - Not Authenticated.
@@ -51,11 +52,12 @@ internal static class PipelineOption
         Console.WriteLine();
         _CreateProductInputPort.FailLicenceVerification = false;
 
-        // Create Product - Validation Failure.
-        Console.WriteLine("[Invoke Pipeline] Validation Failure - ");
+        // Create Product - Business Rule Failures.
+        Console.WriteLine("[Invoke Pipeline] Business Rule Failures - ");
         await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
         Console.WriteLine();
-        _CreateProductInputPort.FailValidation = false;
+        _CreateProductInputPort.FailInvalidCategoryBusinessRule = false;
+        _CreateProductInputPort.FailUniqueNameBusinessRule = false;
 
         // Create Product - Interactor Invoked.
         Console.WriteLine("[Invoke Pipeline] Valid Request - ");

@@ -21,15 +21,21 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
         return Task.CompletedTask;
     }
 
+    Task ICreateProductOutputPort.PresentCategoryDoesNotExistAsync(int categoryID, CancellationToken cancellationToken)
+    {
+        Console.WriteLine("\t- CreateProductPresenter.PresentCategoryDoesNotExistAsync");
+        return Task.CompletedTask;
+    }
+
     Task ICreateProductOutputPort.PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken)
     {
         Console.WriteLine($"\t- CreateProductPresenter.PresentCreatedProductAsync('{product.Name}')");
         return Task.CompletedTask;
     }
 
-    Task ICreateProductOutputPort.PresentValidationFailureAsync(CancellationToken cancellationToken)
+    Task ICreateProductOutputPort.PresentNameMustBeUniqueAsync(string name, CancellationToken cancellationToken)
     {
-        Console.WriteLine("\t- CreateProductPresenter.PresentValidationFailureAsync");
+        Console.WriteLine("\t- CreateProductPresenter.PresentNameMustBeUniqueAsync");
         return Task.CompletedTask;
     }
 

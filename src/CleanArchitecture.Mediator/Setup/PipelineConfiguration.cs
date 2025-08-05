@@ -53,6 +53,13 @@ namespace CleanArchitecture.Mediator.Setup
                 config => config.AddSingletonService(typeof(IAuthorisationEnforcer<,>)));
 
         /// <summary>
+        /// Adds business rule evaluation to the pipeline.
+        /// </summary>
+        /// <returns>Itself.</returns>
+        public PipelineConfiguration<TPipeline> AddBusinessRuleEvaluation()
+            => this.AddPipe<BusinessRuleEvaluationPipe>(config => config.AddSingletonService(typeof(IBusinessRuleEvaluator<,>)));
+
+        /// <summary>
         /// Adds input port validation to the pipeline.
         /// </summary>
         /// <typeparam name="TValidationFailure">The type of input port validation failure.</typeparam>
@@ -161,13 +168,6 @@ namespace CleanArchitecture.Mediator.Setup
         /// </remarks>
         public PipelineConfiguration<TPipeline> AddSingleTenantAuthentication()
             => this.AddPipe<AuthenticationPipe>(config => config.AddSingletonService(typeof(IPrincipalAccessor)));
-
-        /// <summary>
-        /// Adds validation to the pipeline.
-        /// </summary>
-        /// <returns>Itself.</returns>
-        public PipelineConfiguration<TPipeline> AddValidation()
-            => this.AddPipe<ValidationPipe>(config => config.AddSingletonService(typeof(IValidator<,>)));
 
         internal Func<ServiceFactory, PipelineHandleAccessor<TPipeline>> GetPipelineHandleAccessorFactory()
             => serviceFactory
