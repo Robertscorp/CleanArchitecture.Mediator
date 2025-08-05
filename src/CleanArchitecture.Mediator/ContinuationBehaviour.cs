@@ -81,8 +81,8 @@ namespace CleanArchitecture.Mediator
 
             #region - - - - - - Constructors - - - - - -
 
-            public CustomContinuationBehaviour(Func<NextPipeHandleAsync, CancellationToken, Task> handler)
-                => this.m_HandleAsync = handler ?? throw new ArgumentNullException(nameof(handler));
+            public CustomContinuationBehaviour(Func<NextPipeHandleAsync, CancellationToken, Task> handleAsync)
+                => this.m_HandleAsync = handleAsync ?? throw new ArgumentNullException(nameof(handleAsync));
 
             #endregion Constructors
 
