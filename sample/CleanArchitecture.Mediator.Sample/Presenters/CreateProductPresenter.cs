@@ -39,6 +39,12 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
         return Task.CompletedTask;
     }
 
+    Task IInputPortValidationOutputPort<object>.PresentInputPortValidationFailureAsync(object validationFailure, CancellationToken cancellationToken)
+    {
+        Console.WriteLine($"\t- CreateProductPresenter.PresentInputPortValidationFailureAsync");
+        return Task.CompletedTask;
+    }
+
     Task ILicenceEnforcementOutputPort<object>.PresentLicenceFailureAsync(object licenceFailure, CancellationToken cancellationToken)
     {
         Console.WriteLine($"\t- CreateProductPresenter.PresentLicenceFailureAsync");
