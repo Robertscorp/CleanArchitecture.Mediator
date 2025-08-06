@@ -25,20 +25,8 @@ public static class IServiceCollectionExtensions
                     .AddSingleTenantAuthentication()
                     .AddAuthorisation<object>()
                     .AddLicenceEnforcement<object>()
-                    .AddBusinessRuleEvaluation()
-                    .AddInteractorInvocation());
-
-            _ = config.AddPipeline<LegacyPipeline>(pipeline
-                => pipeline
-                    .AddPipe(async (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken) =>
-                    {
-                        Console.WriteLine("\t- Beginning invocation of LegacyPipeline.");
-                        await nextPipeHandleAsync();
-                        Console.WriteLine("\t- Completed invocation of LegacyPipeline.");
-                    })
-                    .AddAuthentication()
-                    .AddAuthorisation<object>()
                     .AddInputPortValidation<object>()
+                    .AddBusinessRuleEvaluation()
                     .AddInteractorInvocation());
 
             _ = config.AddPipeline<VerificationPipeline>(pipeline
@@ -51,6 +39,8 @@ public static class IServiceCollectionExtensions
                     })
                     .AddAuthentication()
                     .AddAuthorisation<object>()
+                    .AddLicenceEnforcement<object>()
+                    .AddInputPortValidation<object>()
                     .AddBusinessRuleEvaluation()
                     .AddPipe<VerificationSuccessPipe>());
         }, registration =>

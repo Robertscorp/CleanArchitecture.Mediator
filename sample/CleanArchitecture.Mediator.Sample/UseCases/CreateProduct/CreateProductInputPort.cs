@@ -7,6 +7,8 @@ public class CreateProductInputPort : IInputPort<ICreateProductOutputPort>
 
     public bool FailAuthorisation { get; set; }
 
+    public bool FailInputPortValidation { get; set; }
+
     public bool FailInvalidCategoryBusinessRule { get; set; }
 
     public bool FailLicenceVerification { get; set; }
