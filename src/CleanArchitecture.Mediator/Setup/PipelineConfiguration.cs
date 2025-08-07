@@ -42,15 +42,15 @@ namespace CleanArchitecture.Mediator.Setup
             => this.AddPipe<AuthenticationPipe>();
 
         /// <summary>
-        /// Adds authorisation to the pipeline.
+        /// Adds authorisation policy validation to the pipeline.
         /// </summary>
-        /// <typeparam name="TAuthorisationFailure">The type of authorisation failure.</typeparam>
+        /// <typeparam name="TPolicyFailure">The type of authorisation policy failure.</typeparam>
         /// <returns>Itself.</returns>
-        public PipelineConfiguration<TPipeline> AddAuthorisation<TAuthorisationFailure>()
+        public PipelineConfiguration<TPipeline> AddAuthorisationPolicyValidation<TPolicyFailure>()
             => this.AddOpenGenericPipe(
-                typeof(AuthorisationPipe<,,>),
-                new Type[] { typeof(TAuthorisationFailure) },
-                config => config.AddSingletonService(typeof(IAuthorisationEnforcer<,>)));
+                typeof(AuthorisationPolicyValidationPipe<,,>),
+                new Type[] { typeof(TPolicyFailure) },
+                config => config.AddSingletonService(typeof(IAuthorisationPolicyValidator<,>)));
 
         /// <summary>
         /// Adds business rule evaluation to the pipeline.

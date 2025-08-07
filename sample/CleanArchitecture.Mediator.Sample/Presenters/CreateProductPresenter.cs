@@ -15,9 +15,9 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
         return Task.CompletedTask;
     }
 
-    Task IAuthorisationOutputPort<object>.PresentAuthorisationFailureAsync(object authorisationFailure, CancellationToken cancellationToken)
+    Task IAuthorisationPolicyFailureOutputPort<object>.PresentAuthorisationPolicyFailureAsync(object policyFailure, CancellationToken cancellationToken)
     {
-        Console.WriteLine("\t- CreateProductPresenter.PresentAuthorisationFailureAsync");
+        Console.WriteLine("\t- CreateProductPresenter.PresentAuthorisationPolicyFailureAsync");
         return Task.CompletedTask;
     }
 

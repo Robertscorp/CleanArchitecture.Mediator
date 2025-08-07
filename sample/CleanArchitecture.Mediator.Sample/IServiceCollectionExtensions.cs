@@ -23,7 +23,7 @@ public static class IServiceCollectionExtensions
                         Console.WriteLine("\t- Completed invocation of DefaultPipeline.");
                     })
                     .AddSingleTenantAuthentication()
-                    .AddAuthorisation<object>()
+                    .AddAuthorisationPolicyValidation<object>()
                     .AddLicenceEnforcement<object>()
                     .AddInputPortValidation<object>()
                     .AddBusinessRuleEvaluation()
@@ -38,7 +38,7 @@ public static class IServiceCollectionExtensions
                         Console.WriteLine("\t- Completed invocation of VerificationPipeline.");
                     })
                     .AddAuthentication()
-                    .AddAuthorisation<object>()
+                    .AddAuthorisationPolicyValidation<object>()
                     .AddLicenceEnforcement<object>()
                     .AddInputPortValidation<object>()
                     .AddBusinessRuleEvaluation()
