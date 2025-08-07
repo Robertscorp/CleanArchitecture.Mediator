@@ -24,7 +24,7 @@ public static class IServiceCollectionExtensions
                     })
                     .AddSingleTenantAuthentication()
                     .AddAuthorisationPolicyValidation<object>()
-                    .AddLicenceEnforcement<object>()
+                    .AddLicencePolicyValidation<object>()
                     .AddInputPortValidation<object>()
                     .AddBusinessRuleEvaluation()
                     .AddInteractorInvocation());
@@ -39,7 +39,7 @@ public static class IServiceCollectionExtensions
                     })
                     .AddAuthentication()
                     .AddAuthorisationPolicyValidation<object>()
-                    .AddLicenceEnforcement<object>()
+                    .AddLicencePolicyValidation<object>()
                     .AddInputPortValidation<object>()
                     .AddBusinessRuleEvaluation()
                     .AddPipe<VerificationSuccessPipe>());

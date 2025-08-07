@@ -20,7 +20,7 @@ public class PipelineTests
     private readonly Mock<IEverythingOutputPort> m_MockEverythingOutputPort = new();
     private readonly Mock<IInteractor<InputPort, IEverythingOutputPort>> m_MockEverythingOutputPortInteractor = new();
     private readonly Mock<IInputPortValidator<InputPort, object>> m_MockInputPortValidator = new();
-    private readonly Mock<ILicenceVerifier<InputPort, object>> m_MockLicenceVerifier = new();
+    private readonly Mock<ILicencePolicyValidator<InputPort, object>> m_MockLicencePolicyValidator = new();
     private readonly Mock<IPrincipalAccessor> m_MockPrincipalAccessor = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
@@ -33,7 +33,7 @@ public class PipelineTests
     private bool m_IsAuthorised = true;
     private bool m_IsInputPortValid = true;
     private bool m_IsLicenced = true;
-    private object? m_LicenceFailure;
+    private object? m_LicencePolicyFailure;
 
     #endregion Fields
 
@@ -43,7 +43,7 @@ public class PipelineTests
     {
         var _AuthorisationPolicyFailure = new object();
         var _InputPortValidationFailure = new object();
-        var _LicenceFailure = new object();
+        var _LicencePolicyFailure = new object();
 
         _ = this.m_MockAuthorisationPolicyValidator
                 .Setup(mock => mock.ValidateAsync(this.m_InputPort, out _AuthorisationPolicyFailure, It.IsAny<ServiceFactory>(), default))
@@ -65,11 +65,11 @@ public class PipelineTests
                     return Task.FromResult(this.m_IsInputPortValid);
                 });
 
-        _ = this.m_MockLicenceVerifier
-                .Setup(mock => mock.IsLicencedAsync(this.m_InputPort, out _LicenceFailure, It.IsAny<ServiceFactory>(), default))
+        _ = this.m_MockLicencePolicyValidator
+                .Setup(mock => mock.ValidateAsync(this.m_InputPort, out _LicencePolicyFailure, It.IsAny<ServiceFactory>(), default))
                 .Returns(() =>
                 {
-                    this.m_LicenceFailure = _LicenceFailure;
+                    this.m_LicencePolicyFailure = _LicencePolicyFailure;
                     return Task.FromResult(this.m_IsLicenced);
                 });
 
@@ -98,8 +98,8 @@ public class PipelineTests
                 .Returns(this.m_MockEverythingOutputPortInteractor.Object);
 
         _ = this.m_MockServiceFactory
-                .Setup(mock => mock.Invoke(typeof(ILicenceVerifier<InputPort, object>)))
-                .Returns(this.m_MockLicenceVerifier.Object);
+                .Setup(mock => mock.Invoke(typeof(ILicencePolicyValidator<InputPort, object>)))
+                .Returns(this.m_MockLicencePolicyValidator.Object);
 
         _ = this.m_MockServiceFactory
                 .Setup(mock => mock.Invoke(typeof(IPrincipalAccessor)))
@@ -112,7 +112,7 @@ public class PipelineTests
                         pipeline
                             .AddAuthentication()
                             .AddAuthorisationPolicyValidation<object>()
-                            .AddLicenceEnforcement<object>()
+                            .AddLicencePolicyValidation<object>()
                             .AddInputPortValidation<object>()
                             .AddBusinessRuleEvaluation()
                             .AddInteractorInvocation()),
@@ -130,8 +130,8 @@ public class PipelineTests
                 .Returns(() => new InputPortValidationPipe<InputPort, IEverythingOutputPort, object>());
 
         _ = this.m_MockServiceFactory
-                .Setup(mock => mock.Invoke(typeof(LicencePipe<InputPort, IEverythingOutputPort, object>)))
-                .Returns(() => new LicencePipe<InputPort, IEverythingOutputPort, object>());
+                .Setup(mock => mock.Invoke(typeof(LicencePolicyValidationPipe<InputPort, IEverythingOutputPort, object>)))
+                .Returns(() => new LicencePolicyValidationPipe<InputPort, IEverythingOutputPort, object>());
 
         this.m_Pipeline = new Pipeline(this.m_MockServiceFactory.Object);
     }
@@ -167,7 +167,7 @@ public class PipelineTests
         this.m_MockEverythingOutputPort.Verify(mock => mock.PresentAuthenticationFailureAsync(default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Never());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Never());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Never());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -188,14 +188,14 @@ public class PipelineTests
         this.m_MockEverythingOutputPort.Verify(mock => mock.PresentAuthorisationPolicyFailureAsync(this.m_AuthorisationPolicyFailure!, default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Never());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Never());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Never());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task InvokeAsync_EverythingOutputPortWithLicenceFailure_StopsWithLicenceFailure()
+    public async Task InvokeAsync_EverythingOutputPortWithLicencePolicyFailure_StopsWithLicencePolicyFailure()
     {
         // Arrange
         this.m_IsLicenced = false;
@@ -206,10 +206,10 @@ public class PipelineTests
         // Assert
         this.m_MockAuthorisationPolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_AuthorisationPolicyFailure, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockBusinessRuleEvaluator.Verify(mock => mock.EvaluateAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Never());
-        this.m_MockEverythingOutputPort.Verify(mock => mock.PresentLicenceFailureAsync(this.m_LicenceFailure!, default), Times.Once());
+        this.m_MockEverythingOutputPort.Verify(mock => mock.PresentLicencePolicyFailureAsync(this.m_LicencePolicyFailure!, default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Never());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -230,7 +230,7 @@ public class PipelineTests
         this.m_MockEverythingOutputPort.Verify(mock => mock.PresentInputPortValidationFailureAsync(this.m_InputPortValidationFailure!, default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -250,7 +250,7 @@ public class PipelineTests
         this.m_MockBusinessRuleEvaluator.Verify(mock => mock.EvaluateAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -269,7 +269,7 @@ public class PipelineTests
         this.m_MockBusinessRuleEvaluator.Verify(mock => mock.EvaluateAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -325,7 +325,7 @@ public class PipelineTests
         this.m_MockEverythingOutputPort.Verify(mock => mock.PresentAuthenticationFailureAsync(default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, It.IsAny<ServiceFactory>(), default), Times.Never());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_LicenceFailure, It.IsAny<ServiceFactory>(), default), Times.Never());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_LicencePolicyFailure, It.IsAny<ServiceFactory>(), default), Times.Never());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -346,14 +346,14 @@ public class PipelineTests
         this.m_MockEverythingOutputPort.Verify(mock => mock.PresentAuthorisationPolicyFailureAsync(this.m_AuthorisationPolicyFailure!, default));
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, It.IsAny<ServiceFactory>(), default), Times.Never());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_LicenceFailure, It.IsAny<ServiceFactory>(), default), Times.Never());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_LicencePolicyFailure, It.IsAny<ServiceFactory>(), default), Times.Never());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task InvokeAsync_WithInvocationServiceCollection_EverythingOutputPortWithLicenceFailure_StopsWithLicenceFailure()
+    public async Task InvokeAsync_WithInvocationServiceCollection_EverythingOutputPortWithLicencePolicyFailure_StopsWithLicencePolicyFailure()
     {
         // Arrange
         this.m_IsLicenced = false;
@@ -364,10 +364,10 @@ public class PipelineTests
         // Assert
         this.m_MockAuthorisationPolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_AuthorisationPolicyFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
         this.m_MockBusinessRuleEvaluator.Verify(mock => mock.EvaluateAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Never());
-        this.m_MockEverythingOutputPort.Verify(mock => mock.PresentLicenceFailureAsync(this.m_LicenceFailure!, default));
+        this.m_MockEverythingOutputPort.Verify(mock => mock.PresentLicencePolicyFailureAsync(this.m_LicencePolicyFailure!, default));
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, It.IsAny<ServiceFactory>(), default), Times.Never());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_LicenceFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_LicencePolicyFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -388,7 +388,7 @@ public class PipelineTests
         this.m_MockEverythingOutputPort.Verify(mock => mock.PresentInputPortValidationFailureAsync(this.m_InputPortValidationFailure!, default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_LicenceFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_LicencePolicyFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -408,7 +408,7 @@ public class PipelineTests
         this.m_MockBusinessRuleEvaluator.Verify(mock => mock.EvaluateAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Never());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_LicenceFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_LicencePolicyFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -427,7 +427,7 @@ public class PipelineTests
         this.m_MockBusinessRuleEvaluator.Verify(mock => mock.EvaluateAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Once());
         this.m_MockEverythingOutputPortInteractor.Verify(mock => mock.HandleAsync(this.m_InputPort, this.m_MockEverythingOutputPort.Object, It.IsAny<ServiceFactory>(), default), Times.Once());
         this.m_MockInputPortValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_InputPortValidationFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
-        this.m_MockLicenceVerifier.Verify(mock => mock.IsLicencedAsync(this.m_InputPort, out this.m_LicenceFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
+        this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_LicencePolicyFailure, It.IsAny<ServiceFactory>(), default), Times.Once());
         this.m_MockPrincipalAccessor.Verify(mock => mock.Principal, Times.Once());
 
         this.m_MockEverythingOutputPort.VerifyNoOtherCalls();
@@ -443,7 +443,7 @@ public class PipelineTests
         IAuthenticationOutputPort,
         IAuthorisationPolicyFailureOutputPort<object>,
         IInputPortValidationOutputPort<object>,
-        ILicenceEnforcementOutputPort<object>
+        ILicencePolicyFailureOutputPort<object>
     { }
 
     public class InputPort : IInputPort<IEmptyOutputPort>, IInputPort<IEverythingOutputPort> { }

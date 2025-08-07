@@ -14,8 +14,8 @@ while (_Option.GetValueOrDefault() is < 1 or > 2)
     Console.Clear();
     Console.WriteLine("Welcome to the CLAM (CleanArchitecture.Mediator) sample project.");
     Console.WriteLine("In this sample, we've defined 2 pipelines that can be invoked:");
-    Console.WriteLine("\t[1] The default pipeline, consisting of Authentication, Authorisation, Licensing, Input Port Validation, Business Rule Evaluation, and Interactor Invocation.");
-    Console.WriteLine("\t[2] The verification pipeline, consisting of Authentication, Authorisation, Licensing, Input Port Validation, Business Rule Evaluation, and Verification Success.");
+    Console.WriteLine("\t[1] The default pipeline, consisting of Authentication, Authorisation Policy Validation, Licence Policy Validation, Input Port Validation, Business Rule Evaluation, and Interactor Invocation.");
+    Console.WriteLine("\t[2] The verification pipeline, consisting of Authentication, Authorisation Policy Validation, Licence Policy Validation, Input Port Validation, Business Rule Evaluation, and Verification Success.");
     Console.WriteLine();
     Console.Write("Please pick a pipeline to invoke: ");
 

@@ -6,7 +6,7 @@ public interface ICreateProductOutputPort :
     IAuthenticationOutputPort,
     IAuthorisationPolicyFailureOutputPort<object>,
     IInputPortValidationOutputPort<object>,
-    ILicenceEnforcementOutputPort<object>
+    ILicencePolicyFailureOutputPort<object>
 {
 
     #region - - - - - - Methods - - - - - -
