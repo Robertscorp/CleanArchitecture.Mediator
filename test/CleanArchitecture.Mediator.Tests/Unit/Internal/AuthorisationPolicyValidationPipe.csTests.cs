@@ -5,7 +5,7 @@ using Xunit;
 
 namespace CleanArchitecture.Mediator.Tests.Unit.Internal;
 
-public class AuthorisationPipeTests
+public class AuthorisationPolicyValidationPipeTests
 {
 
     #region - - - - - - Fields - - - - - -
@@ -26,7 +26,7 @@ public class AuthorisationPipeTests
 
     #region - - - - - - Constructors - - - - - -
 
-    public AuthorisationPipeTests()
+    public AuthorisationPolicyValidationPipeTests()
     {
         var _AuthorisationPolicyFailure = new object();
 
