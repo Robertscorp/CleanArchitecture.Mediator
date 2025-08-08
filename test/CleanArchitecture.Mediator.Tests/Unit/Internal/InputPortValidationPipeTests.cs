@@ -11,13 +11,13 @@ public class InputPortValidationPipeTests
     #region - - - - - - Fields - - - - - -
 
     private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
-    private readonly Mock<IInputPortValidationOutputPort<object>> m_MockOutputPort = new();
+    private readonly Mock<IInputPortValidationFailureOutputPort<object>> m_MockOutputPort = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
-    private readonly Mock<IInputPortValidator<IInputPort<IInputPortValidationOutputPort<object>>, object>> m_MockValidator = new();
+    private readonly Mock<IInputPortValidator<IInputPort<IInputPortValidationFailureOutputPort<object>>, object>> m_MockValidator = new();
 
-    private readonly IInputPort<IInputPortValidationOutputPort<object>> m_InputPort = new Mock<IInputPort<IInputPortValidationOutputPort<object>>>().Object;
-    private readonly IPipe<IInputPort<IInputPortValidationOutputPort<object>>, IInputPortValidationOutputPort<object>> m_Pipe
-        = new InputPortValidationPipe<IInputPort<IInputPortValidationOutputPort<object>>, IInputPortValidationOutputPort<object>, object>();
+    private readonly IInputPort<IInputPortValidationFailureOutputPort<object>> m_InputPort = new Mock<IInputPort<IInputPortValidationFailureOutputPort<object>>>().Object;
+    private readonly IPipe<IInputPort<IInputPortValidationFailureOutputPort<object>>, IInputPortValidationFailureOutputPort<object>> m_Pipe
+        = new InputPortValidationPipe<IInputPort<IInputPortValidationFailureOutputPort<object>>, IInputPortValidationFailureOutputPort<object>, object>();
 
     private bool m_IsInputPortValid = true;
     private object? m_ValidationFailure;
@@ -31,7 +31,7 @@ public class InputPortValidationPipeTests
         var _ValidationFailure = new object();
 
         _ = this.m_MockServiceFactory
-                .Setup(mock => mock.Invoke(typeof(IInputPortValidator<IInputPort<IInputPortValidationOutputPort<object>>, object>)))
+                .Setup(mock => mock.Invoke(typeof(IInputPortValidator<IInputPort<IInputPortValidationFailureOutputPort<object>>, object>)))
                 .Returns(this.m_MockValidator.Object);
 
         _ = this.m_MockValidator

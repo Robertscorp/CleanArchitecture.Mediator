@@ -442,7 +442,7 @@ public class PipelineTests
     public interface IEverythingOutputPort :
         IAuthenticationFailureOutputPort,
         IAuthorisationPolicyFailureOutputPort<object>,
-        IInputPortValidationOutputPort<object>,
+        IInputPortValidationFailureOutputPort<object>,
         ILicencePolicyFailureOutputPort<object>
     { }
 

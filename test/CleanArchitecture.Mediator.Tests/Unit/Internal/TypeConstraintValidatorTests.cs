@@ -50,7 +50,7 @@ public class TypeConstraintValidatorTests
 
     private class CreateProductInputPort : IInputPort<ICreateProductOutputPort> { }
 
-    private interface ICreateProductOutputPort : IAuthorisationPolicyFailureOutputPort<string>, IInputPortValidationOutputPort<object> { }
+    private interface ICreateProductOutputPort : IAuthorisationPolicyFailureOutputPort<string>, IInputPortValidationFailureOutputPort<object> { }
 
     private class BaseClass { }
 
