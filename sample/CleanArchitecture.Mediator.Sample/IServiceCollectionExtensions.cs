@@ -22,7 +22,7 @@ public static class IServiceCollectionExtensions
                         await nextPipeHandleAsync();
                         Console.WriteLine("\t- Completed invocation of DefaultPipeline.");
                     })
-                    .AddSingleTenantAuthentication()
+                    .AddAuthentication(AuthenticationMode.SinglePrincipal)
                     .AddAuthorisationPolicyValidation<object>()
                     .AddLicencePolicyValidation<object>()
                     .AddInputPortValidation<object>()
@@ -37,7 +37,7 @@ public static class IServiceCollectionExtensions
                         await nextPipeHandleAsync();
                         Console.WriteLine("\t- Completed invocation of VerificationPipeline.");
                     })
-                    .AddAuthentication()
+                    .AddAuthentication(AuthenticationMode.SinglePrincipal)
                     .AddAuthorisationPolicyValidation<object>()
                     .AddLicencePolicyValidation<object>()
                     .AddInputPortValidation<object>()
