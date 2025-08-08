@@ -440,7 +440,7 @@ public class PipelineTests
     public interface IEmptyOutputPort { }
 
     public interface IEverythingOutputPort :
-        IAuthenticationOutputPort,
+        IAuthenticationFailureOutputPort,
         IAuthorisationPolicyFailureOutputPort<object>,
         IInputPortValidationOutputPort<object>,
         ILicencePolicyFailureOutputPort<object>

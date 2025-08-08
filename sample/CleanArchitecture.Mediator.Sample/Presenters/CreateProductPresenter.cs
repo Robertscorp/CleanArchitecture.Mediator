@@ -9,7 +9,7 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
 
     #region - - - - - - Methods - - - - - -
 
-    Task IAuthenticationOutputPort.PresentAuthenticationFailureAsync(CancellationToken cancellationToken)
+    Task IAuthenticationFailureOutputPort.PresentAuthenticationFailureAsync(CancellationToken cancellationToken)
     {
         Console.WriteLine("\t- CreateProductPresenter.PresentAuthenticationFailureAsync");
         return Task.CompletedTask;
