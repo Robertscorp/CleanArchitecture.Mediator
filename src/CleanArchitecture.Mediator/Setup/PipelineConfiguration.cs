@@ -33,13 +33,13 @@ namespace CleanArchitecture.Mediator.Setup
         /// <summary>
         /// Adds authentication to the pipeline.
         /// </summary>
+        /// <param name="authenticationMode">The authentication mode to apply. Cannot be null.</param>
         /// <returns>Itself.</returns>
-        /// <remarks>
-        /// This should only be used if a previously configured pipeline has already added either single-tenant or multi-tenant authentication,
-        /// or if <see cref="IPrincipalAccessor"/> is going to be manually registered.
-        /// </remarks>
-        public PipelineConfiguration<TPipeline> AddAuthentication()
-            => this.AddPipe<AuthenticationPipe>();
+        /// <exception cref="ArgumentNullException"><paramref name="authenticationMode"/> is null.</exception>
+        public PipelineConfiguration<TPipeline> AddAuthentication(AuthenticationMode authenticationMode)
+            => authenticationMode is null
+                ? throw new ArgumentNullException(nameof(authenticationMode))
+                : this.AddPipe<AuthenticationPipe>(authenticationMode.RegisterService);
 
         /// <summary>
         /// Adds authorisation policy validation to the pipeline.
@@ -122,14 +122,6 @@ namespace CleanArchitecture.Mediator.Setup
         }
 
         /// <summary>
-        /// Adds multi-tenant authentication to the pipeline.
-        /// </summary>
-        /// <returns>Itself.</returns>
-        /// <remarks>Should not be used in conjunction with single-tenant authentication.</remarks>
-        public PipelineConfiguration<TPipeline> AddMultiTenantAuthentication()
-            => this.AddPipe<AuthenticationPipe>(config => config.AddScopedService(typeof(IPrincipalAccessor)));
-
-        /// <summary>
         /// Adds an open generic pipe to the pipeline.
         /// </summary>
         /// <param name="openGenericPipeType">The <see cref="Type"/> of open generic pipe. Cannot be null.</param>
@@ -158,16 +150,6 @@ namespace CleanArchitecture.Mediator.Setup
 
             return this;
         }
-
-        /// <summary>
-        /// Adds single-tenant authentication to the pipeline.
-        /// </summary>
-        /// <returns>Itself.</returns>
-        /// <remarks>
-        /// Should not be used in conjunction with multi-tenant authentication.
-        /// </remarks>
-        public PipelineConfiguration<TPipeline> AddSingleTenantAuthentication()
-            => this.AddPipe<AuthenticationPipe>(config => config.AddSingletonService(typeof(IPrincipalAccessor)));
 
         internal Func<ServiceFactory, PipelineHandleAccessor<TPipeline>> GetPipelineHandleAccessorFactory()
             => serviceFactory

@@ -110,7 +110,7 @@ public class PipelineTests
                 config.AddPipeline<Pipeline>(
                     pipeline =>
                         pipeline
-                            .AddAuthentication()
+                            .AddAuthentication(AuthenticationMode.SinglePrincipal)
                             .AddAuthorisationPolicyValidation<object>()
                             .AddLicencePolicyValidation<object>()
                             .AddInputPortValidation<object>()
