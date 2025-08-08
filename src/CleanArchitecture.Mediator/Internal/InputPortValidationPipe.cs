@@ -5,8 +5,8 @@ namespace CleanArchitecture.Mediator.Internal
 {
 
     internal class InputPortValidationPipe<TInputPort, TOutputPort, TValidationFailure> : IPipe<TInputPort, TOutputPort>
-        where TInputPort : IInputPort<TOutputPort>, IInputPort<IInputPortValidationOutputPort<TValidationFailure>>
-        where TOutputPort : IInputPortValidationOutputPort<TValidationFailure>
+        where TInputPort : IInputPort<TOutputPort>, IInputPort<IInputPortValidationFailureOutputPort<TValidationFailure>>
+        where TOutputPort : IInputPortValidationFailureOutputPort<TValidationFailure>
     {
 
         #region - - - - - - Methods - - - - - -

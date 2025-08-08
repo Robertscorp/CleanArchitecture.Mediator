@@ -9,15 +9,15 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
 
     #region - - - - - - Methods - - - - - -
 
-    Task IAuthenticationOutputPort.PresentAuthenticationFailureAsync(CancellationToken cancellationToken)
+    Task IAuthenticationFailureOutputPort.PresentAuthenticationFailureAsync(CancellationToken cancellationToken)
     {
         Console.WriteLine("\t- CreateProductPresenter.PresentAuthenticationFailureAsync");
         return Task.CompletedTask;
     }
 
-    Task IAuthorisationOutputPort<object>.PresentAuthorisationFailureAsync(object authorisationFailure, CancellationToken cancellationToken)
+    Task IAuthorisationPolicyFailureOutputPort<object>.PresentAuthorisationPolicyFailureAsync(object policyFailure, CancellationToken cancellationToken)
     {
-        Console.WriteLine("\t- CreateProductPresenter.PresentAuthorisationFailureAsync");
+        Console.WriteLine("\t- CreateProductPresenter.PresentAuthorisationPolicyFailureAsync");
         return Task.CompletedTask;
     }
 
@@ -39,15 +39,15 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
         return Task.CompletedTask;
     }
 
-    Task IInputPortValidationOutputPort<object>.PresentInputPortValidationFailureAsync(object validationFailure, CancellationToken cancellationToken)
+    Task IInputPortValidationFailureOutputPort<object>.PresentInputPortValidationFailureAsync(object validationFailure, CancellationToken cancellationToken)
     {
         Console.WriteLine($"\t- CreateProductPresenter.PresentInputPortValidationFailureAsync");
         return Task.CompletedTask;
     }
 
-    Task ILicenceEnforcementOutputPort<object>.PresentLicenceFailureAsync(object licenceFailure, CancellationToken cancellationToken)
+    Task ILicencePolicyFailureOutputPort<object>.PresentLicencePolicyFailureAsync(object policyFailure, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"\t- CreateProductPresenter.PresentLicenceFailureAsync");
+        Console.WriteLine($"\t- CreateProductPresenter.PresentLicencePolicyFailureAsync");
         return Task.CompletedTask;
     }
 

@@ -15,7 +15,7 @@ namespace CleanArchitecture.Mediator.Internal
             ServiceFactory serviceFactory,
             NextPipeHandleAsync nextPipeHandle,
             CancellationToken cancellationToken)
-            => outputPort is IAuthenticationOutputPort _OutputPort
+            => outputPort is IAuthenticationFailureOutputPort _OutputPort
                 && serviceFactory.GetService<IPrincipalAccessor>()?.Principal == null
                 ? _OutputPort.PresentAuthenticationFailureAsync(cancellationToken)
                 : nextPipeHandle();

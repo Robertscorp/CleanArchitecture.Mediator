@@ -12,11 +12,11 @@ public class AuthenticationPipeTests
     #region - - - - - - Fields - - - - - -
 
     private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
-    private readonly Mock<IAuthenticationOutputPort> m_MockOutputPort = new();
+    private readonly Mock<IAuthenticationFailureOutputPort> m_MockOutputPort = new();
     private readonly Mock<IPrincipalAccessor> m_MockPrincipalAccessor = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
 
-    private readonly IInputPort<IAuthenticationOutputPort> m_InputPort = new Mock<IInputPort<IAuthenticationOutputPort>>().Object;
+    private readonly IInputPort<IAuthenticationFailureOutputPort> m_InputPort = new Mock<IInputPort<IAuthenticationFailureOutputPort>>().Object;
     private readonly IPipe m_Pipe = new AuthenticationPipe();
 
     #endregion Fields
