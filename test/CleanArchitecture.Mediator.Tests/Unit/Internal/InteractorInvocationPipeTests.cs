@@ -1,5 +1,7 @@
 ﻿using CleanArchitecture.Mediator.Internal;
+using FluentAssertions;
 using Moq;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -32,15 +34,17 @@ public class InteractorInvocationPipeTests
     #region - - - - - - InvokeAsync Tests - - - - - -
 
     [Fact]
-    public async Task InvokeAsync_InteractorDoesNotExist_DoesNothing()
+    public async Task InvokeAsync_InteractorDoesNotExist_InvocationFails()
     {
         // Arrange
         this.m_MockServiceFactory.Reset();
 
         // Act
-        await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
+        var _Exception = await Record.ExceptionAsync(() => this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_OutputPort, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default));
 
         // Assert
+        _ = _Exception.Should().BeOfType<NullReferenceException>();
+
         this.m_MockInteractor.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
     }

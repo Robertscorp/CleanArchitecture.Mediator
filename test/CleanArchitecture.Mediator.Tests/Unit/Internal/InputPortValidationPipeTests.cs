@@ -1,5 +1,7 @@
 ﻿using CleanArchitecture.Mediator.Internal;
+using FluentAssertions;
 using Moq;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -48,16 +50,16 @@ public class InputPortValidationPipeTests
     #region - - - - - - InvokeAsync Tests - - - - - -
 
     [Fact]
-    public async Task InvokeAsync_InputPortValidatorHasNotBeenRegistered_MovesToNextPipe()
+    public async Task InvokeAsync_InputPortValidatorHasNotBeenRegistered_InvocationFails()
     {
         // Arrange
         this.m_MockServiceFactory.Reset();
 
         // Act
-        await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
+        var _Exception = await Record.ExceptionAsync(() => this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default));
 
         // Assert
-        this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
+        _ = _Exception.Should().BeOfType<NullReferenceException>();
 
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();

@@ -16,7 +16,7 @@ namespace CleanArchitecture.Mediator.Internal
             NextPipeHandleAsync nextPipeHandle,
             CancellationToken cancellationToken)
             => serviceFactory
-                .GetService<IInteractor<TInputPort, TOutputPort>>()?
+                .GetService<IInteractor<TInputPort, TOutputPort>>()
                 .HandleAsync(inputPort, outputPort, serviceFactory, cancellationToken)
                     ?? Task.CompletedTask;
 

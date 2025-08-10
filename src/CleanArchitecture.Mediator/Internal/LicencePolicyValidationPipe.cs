@@ -19,7 +19,7 @@ namespace CleanArchitecture.Mediator.Internal
             CancellationToken cancellationToken)
         {
             var _Validator = serviceFactory.GetService<ILicencePolicyValidator<TInputPort, TPolicyFailure>>();
-            if (_Validator != null && !await _Validator.ValidateAsync(inputPort, out var _PolicyFailure, serviceFactory, cancellationToken).ConfigureAwait(false))
+            if (!await _Validator.ValidateAsync(inputPort, out var _PolicyFailure, serviceFactory, cancellationToken).ConfigureAwait(false))
             {
                 await outputPort.PresentLicencePolicyFailureAsync(_PolicyFailure, cancellationToken).ConfigureAwait(false);
                 return;
