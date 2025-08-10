@@ -19,7 +19,7 @@ namespace CleanArchitecture.Mediator.Internal
             CancellationToken cancellationToken)
         {
             var _Validator = serviceFactory.GetService<IInputPortValidator<TInputPort, TValidationFailure>>();
-            if (_Validator != null && !await _Validator.ValidateAsync(inputPort, out var _ValidationFailure, serviceFactory, cancellationToken))
+            if (!await _Validator.ValidateAsync(inputPort, out var _ValidationFailure, serviceFactory, cancellationToken))
             {
                 await outputPort.PresentInputPortValidationFailureAsync(_ValidationFailure, cancellationToken).ConfigureAwait(false);
                 return;
