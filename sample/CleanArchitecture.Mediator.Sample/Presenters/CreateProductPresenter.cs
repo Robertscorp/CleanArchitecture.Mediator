@@ -21,10 +21,10 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
         return Task.CompletedTask;
     }
 
-    Task ICreateProductOutputPort.PresentCategoryDoesNotExistAsync(int categoryID, CancellationToken cancellationToken)
+    Task<ContinuationBehaviour> ICreateProductOutputPort.PresentCategoryDoesNotExistAsync(int categoryID, CancellationToken cancellationToken)
     {
-        Console.WriteLine("\t- CreateProductPresenter.PresentCategoryDoesNotExistAsync");
-        return Task.CompletedTask;
+        Console.WriteLine("\t- CreateProductPresenter.PresentCategoryDoesNotExistAsync [Warn]");
+        return ContinuationBehaviour.ContinueAsync;
     }
 
     Task ICreateProductOutputPort.PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken)
@@ -33,10 +33,10 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
         return Task.CompletedTask;
     }
 
-    Task ICreateProductOutputPort.PresentNameMustBeUniqueAsync(string name, CancellationToken cancellationToken)
+    Task<ContinuationBehaviour> ICreateProductOutputPort.PresentNameMustBeUniqueAsync(string name, CancellationToken cancellationToken)
     {
-        Console.WriteLine("\t- CreateProductPresenter.PresentNameMustBeUniqueAsync");
-        return Task.CompletedTask;
+        Console.WriteLine($"\t- CreateProductPresenter.PresentNameMustBeUniqueAsync [Fail]");
+        return ContinuationBehaviour.ReturnAsync;
     }
 
     Task IInputPortValidationFailureOutputPort<object>.PresentInputPortValidationFailureAsync(object validationFailure, CancellationToken cancellationToken)
