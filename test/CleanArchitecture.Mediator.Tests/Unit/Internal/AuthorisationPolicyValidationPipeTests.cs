@@ -13,6 +13,7 @@ public class AuthorisationPolicyValidationPipeTests
     #region - - - - - - Fields - - - - - -
 
     private readonly Mock<IAuthorisationPolicyValidator<IInputPort<IAuthorisationPolicyFailureOutputPort<object>>, object>> m_MockAuthorisationPolicyValidator = new();
+    private readonly Mock<ContinuationBehaviour> m_MockContinuationBehaviour = new(10);
     private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
     private readonly Mock<IAuthorisationPolicyFailureOutputPort<object>> m_MockOutputPort = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
@@ -40,6 +41,14 @@ public class AuthorisationPolicyValidationPipeTests
                     return Task.FromResult(this.m_IsAuthorised);
                 });
 
+        _ = this.m_MockContinuationBehaviour
+                .Setup(mock => mock.HandleAsync(this.m_MockNextPipeHandle.Object, default))
+                .Returns(Task.CompletedTask);
+
+        _ = this.m_MockOutputPort
+                .Setup(mock => mock.PresentAuthorisationPolicyFailureAsync(_AuthorisationPolicyFailure, default))
+                .Returns(Task.FromResult(this.m_MockContinuationBehaviour.Object));
+
         _ = this.m_MockServiceFactory
                 .Setup(mock => mock.Invoke(typeof(IAuthorisationPolicyValidator<IInputPort<IAuthorisationPolicyFailureOutputPort<object>>, object>)))
                 .Returns(this.m_MockAuthorisationPolicyValidator.Object);
@@ -62,6 +71,7 @@ public class AuthorisationPolicyValidationPipeTests
         _ = _Exception.Should().BeOfType<NullReferenceException>();
 
         this.m_MockAuthorisationPolicyValidator.VerifyNoOtherCalls();
+        this.m_MockContinuationBehaviour.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
     }
@@ -79,12 +89,13 @@ public class AuthorisationPolicyValidationPipeTests
         this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
         this.m_MockAuthorisationPolicyValidator.VerifyNoOtherCalls();
+        this.m_MockContinuationBehaviour.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task InvokeAsync_AuthorisationFails_StopsWithAuthorisationFailure()
+    public async Task InvokeAsync_AuthorisationFails_InvokesContinuationBehaviourFromOutputPort()
     {
         // Arrange
         this.m_IsAuthorised = false;
@@ -94,9 +105,11 @@ public class AuthorisationPolicyValidationPipeTests
 
         // Assert
         this.m_MockAuthorisationPolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_AuthorisationPolicyFailure, this.m_MockServiceFactory.Object, default), Times.Once());
+        this.m_MockContinuationBehaviour.Verify(mock => mock.HandleAsync(this.m_MockNextPipeHandle.Object, default), Times.Once());
         this.m_MockOutputPort.Verify(mock => mock.PresentAuthorisationPolicyFailureAsync(this.m_AuthorisationPolicyFailure!, default));
 
         this.m_MockAuthorisationPolicyValidator.VerifyNoOtherCalls();
+        this.m_MockContinuationBehaviour.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
     }

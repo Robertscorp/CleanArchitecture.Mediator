@@ -12,6 +12,7 @@ public class LicencePolicyValidationPipeTests
 
     #region - - - - - - Fields - - - - - -
 
+    private readonly Mock<ContinuationBehaviour> m_MockContinuationBehaviour = new(10);
     private readonly Mock<ILicencePolicyValidator<IInputPort<ILicencePolicyFailureOutputPort<object>>, object>> m_MockLicencePolicyValidator = new();
     private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
     private readonly Mock<ILicencePolicyFailureOutputPort<object>> m_MockOutputPort = new();
@@ -32,6 +33,10 @@ public class LicencePolicyValidationPipeTests
     {
         var _PolicyFailure = new object();
 
+        _ = this.m_MockContinuationBehaviour
+                .Setup(mock => mock.HandleAsync(this.m_MockNextPipeHandle.Object, default))
+                .Returns(Task.CompletedTask);
+
         _ = this.m_MockLicencePolicyValidator
                 .Setup(mock => mock.ValidateAsync(this.m_InputPort, out _PolicyFailure, this.m_MockServiceFactory.Object, default))
                 .Returns(() =>
@@ -39,6 +44,10 @@ public class LicencePolicyValidationPipeTests
                     this.m_LicencePolicyFailure = _PolicyFailure;
                     return Task.FromResult(this.m_IsLicenced);
                 });
+
+        _ = this.m_MockOutputPort
+                .Setup(mock => mock.PresentLicencePolicyFailureAsync(_PolicyFailure, default))
+                .Returns(Task.FromResult(this.m_MockContinuationBehaviour.Object));
 
         _ = this.m_MockServiceFactory
                 .Setup(mock => mock.Invoke(typeof(ILicencePolicyValidator<IInputPort<ILicencePolicyFailureOutputPort<object>>, object>)))
@@ -61,6 +70,7 @@ public class LicencePolicyValidationPipeTests
         // Assert
         _ = _Exception.Should().BeOfType<NullReferenceException>();
 
+        this.m_MockContinuationBehaviour.VerifyNoOtherCalls();
         this.m_MockLicencePolicyValidator.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
@@ -78,13 +88,14 @@ public class LicencePolicyValidationPipeTests
         this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_LicencePolicyFailure, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
+        this.m_MockContinuationBehaviour.VerifyNoOtherCalls();
         this.m_MockLicencePolicyValidator.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task InvokeAsync_PrincipalIsNotLicenced_StopsWithLicenceFailure()
+    public async Task InvokeAsync_PrincipalIsNotLicenced_InvokesContinuationBehaviourFromOutputPort()
     {
         // Arrange
         this.m_IsLicenced = false;
@@ -93,9 +104,11 @@ public class LicencePolicyValidationPipeTests
         await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
+        this.m_MockContinuationBehaviour.Verify(mock => mock.HandleAsync(this.m_MockNextPipeHandle.Object, default), Times.Once());
         this.m_MockLicencePolicyValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_LicencePolicyFailure, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockOutputPort.Verify(mock => mock.PresentLicencePolicyFailureAsync(this.m_LicencePolicyFailure!, default));
 
+        this.m_MockContinuationBehaviour.VerifyNoOtherCalls();
         this.m_MockLicencePolicyValidator.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();

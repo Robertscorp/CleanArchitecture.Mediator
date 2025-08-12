@@ -7,6 +7,12 @@ namespace CleanArchitecture.Mediator.Sample.Presenters;
 public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuccessOutputPort
 {
 
+    #region - - - - - - Properties - - - - - -
+
+    public bool WarnOnInputPortValidationFailure { get; set; }
+
+    #endregion Properties
+
     #region - - - - - - Methods - - - - - -
 
     Task IAuthenticationFailureOutputPort.PresentAuthenticationFailureAsync(CancellationToken cancellationToken)
@@ -15,10 +21,10 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
         return Task.CompletedTask;
     }
 
-    Task IAuthorisationPolicyFailureOutputPort<object>.PresentAuthorisationPolicyFailureAsync(object policyFailure, CancellationToken cancellationToken)
+    Task<ContinuationBehaviour> IAuthorisationPolicyFailureOutputPort<object>.PresentAuthorisationPolicyFailureAsync(object policyFailure, CancellationToken cancellationToken)
     {
         Console.WriteLine("\t- CreateProductPresenter.PresentAuthorisationPolicyFailureAsync");
-        return Task.CompletedTask;
+        return ContinuationBehaviour.ReturnAsync;
     }
 
     Task<ContinuationBehaviour> ICreateProductOutputPort.PresentCategoryDoesNotExistAsync(int categoryID, CancellationToken cancellationToken)
@@ -39,16 +45,21 @@ public class CreateProductPresenter : ICreateProductOutputPort, IVerificationSuc
         return ContinuationBehaviour.ReturnAsync;
     }
 
-    Task IInputPortValidationFailureOutputPort<object>.PresentInputPortValidationFailureAsync(object validationFailure, CancellationToken cancellationToken)
+    async Task<ContinuationBehaviour> IInputPortValidationFailureOutputPort<object>.PresentInputPortValidationFailureAsync(object validationFailure, CancellationToken cancellationToken)
     {
+        await Task.Delay(1, cancellationToken); // This only exists to showcase when to use the non-async ContinuationBehaviour fields.
+
         Console.WriteLine($"\t- CreateProductPresenter.PresentInputPortValidationFailureAsync");
-        return Task.CompletedTask;
+
+        return this.WarnOnInputPortValidationFailure
+            ? ContinuationBehaviour.Continue
+            : ContinuationBehaviour.Return;
     }
 
-    Task ILicencePolicyFailureOutputPort<object>.PresentLicencePolicyFailureAsync(object policyFailure, CancellationToken cancellationToken)
+    Task<ContinuationBehaviour> ILicencePolicyFailureOutputPort<object>.PresentLicencePolicyFailureAsync(object policyFailure, CancellationToken cancellationToken)
     {
         Console.WriteLine($"\t- CreateProductPresenter.PresentLicencePolicyFailureAsync");
-        return Task.CompletedTask;
+        return ContinuationBehaviour.ReturnAsync;
     }
 
     Task IVerificationSuccessOutputPort.PresentVerificationSuccessAsync(CancellationToken cancellationToken)

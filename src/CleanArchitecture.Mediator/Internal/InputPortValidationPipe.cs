@@ -21,11 +21,11 @@ namespace CleanArchitecture.Mediator.Internal
             var _Validator = serviceFactory.GetService<IInputPortValidator<TInputPort, TValidationFailure>>();
             if (!await _Validator.ValidateAsync(inputPort, out var _ValidationFailure, serviceFactory, cancellationToken))
             {
-                await outputPort.PresentInputPortValidationFailureAsync(_ValidationFailure, cancellationToken).ConfigureAwait(false);
-                return;
+                var _ContinuationBehaviour = await outputPort.PresentInputPortValidationFailureAsync(_ValidationFailure, cancellationToken).ConfigureAwait(false);
+                await _ContinuationBehaviour.HandleAsync(nextPipeHandle, cancellationToken).ConfigureAwait(false);
             }
-
-            await nextPipeHandle().ConfigureAwait(false);
+            else
+                await nextPipeHandle().ConfigureAwait(false);
         }
 
         #endregion Methods

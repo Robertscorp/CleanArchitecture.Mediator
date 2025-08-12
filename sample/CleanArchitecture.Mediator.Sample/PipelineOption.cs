@@ -24,7 +24,11 @@ internal static class PipelineOption
 
         var _ServiceFactory = serviceProvider.GetRequiredService<ServiceFactory>();
 
-        var _CreateProductPresenter = new CreateProductPresenter();
+        var _CreateProductPresenter = new CreateProductPresenter()
+        {
+            WarnOnInputPortValidationFailure = true
+        };
+
         var _CreateProductInputPort = new CreateProductInputPort
         {
             FailAuthorisation = true,
@@ -53,7 +57,13 @@ internal static class PipelineOption
         _CreateProductInputPort.FailLicenceVerification = false;
 
         // Create Product - Invalid Input Port.
-        Console.WriteLine("[Invoke Pipeline] Invalid Input Port - ");
+        Console.WriteLine("[Invoke Pipeline] Invalid Input Port - [Warn only]");
+        await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
+        Console.WriteLine();
+        _CreateProductPresenter.WarnOnInputPortValidationFailure = false;
+
+        // Create Product - Invalid Input Port.
+        Console.WriteLine("[Invoke Pipeline] Invalid Input Port - [Fail]");
         await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
         Console.WriteLine();
         _CreateProductInputPort.FailInputPortValidation = false;

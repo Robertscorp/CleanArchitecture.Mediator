@@ -12,6 +12,7 @@ public class InputPortValidationPipeTests
 
     #region - - - - - - Fields - - - - - -
 
+    private readonly Mock<ContinuationBehaviour> m_MockContinuationBehaviour = new(10);
     private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
     private readonly Mock<IInputPortValidationFailureOutputPort<object>> m_MockOutputPort = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();
@@ -31,6 +32,14 @@ public class InputPortValidationPipeTests
     public InputPortValidationPipeTests()
     {
         var _ValidationFailure = new object();
+
+        _ = this.m_MockContinuationBehaviour
+                .Setup(mock => mock.HandleAsync(this.m_MockNextPipeHandle.Object, default))
+                .Returns(Task.CompletedTask);
+
+        _ = this.m_MockOutputPort
+                .Setup(mock => mock.PresentInputPortValidationFailureAsync(_ValidationFailure, default))
+                .Returns(Task.FromResult(this.m_MockContinuationBehaviour.Object));
 
         _ = this.m_MockServiceFactory
                 .Setup(mock => mock.Invoke(typeof(IInputPortValidator<IInputPort<IInputPortValidationFailureOutputPort<object>>, object>)))
@@ -61,13 +70,14 @@ public class InputPortValidationPipeTests
         // Assert
         _ = _Exception.Should().BeOfType<NullReferenceException>();
 
+        this.m_MockContinuationBehaviour.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
         this.m_MockValidator.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task InvokeAsync_InputPortIsInvalid_StopsWithInputPortValidationFailure()
+    public async Task InvokeAsync_InputPortIsInvalid_InvokesContinuationBehaviourFromOutputPort()
     {
         // Arrange
         this.m_IsInputPortValid = false;
@@ -76,9 +86,11 @@ public class InputPortValidationPipeTests
         await this.m_Pipe.InvokeAsync(this.m_InputPort, this.m_MockOutputPort.Object, this.m_MockServiceFactory.Object, this.m_MockNextPipeHandle.Object, default);
 
         // Assert
+        this.m_MockContinuationBehaviour.Verify(mock => mock.HandleAsync(this.m_MockNextPipeHandle.Object, default), Times.Once());
         this.m_MockOutputPort.Verify(mock => mock.PresentInputPortValidationFailureAsync(this.m_ValidationFailure!, default), Times.Once());
         this.m_MockValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_ValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
 
+        this.m_MockContinuationBehaviour.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
         this.m_MockValidator.VerifyNoOtherCalls();
@@ -96,6 +108,7 @@ public class InputPortValidationPipeTests
         this.m_MockValidator.Verify(mock => mock.ValidateAsync(this.m_InputPort, out this.m_ValidationFailure, this.m_MockServiceFactory.Object, default), Times.Once());
         this.m_MockNextPipeHandle.Verify(mock => mock.Invoke(), Times.Once());
 
+        this.m_MockContinuationBehaviour.VerifyNoOtherCalls();
         this.m_MockNextPipeHandle.VerifyNoOtherCalls();
         this.m_MockOutputPort.VerifyNoOtherCalls();
         this.m_MockValidator.VerifyNoOtherCalls();
