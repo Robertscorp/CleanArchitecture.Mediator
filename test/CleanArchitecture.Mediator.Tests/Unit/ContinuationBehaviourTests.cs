@@ -62,7 +62,7 @@ public class ContinuationBehaviourTests
     }
 
     [Fact]
-    public void AggregateWith_ContinuationBehaviourParameterHasHigherPriority_ThisInstanceChosen()
+    public void AggregateWith_ContinuationBehaviourParameterHasHigherPriority_ParameterInstanceChosen()
     {
         // Arrange
         var _Expected = ContinuationBehaviour.Custom((_, _) => Task.CompletedTask, 11);
