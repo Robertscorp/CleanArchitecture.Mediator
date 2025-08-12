@@ -18,7 +18,8 @@ namespace CleanArchitecture.Mediator
         /// </summary>
         /// <param name="policyFailure">The <typeparamref name="TPolicyFailure"/> from an <see cref="ILicencePolicyValidator{TInputPort, TPolicyFailure}"/>.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
-        Task PresentLicencePolicyFailureAsync(TPolicyFailure policyFailure, CancellationToken cancellationToken);
+        /// <returns>A continuation strategy that determines how the pipeline should proceed.</returns>
+        Task<ContinuationBehaviour> PresentLicencePolicyFailureAsync(TPolicyFailure policyFailure, CancellationToken cancellationToken);
 
         #endregion Methods
 

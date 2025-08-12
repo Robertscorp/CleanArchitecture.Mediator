@@ -21,11 +21,11 @@ namespace CleanArchitecture.Mediator.Internal
             var _Validator = serviceFactory.GetService<ILicencePolicyValidator<TInputPort, TPolicyFailure>>();
             if (!await _Validator.ValidateAsync(inputPort, out var _PolicyFailure, serviceFactory, cancellationToken).ConfigureAwait(false))
             {
-                await outputPort.PresentLicencePolicyFailureAsync(_PolicyFailure, cancellationToken).ConfigureAwait(false);
-                return;
+                var _ContinuationBehaviour = await outputPort.PresentLicencePolicyFailureAsync(_PolicyFailure, cancellationToken).ConfigureAwait(false);
+                await _ContinuationBehaviour.HandleAsync(nextPipeHandle, cancellationToken).ConfigureAwait(false);
             }
-
-            await nextPipeHandle().ConfigureAwait(false);
+            else
+                await nextPipeHandle().ConfigureAwait(false);
         }
 
         #endregion Methods

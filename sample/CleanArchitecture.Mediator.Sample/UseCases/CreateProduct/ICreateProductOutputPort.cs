@@ -11,11 +11,11 @@ public interface ICreateProductOutputPort :
 
     #region - - - - - - Methods - - - - - -
 
-    Task PresentCategoryDoesNotExistAsync(int categoryID, CancellationToken cancellationToken);
+    Task<ContinuationBehaviour> PresentCategoryDoesNotExistAsync(int categoryID, CancellationToken cancellationToken);
 
     Task PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken);
 
-    Task PresentNameMustBeUniqueAsync(string name, CancellationToken cancellationToken);
+    Task<ContinuationBehaviour> PresentNameMustBeUniqueAsync(string name, CancellationToken cancellationToken);
 
     #endregion Methods
 

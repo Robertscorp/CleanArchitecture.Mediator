@@ -10,7 +10,7 @@ public class BusinessRuleEvaluationPipeTests
 
     #region - - - - - - Fields - - - - - -
 
-    private readonly Mock<ContinuationBehaviour> m_MockContinuation = new();
+    private readonly Mock<ContinuationBehaviour> m_MockContinuation = new(10);
     private readonly Mock<IBusinessRuleEvaluator<IInputPort<object>, object>> m_MockEvaluator = new();
     private readonly Mock<NextPipeHandleAsync> m_MockNextPipeHandle = new();
     private readonly Mock<ServiceFactory> m_MockServiceFactory = new();

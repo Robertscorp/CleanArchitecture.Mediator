@@ -18,7 +18,8 @@ namespace CleanArchitecture.Mediator
         /// </summary>
         /// <param name="validationFailure">The <typeparamref name="TValidationFailure"/> from an <see cref="IInputPortValidator{TInputPort, TValidationFailure}"/>.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
-        Task PresentInputPortValidationFailureAsync(TValidationFailure validationFailure, CancellationToken cancellationToken);
+        /// <returns>A continuation strategy that determines how the pipeline should proceed.</returns>
+        Task<ContinuationBehaviour> PresentInputPortValidationFailureAsync(TValidationFailure validationFailure, CancellationToken cancellationToken);
 
         #endregion Methods
 

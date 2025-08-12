@@ -14,16 +14,10 @@ internal class CreateProductBusinessRuleEvaluator : IBusinessRuleEvaluator<Creat
         var _Continuation = ContinuationBehaviour.Continue;
 
         if (inputPort.FailUniqueNameBusinessRule)
-        {
-            await outputPort.PresentNameMustBeUniqueAsync("SomeProduct", cancellationToken).ConfigureAwait(false);
-            _Continuation = ContinuationBehaviour.Return;
-        }
+            _Continuation = _Continuation.AggregateWith(await outputPort.PresentNameMustBeUniqueAsync("SomeProduct", cancellationToken).ConfigureAwait(false));
 
         if (inputPort.FailInvalidCategoryBusinessRule)
-        {
-            await outputPort.PresentCategoryDoesNotExistAsync(123, cancellationToken).ConfigureAwait(false);
-            _Continuation = ContinuationBehaviour.Return;
-        }
+            _Continuation = _Continuation.AggregateWith(await outputPort.PresentCategoryDoesNotExistAsync(123, cancellationToken).ConfigureAwait(false));
 
         return _Continuation;
     }
