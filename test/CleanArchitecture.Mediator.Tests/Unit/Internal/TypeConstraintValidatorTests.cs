@@ -10,7 +10,7 @@ public class TypeConstraintValidatorTests
     #region - - - - - - IsValid Tests - - - - - -
 
     [Theory]
-    [InlineData(typeof(AuthorisationPolicyValidationPipe<,,>), new Type[] { typeof(CreateProductInputPort), typeof(ICreateProductOutputPort), typeof(object) })]
+    [InlineData(typeof(AuthorisationPolicyValidationPipe<,,>), new Type[] { typeof(CreateEntityInputPort), typeof(ICreateEntityOutputPort), typeof(object) })]
     [InlineData(typeof(DoubleInterface<,>), new Type[] { typeof(DerivedClass), typeof(MoreDerivedClass) })]
     [InlineData(typeof(DoubleInterface<,>), new Type[] { typeof(DerivedClass), typeof(BaseClass) })]
     [InlineData(typeof(DoubleInterface<,>), new Type[] { typeof(MoreDerivedClass), typeof(MoreDerivedClass) })]
@@ -48,9 +48,9 @@ public class TypeConstraintValidatorTests
 
     #region - - - - - - Nested Classes - - - - - -
 
-    private class CreateProductInputPort : IInputPort<ICreateProductOutputPort> { }
+    private class CreateEntityInputPort : IInputPort<ICreateEntityOutputPort> { }
 
-    private interface ICreateProductOutputPort : IAuthorisationPolicyFailureOutputPort<string>, IInputPortValidationFailureOutputPort<object> { }
+    private interface ICreateEntityOutputPort : IAuthorisationPolicyFailureOutputPort<string>, IInputPortValidationFailureOutputPort<object> { }
 
     private class BaseClass { }
 

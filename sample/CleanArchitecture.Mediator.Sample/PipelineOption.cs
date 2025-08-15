@@ -1,9 +1,9 @@
 ﻿using CleanArchitecture.Mediator;
-using CleanArchitecture.Mediator.Sample.Infrastructure;
-using CleanArchitecture.Mediator.Sample.Pipelines;
-using CleanArchitecture.Mediator.Sample.Presenters;
-using CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
-using CleanArchitecture.Mediator.Sample.UseCases.GetProduct;
+using CleanArchitecture.Mediator.Sample.Application.Services.Pipelines;
+using CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
+using CleanArchitecture.Mediator.Sample.Application.UseCases.SampleGet;
+using CleanArchitecture.Mediator.Sample.Framework.Infrastructure;
+using CleanArchitecture.Mediator.Sample.InterfaceAdapters.Presenters;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 
@@ -17,19 +17,19 @@ internal static class PipelineOption
 
     #region - - - - - - Methods - - - - - -
 
-    private static async Task InvokeCreateProductUseCaseAsync(Pipeline pipeline, IServiceProvider serviceProvider)
+    private static async Task InvokeSampleCreateUseCaseAsync(Pipeline pipeline, IServiceProvider serviceProvider)
     {
         var _PrincipalStore = (PrincipalStore)serviceProvider.GetService<IPrincipalAccessor>()!;
         _PrincipalStore.Principal = null;
 
         var _ServiceFactory = serviceProvider.GetRequiredService<ServiceFactory>();
 
-        var _CreateProductPresenter = new CreateProductPresenter()
+        var _SampleCreatePresenter = new SampleCreatePresenter()
         {
             WarnOnInputPortValidationFailure = true
         };
 
-        var _CreateProductInputPort = new CreateProductInputPort
+        var _SampleCreateInputPort = new SampleCreateInputPort
         {
             FailAuthorisation = true,
             FailInvalidCategoryBusinessRule = true,
@@ -38,46 +38,46 @@ internal static class PipelineOption
             FailUniqueNameBusinessRule = true
         };
 
-        // Create Product - Not Authenticated.
+        // Sample Create - Not Authenticated.
         Console.WriteLine("[Invoke Pipeline] Not Authenticated - ");
-        await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
+        await pipeline.InvokeAsync(_SampleCreateInputPort, _SampleCreatePresenter, _ServiceFactory, default);
         Console.WriteLine();
         _PrincipalStore.Principal = new ClaimsPrincipal();
 
-        // Create Product - Not Authorised.
+        // Sample Create - Not Authorised.
         Console.WriteLine("[Invoke Pipeline] Not Authorised - ");
-        await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
+        await pipeline.InvokeAsync(_SampleCreateInputPort, _SampleCreatePresenter, _ServiceFactory, default);
         Console.WriteLine();
-        _CreateProductInputPort.FailAuthorisation = false;
+        _SampleCreateInputPort.FailAuthorisation = false;
 
-        // Create Product - Not Licenced.
+        // Sample Create - Not Licenced.
         Console.WriteLine("[Invoke Pipeline] Not Licenced - ");
-        await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
+        await pipeline.InvokeAsync(_SampleCreateInputPort, _SampleCreatePresenter, _ServiceFactory, default);
         Console.WriteLine();
-        _CreateProductInputPort.FailLicenceVerification = false;
+        _SampleCreateInputPort.FailLicenceVerification = false;
 
-        // Create Product - Invalid Input Port.
+        // Sample Create - Invalid Input Port.
         Console.WriteLine("[Invoke Pipeline] Invalid Input Port - [Warn only]");
-        await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
+        await pipeline.InvokeAsync(_SampleCreateInputPort, _SampleCreatePresenter, _ServiceFactory, default);
         Console.WriteLine();
-        _CreateProductPresenter.WarnOnInputPortValidationFailure = false;
+        _SampleCreatePresenter.WarnOnInputPortValidationFailure = false;
 
-        // Create Product - Invalid Input Port.
+        // Sample Create - Invalid Input Port.
         Console.WriteLine("[Invoke Pipeline] Invalid Input Port - [Fail]");
-        await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
+        await pipeline.InvokeAsync(_SampleCreateInputPort, _SampleCreatePresenter, _ServiceFactory, default);
         Console.WriteLine();
-        _CreateProductInputPort.FailInputPortValidation = false;
+        _SampleCreateInputPort.FailInputPortValidation = false;
 
-        // Create Product - Business Rule Failures.
+        // Sample Create - Business Rule Failures.
         Console.WriteLine("[Invoke Pipeline] Business Rule Failures - ");
-        await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
+        await pipeline.InvokeAsync(_SampleCreateInputPort, _SampleCreatePresenter, _ServiceFactory, default);
         Console.WriteLine();
-        _CreateProductInputPort.FailInvalidCategoryBusinessRule = false;
-        _CreateProductInputPort.FailUniqueNameBusinessRule = false;
+        _SampleCreateInputPort.FailInvalidCategoryBusinessRule = false;
+        _SampleCreateInputPort.FailUniqueNameBusinessRule = false;
 
-        // Create Product - Interactor Invoked.
+        // Sample Create - Interactor Invoked.
         Console.WriteLine("[Invoke Pipeline] Valid Request - ");
-        await pipeline.InvokeAsync(_CreateProductInputPort, _CreateProductPresenter, _ServiceFactory, default);
+        await pipeline.InvokeAsync(_SampleCreateInputPort, _SampleCreatePresenter, _ServiceFactory, default);
         Console.WriteLine();
     }
 
@@ -88,8 +88,8 @@ internal static class PipelineOption
         {
             Console.Clear();
             Console.WriteLine("We've also defined 2 Use Cases that can be invoked:");
-            Console.WriteLine("\t- [1] The GetProduct Use Case, which only supports outputting a successful response.");
-            Console.WriteLine("\t- [2] The CreateProduct Use Case, which supports outputting all failures, as well as a successful response.");
+            Console.WriteLine("\t- [1] The SampleGet Use Case, which only supports outputting a successful response.");
+            Console.WriteLine("\t- [2] The SampleCreate Use Case, which supports outputting all failures, as well as a successful response.");
             Console.WriteLine();
             Console.Write("Please pick a use case to invoke: ");
 
@@ -104,20 +104,20 @@ internal static class PipelineOption
         Console.WriteLine();
 
         return _Option == 1
-            ? InvokeGetProductUseCaseAsync(_Pipeline, serviceProvider)
-            : InvokeCreateProductUseCaseAsync(_Pipeline, serviceProvider);
+            ? InvokeSampleGetUseCaseAsync(_Pipeline, serviceProvider)
+            : InvokeSampleCreateUseCaseAsync(_Pipeline, serviceProvider);
     }
 
-    private static async Task InvokeGetProductUseCaseAsync(Pipeline pipeline, IServiceProvider serviceProvider)
+    private static async Task InvokeSampleGetUseCaseAsync(Pipeline pipeline, IServiceProvider serviceProvider)
     {
         var _ServiceFactory = serviceProvider.GetRequiredService<ServiceFactory>();
 
-        var _GetProductPresenter = new GetProductPresenter();
-        var _GetProductInputPort = new GetProductInputPort();
+        var _SampleGetPresenter = new SampleGetPresenter();
+        var _SampleGetInputPort = new SampleGetInputPort();
 
-        // Get Product - Not Authenticated. Output Port doesn't support Authentication, so we expect to invoke the Interactor.
+        // Sample Get - Not Authenticated. Output Port doesn't support Authentication, so we expect to invoke the Interactor.
         Console.WriteLine("[Invoke Pipeline] Valid Request - ");
-        await pipeline.InvokeAsync(_GetProductInputPort, _GetProductPresenter, _ServiceFactory, default);
+        await pipeline.InvokeAsync(_SampleGetInputPort, _SampleGetPresenter, _ServiceFactory, default);
         Console.WriteLine();
     }
 
@@ -128,8 +128,8 @@ internal static class PipelineOption
         {
             Console.Clear();
             Console.WriteLine("We've also defined 2 Use Cases that can be invoked:");
-            Console.WriteLine("\t- [1] The GetProduct Use Case, which only supports outputting a successful response.");
-            Console.WriteLine("\t- [2] The CreateProduct Use Case, which supports outputting Authentication, Authorisation, and Validation failures, as well as a successful response.");
+            Console.WriteLine("\t- [1] The SampleGet Use Case, which only supports outputting a successful response.");
+            Console.WriteLine("\t- [2] The SampleCreate Use Case, which supports outputting Authentication, Authorisation, and Validation failures, as well as a successful response.");
             Console.WriteLine();
             Console.Write("Please pick a use case to invoke: ");
 
@@ -144,8 +144,8 @@ internal static class PipelineOption
         Console.WriteLine();
 
         return _Option == 1
-            ? InvokeGetProductUseCaseAsync(_Pipeline, serviceProvider)
-            : InvokeCreateProductUseCaseAsync(_Pipeline, serviceProvider);
+            ? InvokeSampleGetUseCaseAsync(_Pipeline, serviceProvider)
+            : InvokeSampleCreateUseCaseAsync(_Pipeline, serviceProvider);
     }
 
     #endregion Methods

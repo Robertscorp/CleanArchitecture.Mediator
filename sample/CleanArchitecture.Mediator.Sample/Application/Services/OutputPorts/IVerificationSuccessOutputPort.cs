@@ -1,4 +1,4 @@
-﻿namespace CleanArchitecture.Mediator.Sample.OutputPorts;
+﻿namespace CleanArchitecture.Mediator.Sample.Application.Services.OutputPorts;
 
 public interface IVerificationSuccessOutputPort
 {

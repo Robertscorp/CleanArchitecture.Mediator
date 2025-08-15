@@ -1,5 +1,5 @@
 ﻿using CleanArchitecture.Mediator.Sample;
-using CleanArchitecture.Mediator.Sample.Pipelines;
+using CleanArchitecture.Mediator.Sample.Application.Services.Pipelines;
 using Microsoft.Extensions.DependencyInjection;
 
 using var _ServiceProvider

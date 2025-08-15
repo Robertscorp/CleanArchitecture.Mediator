@@ -1,12 +1,12 @@
-﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
+﻿namespace CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
 
-public class CreateProductLicenceVerifier : ILicencePolicyValidator<CreateProductInputPort, object>
+public class SampleCreateLicenceVerifier : ILicencePolicyValidator<SampleCreateInputPort, object>
 {
 
     #region - - - - - - Methods - - - - - -
 
-    Task<bool> ILicencePolicyValidator<CreateProductInputPort, object>.ValidateAsync(
-        CreateProductInputPort inputPort,
+    Task<bool> ILicencePolicyValidator<SampleCreateInputPort, object>.ValidateAsync(
+        SampleCreateInputPort inputPort,
         out object policyFailure,
         ServiceFactory serviceFactory,
         CancellationToken cancellationToken)

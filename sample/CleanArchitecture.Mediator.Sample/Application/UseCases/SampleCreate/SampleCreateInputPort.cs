@@ -1,6 +1,6 @@
-﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
+﻿namespace CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
 
-public class CreateProductInputPort : IInputPort<ICreateProductOutputPort>
+public class SampleCreateInputPort : IInputPort<ISampleCreateOutputPort>
 {
 
     #region - - - - - - Properties - - - - - -
