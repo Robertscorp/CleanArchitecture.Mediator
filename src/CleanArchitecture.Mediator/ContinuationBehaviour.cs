@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -112,6 +113,7 @@ namespace CleanArchitecture.Mediator
 
         #region - - - - - - Nested Classes - - - - - -
 
+        [DebuggerDisplay("Continue (Severity={Severity})")]
         internal sealed class ContinueBehaviour : ContinuationBehaviour
         {
 
@@ -130,6 +132,7 @@ namespace CleanArchitecture.Mediator
 
         }
 
+        [DebuggerDisplay("Return (Severity={Severity})")]
         internal sealed class ReturnBehaviour : ContinuationBehaviour
         {
 
@@ -148,6 +151,7 @@ namespace CleanArchitecture.Mediator
 
         }
 
+        [DebuggerDisplay("Custom (Severity={Severity})")]
         internal sealed class CustomContinuationBehaviour : ContinuationBehaviour
         {
 
