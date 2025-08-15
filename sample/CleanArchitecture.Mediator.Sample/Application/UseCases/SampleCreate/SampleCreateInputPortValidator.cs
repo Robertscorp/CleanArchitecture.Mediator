@@ -1,12 +1,12 @@
-﻿namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
+﻿namespace CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
 
-internal class CreateProductInputPortValidator : IInputPortValidator<CreateProductInputPort, object>
+internal class SampleCreateInputPortValidator : IInputPortValidator<SampleCreateInputPort, object>
 {
 
     #region - - - - - - Methods - - - - - -
 
-    Task<bool> IInputPortValidator<CreateProductInputPort, object>.ValidateAsync(
-        CreateProductInputPort inputPort,
+    Task<bool> IInputPortValidator<SampleCreateInputPort, object>.ValidateAsync(
+        SampleCreateInputPort inputPort,
         out object validationFailure,
         ServiceFactory serviceFactory,
         CancellationToken cancellationToken)

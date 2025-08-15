@@ -1,6 +1,6 @@
 ﻿using System.Security.Principal;
 
-namespace CleanArchitecture.Mediator.Sample.Infrastructure;
+namespace CleanArchitecture.Mediator.Sample.Framework.Infrastructure;
 
 public class PrincipalStore : IPrincipalAccessor
 {

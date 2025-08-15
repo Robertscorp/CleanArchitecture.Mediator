@@ -1,8 +1,8 @@
-﻿using CleanArchitecture.Mediator.Sample.Dtos;
+﻿using CleanArchitecture.Mediator.Sample.Domain.Entities;
 
-namespace CleanArchitecture.Mediator.Sample.UseCases.CreateProduct;
+namespace CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
 
-public interface ICreateProductOutputPort :
+public interface ISampleCreateOutputPort :
     IAuthenticationFailureOutputPort,
     IAuthorisationPolicyFailureOutputPort<object>,
     IInputPortValidationFailureOutputPort<object>,
@@ -13,7 +13,7 @@ public interface ICreateProductOutputPort :
 
     Task<ContinuationBehaviour> PresentCategoryDoesNotExistAsync(int categoryID, CancellationToken cancellationToken);
 
-    Task PresentCreatedProductAsync(ProductDto product, CancellationToken cancellationToken);
+    Task PresentCreatedSampleEntityAsync(SampleEntity sampleEntity, CancellationToken cancellationToken);
 
     Task<ContinuationBehaviour> PresentNameMustBeUniqueAsync(string name, CancellationToken cancellationToken);
 

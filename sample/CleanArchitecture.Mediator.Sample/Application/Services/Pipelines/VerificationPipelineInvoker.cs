@@ -1,6 +1,6 @@
-﻿using CleanArchitecture.Mediator.Sample.OutputPorts;
+﻿using CleanArchitecture.Mediator.Sample.Application.Services.OutputPorts;
 
-namespace CleanArchitecture.Mediator.Sample.Pipelines;
+namespace CleanArchitecture.Mediator.Sample.Application.Services.Pipelines;
 
 public class VerificationPipelineInvoker(VerificationPipeline pipeline)
 {
