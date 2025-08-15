@@ -88,8 +88,8 @@ internal static class PipelineOption
         {
             Console.Clear();
             Console.WriteLine("We've also defined 2 Use Cases that can be invoked:");
-            Console.WriteLine("\t- [1] The GetSample Use Case, which only supports outputting a successful response.");
-            Console.WriteLine("\t- [2] The CreateSample Use Case, which supports outputting all failures, as well as a successful response.");
+            Console.WriteLine("\t- [1] The SampleGet Use Case, which only supports outputting a successful response.");
+            Console.WriteLine("\t- [2] The SampleCreate Use Case, which supports outputting all failures, as well as a successful response.");
             Console.WriteLine();
             Console.Write("Please pick a use case to invoke: ");
 
