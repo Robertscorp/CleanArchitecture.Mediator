@@ -1,17 +1,19 @@
-﻿namespace CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
+﻿using CleanArchitecture.Mediator.Sample.Application.Services.Validation;
 
-internal class SampleCreateInputPortValidator : IInputPortValidator<SampleCreateInputPort, object>
+namespace CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
+
+internal class SampleCreateInputPortValidator : IInputPortValidator<SampleCreateInputPort, SampleInputPortValidationFailure>
 {
 
     #region - - - - - - Methods - - - - - -
 
-    Task<bool> IInputPortValidator<SampleCreateInputPort, object>.ValidateAsync(
+    Task<bool> IInputPortValidator<SampleCreateInputPort, SampleInputPortValidationFailure>.ValidateAsync(
         SampleCreateInputPort inputPort,
-        out object validationFailure,
+        out SampleInputPortValidationFailure validationFailure,
         ServiceFactory serviceFactory,
         CancellationToken cancellationToken)
     {
-        validationFailure = new();
+        validationFailure = new(inputPort.FailInputPortValidation ? [new("PropertyName", "Error")] : []);
 
         return Task.FromResult(!inputPort.FailInputPortValidation);
     }
