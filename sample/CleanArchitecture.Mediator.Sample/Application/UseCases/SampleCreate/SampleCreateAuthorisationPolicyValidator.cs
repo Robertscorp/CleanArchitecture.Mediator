@@ -1,17 +1,19 @@
-﻿namespace CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
+﻿using CleanArchitecture.Mediator.Sample.Application.Services.Validation;
 
-public class SampleCreateAuthorisationPolicyValidator : IAuthorisationPolicyValidator<SampleCreateInputPort, object>
+namespace CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
+
+public class SampleCreateAuthorisationPolicyValidator : IAuthorisationPolicyValidator<SampleCreateInputPort, SampleAuthorisationPolicyFailure>
 {
 
     #region - - - - - - Methods - - - - - -
 
-    Task<bool> IAuthorisationPolicyValidator<SampleCreateInputPort, object>.ValidateAsync(
+    Task<bool> IAuthorisationPolicyValidator<SampleCreateInputPort, SampleAuthorisationPolicyFailure>.ValidateAsync(
         SampleCreateInputPort inputPort,
-        out object policyFailure,
+        out SampleAuthorisationPolicyFailure policyFailure,
         ServiceFactory serviceFactory,
         CancellationToken cancellationToken)
     {
-        policyFailure = new();
+        policyFailure = new(inputPort.FailAuthorisation ? "Failure" : string.Empty);
 
         return Task.FromResult(!inputPort.FailAuthorisation);
     }

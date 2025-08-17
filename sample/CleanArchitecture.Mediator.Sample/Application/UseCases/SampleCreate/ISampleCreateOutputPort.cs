@@ -1,12 +1,13 @@
-﻿using CleanArchitecture.Mediator.Sample.Domain.Entities;
+﻿using CleanArchitecture.Mediator.Sample.Application.Services.Validation;
+using CleanArchitecture.Mediator.Sample.Domain.Entities;
 
 namespace CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
 
 public interface ISampleCreateOutputPort :
     IAuthenticationFailureOutputPort,
-    IAuthorisationPolicyFailureOutputPort<object>,
-    IInputPortValidationFailureOutputPort<object>,
-    ILicencePolicyFailureOutputPort<object>
+    IAuthorisationPolicyFailureOutputPort<SampleAuthorisationPolicyFailure>,
+    IInputPortValidationFailureOutputPort<SampleInputPortValidationFailure>,
+    ILicencePolicyFailureOutputPort<SampleLicencePolicyFailure>
 {
 
     #region - - - - - - Methods - - - - - -

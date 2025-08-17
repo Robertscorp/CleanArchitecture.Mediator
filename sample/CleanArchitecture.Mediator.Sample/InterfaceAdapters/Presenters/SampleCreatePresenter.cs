@@ -1,4 +1,5 @@
 ﻿using CleanArchitecture.Mediator.Sample.Application.Services.OutputPorts;
+using CleanArchitecture.Mediator.Sample.Application.Services.Validation;
 using CleanArchitecture.Mediator.Sample.Application.UseCases.SampleCreate;
 using CleanArchitecture.Mediator.Sample.Domain.Entities;
 
@@ -21,7 +22,9 @@ public class SampleCreatePresenter : ISampleCreateOutputPort, IVerificationSucce
         return Task.CompletedTask;
     }
 
-    Task<ContinuationBehaviour> IAuthorisationPolicyFailureOutputPort<object>.PresentAuthorisationPolicyFailureAsync(object policyFailure, CancellationToken cancellationToken)
+    Task<ContinuationBehaviour> IAuthorisationPolicyFailureOutputPort<SampleAuthorisationPolicyFailure>.PresentAuthorisationPolicyFailureAsync(
+        SampleAuthorisationPolicyFailure policyFailure,
+        CancellationToken cancellationToken)
     {
         Console.WriteLine("\t- SampleCreatePresenter.PresentAuthorisationPolicyFailureAsync");
         return ContinuationBehaviour.ReturnAsync;
@@ -45,7 +48,9 @@ public class SampleCreatePresenter : ISampleCreateOutputPort, IVerificationSucce
         return ContinuationBehaviour.ReturnAsync;
     }
 
-    async Task<ContinuationBehaviour> IInputPortValidationFailureOutputPort<object>.PresentInputPortValidationFailureAsync(object validationFailure, CancellationToken cancellationToken)
+    async Task<ContinuationBehaviour> IInputPortValidationFailureOutputPort<SampleInputPortValidationFailure>.PresentInputPortValidationFailureAsync(
+        SampleInputPortValidationFailure validationFailure,
+        CancellationToken cancellationToken)
     {
         await Task.Delay(1, cancellationToken); // This only exists to showcase when to use the non-async ContinuationBehaviour fields.
 
@@ -56,7 +61,9 @@ public class SampleCreatePresenter : ISampleCreateOutputPort, IVerificationSucce
             : ContinuationBehaviour.Return;
     }
 
-    Task<ContinuationBehaviour> ILicencePolicyFailureOutputPort<object>.PresentLicencePolicyFailureAsync(object policyFailure, CancellationToken cancellationToken)
+    Task<ContinuationBehaviour> ILicencePolicyFailureOutputPort<SampleLicencePolicyFailure>.PresentLicencePolicyFailureAsync(
+        SampleLicencePolicyFailure policyFailure,
+        CancellationToken cancellationToken)
     {
         Console.WriteLine($"\t- SampleCreatePresenter.PresentLicencePolicyFailureAsync");
         return ContinuationBehaviour.ReturnAsync;

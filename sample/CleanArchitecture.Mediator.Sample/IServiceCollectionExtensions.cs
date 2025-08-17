@@ -1,5 +1,6 @@
 ﻿using CleanArchitecture.Mediator;
 using CleanArchitecture.Mediator.Sample.Application.Services.Pipelines;
+using CleanArchitecture.Mediator.Sample.Application.Services.Validation;
 using CleanArchitecture.Mediator.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,9 +24,9 @@ public static class IServiceCollectionExtensions
                         Console.WriteLine("\t- Completed invocation of DefaultPipeline.");
                     })
                     .AddAuthentication(AuthenticationMode.SinglePrincipal)
-                    .AddAuthorisationPolicyValidation<object>()
-                    .AddLicencePolicyValidation<object>()
-                    .AddInputPortValidation<object>()
+                    .AddAuthorisationPolicyValidation<SampleAuthorisationPolicyFailure>()
+                    .AddLicencePolicyValidation<SampleLicencePolicyFailure>()
+                    .AddInputPortValidation<SampleInputPortValidationFailure>()
                     .AddBusinessRuleEvaluation()
                     .AddInteractorInvocation());
 
@@ -38,9 +39,9 @@ public static class IServiceCollectionExtensions
                         Console.WriteLine("\t- Completed invocation of VerificationPipeline.");
                     })
                     .AddAuthentication(AuthenticationMode.SinglePrincipal)
-                    .AddAuthorisationPolicyValidation<object>()
-                    .AddLicencePolicyValidation<object>()
-                    .AddInputPortValidation<object>()
+                    .AddAuthorisationPolicyValidation<SampleAuthorisationPolicyFailure>()
+                    .AddLicencePolicyValidation<SampleLicencePolicyFailure>()
+                    .AddInputPortValidation<SampleInputPortValidationFailure>()
                     .AddBusinessRuleEvaluation()
                     .AddPipe<VerificationSuccessPipe>());
         }, registration =>
