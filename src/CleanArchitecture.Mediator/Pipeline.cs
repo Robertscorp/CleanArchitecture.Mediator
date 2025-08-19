@@ -14,27 +14,9 @@ namespace CleanArchitecture.Mediator
 
         #region - - - - - - Fields - - - - - -
 
-        private readonly IPipeHandle m_PipelineHandle;
+        private IPipeHandle m_PipelineHandle;
 
         #endregion Fields
-
-        #region - - - - - - Constructors - - - - - -
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="Pipeline"/> class.
-        /// </summary>
-        /// <param name="serviceFactory">The factory used to get service instances.</param>
-        public Pipeline(ServiceFactory serviceFactory)
-        {
-            if (serviceFactory == null)
-                throw new ArgumentNullException(nameof(serviceFactory));
-
-            var _PipelineHandleAccessor = (IPipelineHandleAccessor)serviceFactory(typeof(PipelineHandleAccessor<>).MakeGenericType(this.GetType()));
-
-            this.m_PipelineHandle = _PipelineHandleAccessor.PipeHandle;
-        }
-
-        #endregion Constructors
 
         #region - - - - - - Methods - - - - - -
 
@@ -53,11 +35,19 @@ namespace CleanArchitecture.Mediator
             TOutputPort outputPort,
             ServiceFactory serviceFactory,
             CancellationToken cancellationToken)
-            => inputPort == null
-                ? throw new ArgumentNullException(nameof(inputPort))
-                : outputPort == null
-                    ? throw new ArgumentNullException(nameof(outputPort))
-                    : PipelineInvoker.Instance(inputPort.GetType(), typeof(TOutputPort)).InvokePipelineAsync(inputPort, outputPort, this.m_PipelineHandle, serviceFactory, cancellationToken);
+        {
+            if (inputPort == null) throw new ArgumentNullException(nameof(inputPort));
+            if (outputPort == null) throw new ArgumentNullException(nameof(outputPort));
+
+            if (this.m_PipelineHandle == null)
+            {
+                var _PipelineHandleAccessor = (IPipelineHandleAccessor)serviceFactory(typeof(PipelineHandleAccessor<>).MakeGenericType(this.GetType()));
+
+                this.m_PipelineHandle = _PipelineHandleAccessor.PipeHandle;
+            }
+
+            return PipelineInvoker.Instance(inputPort.GetType(), typeof(TOutputPort)).InvokePipelineAsync(inputPort, outputPort, this.m_PipelineHandle, serviceFactory, cancellationToken);
+        }
 
         /// <summary>
         /// Invokes the pipeline.
@@ -85,6 +75,13 @@ namespace CleanArchitecture.Mediator
             if (inputPort == null) throw new ArgumentNullException(nameof(inputPort));
             if (outputPort == null) throw new ArgumentNullException(nameof(outputPort));
             if (configureInvocationServiceCollection == null) throw new ArgumentNullException(nameof(configureInvocationServiceCollection));
+
+            if (this.m_PipelineHandle == null)
+            {
+                var _PipelineHandleAccessor = (IPipelineHandleAccessor)serviceFactory(typeof(PipelineHandleAccessor<>).MakeGenericType(this.GetType()));
+
+                this.m_PipelineHandle = _PipelineHandleAccessor.PipeHandle;
+            }
 
             var _InvocationServices = new InvocationServiceCollection(serviceFactory);
             configureInvocationServiceCollection(_InvocationServices);
