@@ -43,7 +43,7 @@ namespace CleanArchitecture.Mediator
             {
                 var _PipelineHandleAccessor = (IPipelineHandleAccessor)serviceFactory(typeof(PipelineHandleAccessor<>).MakeGenericType(this.GetType()));
 
-                this.m_PipelineHandle = _PipelineHandleAccessor.PipeHandle;
+                this.m_PipelineHandle = _PipelineHandleAccessor.GetPipeHandle(serviceFactory);
             }
 
             return PipelineInvoker.Instance(inputPort.GetType(), typeof(TOutputPort)).InvokePipelineAsync(inputPort, outputPort, this.m_PipelineHandle, serviceFactory, cancellationToken);
@@ -80,7 +80,7 @@ namespace CleanArchitecture.Mediator
             {
                 var _PipelineHandleAccessor = (IPipelineHandleAccessor)serviceFactory(typeof(PipelineHandleAccessor<>).MakeGenericType(this.GetType()));
 
-                this.m_PipelineHandle = _PipelineHandleAccessor.PipeHandle;
+                this.m_PipelineHandle = _PipelineHandleAccessor.GetPipeHandle(serviceFactory);
             }
 
             var _InvocationServices = new InvocationServiceCollection(serviceFactory);

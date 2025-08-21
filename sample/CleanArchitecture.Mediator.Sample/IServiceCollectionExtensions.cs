@@ -47,7 +47,7 @@ public static class IServiceCollectionExtensions
         }, registration =>
             registration
                 .AddAssemblies(typeof(Program).Assembly)
-                .WithSingletonFactoryRegistrationAction((serviceType, getServiceFunc) => serviceCollection.AddSingleton(serviceType, serviceProvider => getServiceFunc(serviceProvider.GetRequiredService<ServiceFactory>())))
+                .WithSingletonInstanceRegistrationAction((serviceType, instance) => serviceCollection.AddSingleton(serviceType, instance))
                 .WithSingletonServiceRegistrationAction((serviceType, implementationType) => serviceCollection.AddSingleton(serviceType, implementationType)));
 
         _ = serviceCollection.AddScoped<ServiceFactory>(serviceProvider => serviceProvider.GetService);

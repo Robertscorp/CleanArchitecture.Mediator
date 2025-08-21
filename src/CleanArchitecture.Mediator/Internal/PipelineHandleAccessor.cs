@@ -1,32 +1,48 @@
-﻿namespace CleanArchitecture.Mediator.Internal
+﻿using System;
+
+namespace CleanArchitecture.Mediator.Internal
 {
 
     internal interface IPipelineHandleAccessor
     {
 
-        #region - - - - - - Properties - - - - - -
+        #region - - - - - - Methods - - - - - -
 
-        IPipeHandle PipeHandle { get; }
+        IPipeHandle GetPipeHandle(ServiceFactory serviceFactory);
 
-        #endregion Properties
+        #endregion Methods
 
     }
 
     internal class PipelineHandleAccessor<TPipeline> : IPipelineHandleAccessor where TPipeline : Pipeline
     {
 
+        #region - - - - - - Fields - - - - - -
+
+        private readonly Func<ServiceFactory, IPipeHandle> m_PipeHandleFactory;
+
+        private IPipeHandle m_PipeHandle;
+
+        #endregion Fields
+
         #region - - - - - - Constructors - - - - - -
 
-        public PipelineHandleAccessor(IPipeHandle pipeHandle)
-            => this.PipeHandle = pipeHandle ?? throw new System.ArgumentNullException(nameof(pipeHandle));
+        public PipelineHandleAccessor(Func<ServiceFactory, IPipeHandle> pipeHandleFactory)
+            => this.m_PipeHandleFactory = pipeHandleFactory ?? throw new ArgumentNullException(nameof(pipeHandleFactory));
 
         #endregion Constructors
 
-        #region - - - - - - Properties - - - - - -
+        #region - - - - - - Methods - - - - - -
 
-        public IPipeHandle PipeHandle { get; }
+        IPipeHandle IPipelineHandleAccessor.GetPipeHandle(ServiceFactory serviceFactory)
+        {
+            if (this.m_PipeHandle == null)
+                this.m_PipeHandle = this.m_PipeHandleFactory(serviceFactory);
 
-        #endregion Properties
+            return this.m_PipeHandle;
+        }
+
+        #endregion Methods
 
     }
 

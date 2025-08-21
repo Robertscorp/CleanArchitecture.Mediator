@@ -21,8 +21,8 @@ namespace CleanArchitecture.Mediator.Setup
         private Action<Type, Type> m_ScopedServiceRegistrationAction
             = (_, __) => throw new InvalidOperationException($"Must specify a scoped service registration action by calling '{nameof(WithScopedServiceRegistrationAction)}' prior to calling '{nameof(AddScopedServiceImplementation)}'.");
 
-        private Action<Type, Func<ServiceFactory, object>> m_SingletonFactoryRegistrationAction
-            = (_, __) => throw new InvalidOperationException($"Must specify a singleton factory registration action by calling '{nameof(WithSingletonFactoryRegistrationAction)}' prior to calling '{nameof(AddSingletonFactory)}'.");
+        private Action<Type, object> m_SingletonInstanceRegistrationAction
+            = (_, __) => throw new InvalidOperationException($"Must specify a singleton instance registration action by calling '{nameof(WithSingletonInstanceRegistrationAction)}' prior to calling '{nameof(AddSingletonInstance)}'.");
 
         private Action<Type, Type> m_SingletonServiceRegistrationAction
             = (_, __) => throw new InvalidOperationException($"Must specify a singleton service registration action by calling '{nameof(WithSingletonServiceRegistrationAction)}' prior to calling '{nameof(AddSingletonServiceImplementation)}'.");
@@ -84,18 +84,18 @@ namespace CleanArchitecture.Mediator.Setup
         }
 
         /// <summary>
-        /// Adds a singleton factory to be registered in the service container.
+        /// Adds a singleton instance to be registered in the service container.
         /// </summary>
         /// <param name="serviceType">The type of service to register. Cannot be null.</param>
-        /// <param name="serviceFactory">The service factory to register. Cannot be null.</param>
+        /// <param name="instance">The singleton instance to register. Cannot be null.</param>
         /// <returns>Itself.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="serviceFactory"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="instance"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="serviceType"/> is null.</exception>
-        public PackageRegistration AddSingletonFactory(Type serviceType, Func<ServiceFactory, object> serviceFactory)
+        public PackageRegistration AddSingletonInstance(Type serviceType, object instance)
         {
-            this.m_SingletonFactoryRegistrationAction(
+            this.m_SingletonInstanceRegistrationAction(
                 serviceType ?? throw new ArgumentNullException(nameof(serviceType)),
-                serviceFactory ?? throw new ArgumentNullException(nameof(serviceFactory)));
+                instance ?? throw new ArgumentNullException(nameof(instance)));
 
             return this;
         }
@@ -143,14 +143,14 @@ namespace CleanArchitecture.Mediator.Setup
         }
 
         /// <summary>
-        /// Defines how to register a singleton factory in the service container.
+        /// Defines how to register a singleton instance in the service container.
         /// </summary>
-        /// <param name="singletonFactoryRegistrationAction">The action to register the specified serviceType and factory in the service container as a singleton. Cannot be null.</param>
+        /// <param name="singletonInstanceRegistrationAction">The action to register the specified serviceType and instance in the service container as a singleton. Cannot be null.</param>
         /// <returns>Itself.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="singletonFactoryRegistrationAction"/> is null.</exception>
-        public PackageRegistration WithSingletonFactoryRegistrationAction(Action<Type, Func<ServiceFactory, object>> singletonFactoryRegistrationAction)
+        /// <exception cref="ArgumentNullException"><paramref name="singletonInstanceRegistrationAction"/> is null.</exception>
+        public PackageRegistration WithSingletonInstanceRegistrationAction(Action<Type, object> singletonInstanceRegistrationAction)
         {
-            this.m_SingletonFactoryRegistrationAction = singletonFactoryRegistrationAction ?? throw new ArgumentNullException(nameof(singletonFactoryRegistrationAction));
+            this.m_SingletonInstanceRegistrationAction = singletonInstanceRegistrationAction ?? throw new ArgumentNullException(nameof(singletonInstanceRegistrationAction));
             return this;
         }
 
