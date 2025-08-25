@@ -152,13 +152,18 @@ namespace CleanArchitecture.Mediator.Setup
         }
 
         internal PipelineHandleAccessor<TPipeline> GetPipelineHandleAccessor()
-            => new PipelineHandleAccessor<TPipeline>(serviceFactory
-                => this.m_PipeHandleProviders
+        {
+            // Clone the Providers list so the PipelineConfiguration can go out of scope and get collected. 
+            var _Providers = this.m_PipeHandleProviders.ToList();
+
+            return new PipelineHandleAccessor<TPipeline>(serviceFactory
+                => _Providers
                     .AsEnumerable()
                     .Reverse()
                     .Aggregate(
                         (IPipeHandle)new TerminalPipeHandle(),
                         (nextPipeHandle, pipeHandleProvider) => pipeHandleProvider(serviceFactory, nextPipeHandle)));
+        }
 
         #endregion Methods
 
