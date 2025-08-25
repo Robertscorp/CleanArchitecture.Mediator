@@ -135,7 +135,7 @@ public class PipelineTests
                             .AddInteractorInvocation()),
             registration =>
                 registration
-                    .WithSingletonFactoryRegistrationAction((type, factory) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns(factory(this.m_MockServiceFactory.Object)))
+                    .WithSingletonInstanceRegistrationAction((type, instance) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns(instance))
                     .WithSingletonServiceRegistrationAction((type, implementationType) => this.m_MockServiceFactory.Setup(mock => mock.Invoke(type)).Returns((Type t) => Activator.CreateInstance(implementationType)!)));
 
         _ = this.m_MockServiceFactory
@@ -150,7 +150,7 @@ public class PipelineTests
                 .Setup(mock => mock.Invoke(typeof(LicencePolicyValidationPipe<InputPort, IEverythingOutputPort, object>)))
                 .Returns(() => new LicencePolicyValidationPipe<InputPort, IEverythingOutputPort, object>());
 
-        this.m_Pipeline = new Pipeline(this.m_MockServiceFactory.Object);
+        this.m_Pipeline = new Pipeline();
     }
 
     #endregion Constructors

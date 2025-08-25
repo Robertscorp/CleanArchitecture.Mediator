@@ -41,7 +41,7 @@ namespace CleanArchitecture.Mediator.Setup
             configurationAction(_PipelineBuilder);
 
             _ = this.m_PackageRegistration
-                    .AddSingletonFactory(typeof(PipelineHandleAccessor<TPipeline>), _PipelineBuilder.GetPipelineHandleAccessorFactory())
+                    .AddSingletonInstance(typeof(PipelineHandleAccessor<TPipeline>), _PipelineBuilder.GetPipelineHandleAccessor())
                     .AddSingletonServiceImplementation(typeof(TPipeline), typeof(TPipeline));
 
             return this;
