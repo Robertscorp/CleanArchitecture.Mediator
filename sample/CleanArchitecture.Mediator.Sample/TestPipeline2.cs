@@ -161,11 +161,10 @@ internal partial class TestPipeline2
         CancellationToken cancellationToken)
         where TInputPort : IInputPort<TOutputPort>
     {
-        _ = serviceFactory
-            .GetService<IInteractor<TInputPort, TOutputPort>>()
-            .HandleAsync(inputPort, outputPort, serviceFactory, cancellationToken);
-
-        return ContinuationBehaviour.ContinueAsync;
+        var _Evaluator = serviceFactory.GetService<IBusinessRuleEvaluator<TInputPort, TOutputPort>>();
+        return _Evaluator == null
+            ? ContinuationBehaviour.ContinueAsync
+            : _Evaluator.EvaluateAsync(inputPort, outputPort, serviceFactory, cancellationToken);
     }
 
 }
