@@ -8,13 +8,15 @@ namespace CleanArchitecture.Mediator.Sample;
 internal partial class TestPipeline4
 {
 
+    private delegate Task PipeHandleAsync<TOutputPort>(object inputPort, TOutputPort outputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken);
+
     private static readonly MethodInfo s_InvokeAuthenticationPipeAsyncMethodInfo = typeof(TestPipeline4).GetMethod(nameof(InvokeAuthenticationPipeAsync), BindingFlags.NonPublic | BindingFlags.Static)!;
     private static readonly MethodInfo s_InvokeAuthorisationPipeAsyncMethodInfo = typeof(TestPipeline4).GetMethod(nameof(InvokeAuthorisationPipeAsync), BindingFlags.NonPublic | BindingFlags.Static)!;
     private static readonly MethodInfo s_InvokeInputPortValidationPipeAsyncMethodInfo = typeof(TestPipeline4).GetMethod(nameof(InvokeInputPortValidationPipeAsync), BindingFlags.NonPublic | BindingFlags.Static)!;
     private static readonly MethodInfo s_InvokeValidationPipeAsyncMethodInfo = typeof(TestPipeline4).GetMethod(nameof(InvokeValidationPipeAsync), BindingFlags.NonPublic | BindingFlags.Static)!;
     private static readonly MethodInfo s_InvokeInteractorPipeAsyncMethodInfo = typeof(TestPipeline4).GetMethod(nameof(InvokeInteractorInvocationPipeAsync), BindingFlags.NonPublic | BindingFlags.Static)!;
 
-    private static readonly ConcurrentDictionary<Type, object> s_InvokeHandleCache = [];
+    private static readonly ConcurrentDictionary<Type, PipeHandleAsync<object>> s_PipelineHandleCache = [];
 
     /// <summary>
     /// Invokes the pipeline.
@@ -35,67 +37,55 @@ internal partial class TestPipeline4
         if (inputPort == null) throw new ArgumentNullException(nameof(inputPort));
         if (outputPort == null) throw new ArgumentNullException(nameof(outputPort));
 
-        if (!s_InvokeHandleCache.TryGetValue(inputPort.GetType(), out var _Value))
+        if (!s_PipelineHandleCache.TryGetValue(inputPort.GetType(), out var _Value))
         {
             var _InputPortType = inputPort.GetType();
-            var _AuthenticationPipeHandle = GetFunc<TOutputPort>(_InputPortType, s_InvokeAuthenticationPipeAsyncMethodInfo);
+            var _OutputPortType = typeof(TOutputPort);
 
-            var _AuthorisationPipeHandle = default(Func<object, TOutputPort, ServiceFactory, CancellationToken, Task>);
-            if (inputPort is IInputPort<IAuthorisationPolicyFailureOutputPort<SampleInputPortValidationFailure>>
-                && outputPort is IAuthorisationPolicyFailureOutputPort<SampleInputPortValidationFailure>)
-                _AuthorisationPipeHandle = GetFunc<TOutputPort>(_InputPortType, s_InvokeAuthorisationPipeAsyncMethodInfo);
+            var _PipeHandle = new PipeHandleAsync<TOutputPort>(static (inputPort, outputPort, serviceFactory, cancellationToken) => Task.CompletedTask);
+            _PipeHandle = GetPipeHandle(_InputPortType, s_InvokeInteractorPipeAsyncMethodInfo, _PipeHandle);
+            _PipeHandle = GetPipeHandle(_InputPortType, s_InvokeValidationPipeAsyncMethodInfo, _PipeHandle);
 
-            var _InputPortValidationPipeHandle = default(Func<object, TOutputPort, ServiceFactory, CancellationToken, Task>);
-            if (inputPort is IInputPort<IInputPortValidationFailureOutputPort<SampleInputPortValidationFailure>>
-                && outputPort is IInputPortValidationFailureOutputPort<SampleInputPortValidationFailure>)
-                _InputPortValidationPipeHandle = GetFunc<TOutputPort>(_InputPortType, s_InvokeInputPortValidationPipeAsyncMethodInfo);
+            if (_InputPortType.IsAssignableTo(typeof(IInputPort<IInputPortValidationFailureOutputPort<SampleInputPortValidationFailure>>))
+                && _OutputPortType.IsAssignableTo(typeof(IInputPortValidationFailureOutputPort<SampleInputPortValidationFailure>)))
+                _PipeHandle = GetPipeHandle(_InputPortType, s_InvokeInputPortValidationPipeAsyncMethodInfo, _PipeHandle);
 
-            var _ValidationPipeHandle = GetFunc<TOutputPort>(_InputPortType, s_InvokeValidationPipeAsyncMethodInfo);
+            if (_InputPortType.IsAssignableTo(typeof(IInputPort<IAuthorisationPolicyFailureOutputPort<SampleInputPortValidationFailure>>))
+                && _OutputPortType.IsAssignableTo(typeof(IAuthorisationPolicyFailureOutputPort<SampleInputPortValidationFailure>)))
+                _PipeHandle = GetPipeHandle(_InputPortType, s_InvokeAuthorisationPipeAsyncMethodInfo, _PipeHandle);
 
-            var _InteractorPipeHandle = GetFunc<TOutputPort>(_InputPortType, s_InvokeInteractorPipeAsyncMethodInfo);
+            if (_OutputPortType.IsAssignableTo(typeof(IAuthenticationFailureOutputPort)))
+                _PipeHandle = GetPipeHandle(_InputPortType, s_InvokeAuthenticationPipeAsyncMethodInfo, _PipeHandle);
 
-            _Value = async (object inputPort, TOutputPort outputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken) =>
-            {
-                // Authentication Pipe
-                await _AuthenticationPipeHandle.Invoke(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
+            _Value = new((inputPort, outputPort, serviceFactory, cancellationToken) => _PipeHandle(inputPort, (TOutputPort)outputPort, serviceFactory, cancellationToken));
 
-                // Authorisation Pipe
-                if (_AuthorisationPipeHandle != null)
-                    await _AuthorisationPipeHandle.Invoke(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
-
-                // Input Port Validation Pipe
-                if (_InputPortValidationPipeHandle != null)
-                    await _InputPortValidationPipeHandle.Invoke(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
-
-                // Validation Pipe
-                await _ValidationPipeHandle.Invoke(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
-
-                // Interactor Pipe
-                await _InteractorPipeHandle.Invoke(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
-            };
-
-            s_InvokeHandleCache[_InputPortType] = _Value;
+            s_PipelineHandleCache[_InputPortType] = _Value;
         }
 
-        return ((Func<object, TOutputPort, ServiceFactory, CancellationToken, Task>)_Value)
-            .Invoke(inputPort, outputPort, serviceFactory, cancellationToken);
+        return _Value(inputPort, outputPort, serviceFactory, cancellationToken);
     }
 
-    private static Func<object, TOutputPort, ServiceFactory, CancellationToken, Task> GetFunc<TOutputPort>(Type inputPortType, MethodInfo methodInfo)
+    private static PipeHandleAsync<TOutputPort> GetPipeHandle<TOutputPort>(Type inputPortType, MethodInfo methodInfo, PipeHandleAsync<TOutputPort> nextPipe)
     {
         var _InputPort = Expression.Parameter(typeof(object));
         var _OutputPort = Expression.Parameter(typeof(TOutputPort));
         var _ServiceFactory = Expression.Parameter(typeof(ServiceFactory));
         var _CancellationToken = Expression.Parameter(typeof(CancellationToken));
 
-        return Expression
-            .Lambda<Func<object, TOutputPort, ServiceFactory, CancellationToken, Task>>(
+        var _PipeHandleFunc = Expression
+            .Lambda<Func<object, TOutputPort, ServiceFactory, CancellationToken, Task<ContinuationBehaviour>>>(
                 Expression.Call(
                     null,
                     methodInfo.MakeGenericMethod(inputPortType, typeof(TOutputPort)),
                     [Expression.Convert(_InputPort, inputPortType), _OutputPort, _ServiceFactory, _CancellationToken]),
                 [_InputPort, _OutputPort, _ServiceFactory, _CancellationToken])
             .Compile();
+
+        return new(async (inputPort, outputPort, serviceFactory, cancellationToken) =>
+        {
+            var _Continuation = await _PipeHandleFunc(inputPort, outputPort, serviceFactory, cancellationToken).ConfigureAwait(false);
+            await _Continuation.HandleAsync(new(() => nextPipe.Invoke(inputPort, outputPort, serviceFactory, cancellationToken)), cancellationToken).ConfigureAwait(false);
+        });
     }
 
     private static async Task<ContinuationBehaviour> InvokeAuthenticationPipeAsync<TInputPort, TOutputPort>(
@@ -103,11 +93,11 @@ internal partial class TestPipeline4
         TOutputPort outputPort,
         ServiceFactory serviceFactory,
         CancellationToken cancellationToken)
+        where TOutputPort : IAuthenticationFailureOutputPort
     {
-        if (outputPort is IAuthenticationFailureOutputPort _OutputPort
-            && serviceFactory.GetService<IPrincipalAccessor>().Principal == null)
+        if (serviceFactory.GetService<IPrincipalAccessor>().Principal == null)
         {
-            await _OutputPort.PresentAuthenticationFailureAsync(cancellationToken);
+            await outputPort.PresentAuthenticationFailureAsync(cancellationToken);
             return ContinuationBehaviour.Return;
         }
 
