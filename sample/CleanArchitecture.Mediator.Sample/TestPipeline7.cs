@@ -5,7 +5,11 @@ using System.Reflection;
 
 namespace CleanArchitecture.Mediator.Sample;
 
-internal class TestPipeline7
+/// <summary>
+/// The current implementation of this doesn't allow doing work before and after the pipe logic, because the next pipe isn't passed in as a delegate
+/// In theory, we can use "NextPipeHandleAsync" as a placeholder and replace it with the actual method when we do code gen.
+/// </summary>
+public static partial class TestPipeline7
 {
 
     private delegate Task PipeHandleAsync<TOutputPort>(object inputPort, TOutputPort outputPort, ServiceFactory serviceFactory, CancellationToken cancellationToken);
