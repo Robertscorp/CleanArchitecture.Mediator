@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// A single pipe in the pipeline.
+    /// Provides a specific behaviour when added to a pipeline.
     /// </summary>
     /// <remarks>
     /// Pipe implementations are registered as singletons, which means that only singleton and transient services should be resolved in their constructors.<br/>
@@ -24,7 +24,7 @@ namespace CleanArchitecture.Mediator
         /// <typeparam name="TOutputPort">The type of output port.</typeparam>
         /// <param name="inputPort">The input to the pipeline.</param>
         /// <param name="outputPort">The output mechanism for the pipeline.</param>
-        /// <param name="serviceFactory">The factory used to get the service object of the specified type.</param>
+        /// <param name="serviceFactory">The <see cref="ServiceFactory"/> used to get service instances.</param>
         /// <param name="nextPipeHandle">The handle to the next pipe in the pipeline.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         Task InvokeAsync<TInputPort, TOutputPort>(
@@ -58,7 +58,7 @@ namespace CleanArchitecture.Mediator
         /// </summary>
         /// <param name="inputPort">The input to the pipeline.</param>
         /// <param name="outputPort">The output mechanism for the pipeline.</param>
-        /// <param name="serviceFactory">The factory used to get the service object of the specified type.</param>
+        /// <param name="serviceFactory">The <see cref="ServiceFactory"/> used to get service instances.</param>
         /// <param name="nextPipeHandle">The handle to the next pipe in the pipeline.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         Task InvokeAsync(

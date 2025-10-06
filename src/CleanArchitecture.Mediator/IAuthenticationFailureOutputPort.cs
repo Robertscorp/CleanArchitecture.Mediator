@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// Provides a mechanism for outputting authentication failures.
+    /// Represents an output port that presents authentication failures from the pipeline. 
     /// </summary>
     public interface IAuthenticationFailureOutputPort
     {
@@ -13,7 +13,7 @@ namespace CleanArchitecture.Mediator
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Presents an authentication failure.
+        /// Presents an authentication failure from the pipeline.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         Task PresentAuthenticationFailureAsync(CancellationToken cancellationToken);
