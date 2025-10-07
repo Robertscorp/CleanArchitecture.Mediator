@@ -67,7 +67,7 @@ namespace CleanArchitecture.Mediator.Setup
         }
 
         /// <summary>
-        /// Adds a scoped service service type and implementation type to be registered in the service container.
+        /// Adds a scoped service type and implementation type to be registered in the service container.
         /// </summary>
         /// <param name="serviceType">The type of service to register. Cannot be null.</param>
         /// <param name="implementationType">The type of implementation to register. Cannot be null.</param>
