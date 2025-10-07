@@ -59,7 +59,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// <param name="serviceType">The type of service to find implementations for. Cannot be null.</param>
         /// <returns>Itself.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="serviceType"/> is null.</exception>
-        /// <remarks>When registering generic types, the generic type definition should be provided.</remarks>
+        /// <remarks>Provide the generic type definition when registering generic types.</remarks>
         public PackageRegistration AddScopedService(Type serviceType)
         {
             _ = this.m_ScopedServicesToScan.Add(serviceType ?? throw new ArgumentNullException(nameof(serviceType)));
@@ -67,7 +67,7 @@ namespace CleanArchitecture.Mediator.Setup
         }
 
         /// <summary>
-        /// Adds a scoped service instance to be registered in the service container.
+        /// Adds a scoped service service type and implementation type to be registered in the service container.
         /// </summary>
         /// <param name="serviceType">The type of service to register. Cannot be null.</param>
         /// <param name="implementationType">The type of implementation to register. Cannot be null.</param>
@@ -106,7 +106,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// <param name="serviceType">The type of service to find implementations for. Cannot be null.</param>
         /// <returns>Itself.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="serviceType"/> is null.</exception>
-        /// <remarks>When registering generic types, the generic type definition should be provided.</remarks>
+        /// <remarks>Provide the generic type definition when registering generic types.</remarks>
         public PackageRegistration AddSingletonService(Type serviceType)
         {
             _ = this.m_SingletonServicesToScan.Add(serviceType ?? throw new ArgumentNullException(nameof(serviceType)));
@@ -114,7 +114,7 @@ namespace CleanArchitecture.Mediator.Setup
         }
 
         /// <summary>
-        /// Adds a singleton service instance to be registered in the service container.
+        /// Adds a singleton service type and implementation type to be registered in the service container.
         /// </summary>
         /// <param name="serviceType">The type of service to register. Cannot be null.</param>
         /// <param name="implementationType">The type of implementation to register. Cannot be null.</param>

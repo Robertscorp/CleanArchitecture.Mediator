@@ -91,7 +91,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// Adds a pipe to the pipeline.
         /// </summary>
         /// <typeparam name="TPipe">The type of pipe to add to the pipeline.</typeparam>
-        /// <param name="registrationConfigurationAction">The action to register the services that are produced by the <see cref="ServiceFactory"/> within the <typeparamref name="TPipe"/>.</param>
+        /// <param name="registrationConfigurationAction">The action to register services produced by the <see cref="ServiceFactory"/> within <typeparamref name="TPipe"/>.</param>
         /// <returns>Itself.</returns>
         public PipelineConfiguration<TPipeline> AddPipe<TPipe>(Action<PackageRegistration> registrationConfigurationAction = null) where TPipe : IPipe
         {
@@ -106,7 +106,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// Adds inline behaviour to the pipeline.
         /// </summary>
         /// <param name="inlineBehaviourAsync">The behaviour of the pipe. The parameters are (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken). Cannot be null.</param>
-        /// <param name="registrationConfigurationAction">The action to register the services that are produced by the <see cref="ServiceFactory"/> within the specified <paramref name="inlineBehaviourAsync"/>.</param>
+        /// <param name="registrationConfigurationAction">The action to register the services produced by the <see cref="ServiceFactory"/> within the specified <paramref name="inlineBehaviourAsync"/>.</param>
         /// <returns>Itself.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="inlineBehaviourAsync"/> is null.</exception>
         public PipelineConfiguration<TPipeline> AddPipe(
@@ -124,16 +124,16 @@ namespace CleanArchitecture.Mediator.Setup
         /// <summary>
         /// Adds an open generic pipe to the pipeline.
         /// </summary>
-        /// <param name="openGenericPipeType">The <see cref="Type"/> of open generic pipe. Cannot be null.</param>
+        /// <param name="openGenericPipeType">The <see cref="Type"/> of an open generic pipe. Cannot be null.</param>
         /// <param name="closedGenericTypes">The types (excluding input port and output port) required to close the open generic pipe. Cannot be null.</param>
-        /// <param name="registrationConfigurationAction">The action to register the services that are produced by the <see cref="ServiceFactory"/> within the pipe.</param>
+        /// <param name="registrationConfigurationAction">The action to register the services produced by the <see cref="ServiceFactory"/> within the pipe.</param>
         /// <returns>Itself.</returns>
         /// <exception cref="ArgumentException"><paramref name="openGenericPipeType"/> is not an open generic type.</exception>
         /// <exception cref="ArgumentException"><paramref name="openGenericPipeType"/> does not implement <see cref="IPipe{TInputPort, TOutputPort}"/>.</exception>
         /// <exception cref="ArgumentException"><paramref name="openGenericPipeType"/> implements <see cref="IPipe{TInputPort, TOutputPort}"/> more than once.</exception>
         /// <exception cref="ArgumentException">The TInputPort parameter of the <see cref="IPipe{TInputPort, TOutputPort}"/> implementation is not a generic parameter.</exception>
         /// <exception cref="ArgumentException">The TOutputPort parameter of the <see cref="IPipe{TInputPort, TOutputPort}"/> implementation is not a generic parameter.</exception>
-        /// <exception cref="ArgumentException">An incorrect number of closed generic parameters are specified in the <paramref name="closedGenericTypes"/> collection.</exception>
+        /// <exception cref="ArgumentException">An incorrect number of closed generic parameters are specified in <paramref name="closedGenericTypes"/>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="closedGenericTypes"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="openGenericPipeType"/> is null.</exception>
         public PipelineConfiguration<TPipeline> AddOpenGenericPipe(Type openGenericPipeType, Type[] closedGenericTypes, Action<PackageRegistration> registrationConfigurationAction = null)

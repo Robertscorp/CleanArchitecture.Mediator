@@ -8,9 +8,8 @@ namespace CleanArchitecture.Mediator
     /// Provides a specific behaviour when added to a pipeline.
     /// </summary>
     /// <remarks>
-    /// Pipe implementations are registered as singletons, which means that only singleton and transient services should be resolved in their constructors.<br/>
-    /// Scoped services can be resolved in the <see cref="InvokeAsync{TInputPort, TOutputPort}(TInputPort, TOutputPort, ServiceFactory, NextPipeHandleAsync, CancellationToken)"/>
-    /// method by using the <see cref="ServiceFactory"/> parameter.
+    /// Pipe implementations are registered as singletons. Resolve only singleton and transient services in pipe constructors.
+    /// Resolve scoped services inside <see cref="InvokeAsync{TInputPort, TOutputPort}(TInputPort, TOutputPort, ServiceFactory, NextPipeHandleAsync, CancellationToken)"/> by using the <see cref="ServiceFactory"/> parameter.
     /// </remarks>
     public interface IPipe
     {
@@ -44,9 +43,8 @@ namespace CleanArchitecture.Mediator
     /// <typeparam name="TInputPort">The type of input port.</typeparam>
     /// <typeparam name="TOutputPort">The type of output port.</typeparam>
     /// <remarks>
-    /// Pipe implementations are registered as singletons, which means that only singleton and transient services should be resolved in their constructors.<br/>
-    /// Scoped services can be resolved in the <see cref="InvokeAsync(TInputPort, TOutputPort, ServiceFactory, NextPipeHandleAsync, CancellationToken)"/>
-    /// method by using the <see cref="ServiceFactory"/> parameter.
+    /// Pipe implementations are registered as singletons. Resolve only singleton and transient services in pipe constructors.
+    /// Resolve scoped services inside <see cref="InvokeAsync(TInputPort, TOutputPort, ServiceFactory, NextPipeHandleAsync, CancellationToken)"/> by using the <see cref="ServiceFactory"/> parameter.
     /// </remarks>
     public interface IPipe<TInputPort, TOutputPort> where TInputPort : IInputPort<TOutputPort>
     {

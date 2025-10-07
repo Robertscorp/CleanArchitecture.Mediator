@@ -32,10 +32,10 @@ namespace CleanArchitecture.Mediator
                 : this.m_ServiceFactory(type);
 
         /// <summary>
-        /// Uses the specified <paramref name="implementationInstance"/> when getting an instance of <typeparamref name="TService"/>.
+        /// Uses the specified <paramref name="implementationInstance"/> when resolving <typeparamref name="TService"/>.
         /// </summary>
         /// <typeparam name="TService">The type of service to get an instance for.</typeparam>
-        /// <param name="implementationInstance">The instance to use when getting an instance of <typeparamref name="TService"/> from the <see cref="ServiceFactory"/>.</param>
+        /// <param name="implementationInstance">The instance to use when resolving <typeparamref name="TService"/> from the <see cref="ServiceFactory"/>.</param>
         /// <returns>Itself.</returns>
         public InvocationServiceCollection WithService<TService>(TService implementationInstance)
         {

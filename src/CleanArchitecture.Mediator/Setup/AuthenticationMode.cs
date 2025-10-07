@@ -7,7 +7,7 @@ namespace CleanArchitecture.Mediator.Setup
     /// Represents a mutually exclusive authentication configuration for the pipeline.
     /// </summary>
     /// <remarks>
-    /// Attempting to register both <see cref="MultiPrincipal"/> and <see cref="SinglePrincipal"/> will result in an <see cref="InvalidOperationException"/>.
+    /// Attempting to register both <see cref="MultiPrincipal"/> and <see cref="SinglePrincipal"/> results in an <see cref="InvalidOperationException"/>.
     /// </remarks>
 
     public class AuthenticationMode
@@ -21,7 +21,7 @@ namespace CleanArchitecture.Mediator.Setup
         public static readonly AuthenticationMode MultiPrincipal;
 
         /// <summary>
-        /// Configures authentication to only support a single authenticated principal.
+        /// Configures authentication to support a single authenticated principal.
         /// </summary>
         public static readonly AuthenticationMode SinglePrincipal;
 

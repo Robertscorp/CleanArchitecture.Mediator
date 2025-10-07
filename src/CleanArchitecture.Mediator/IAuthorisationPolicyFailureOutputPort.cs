@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// Provides a mechanism for outputting authorisation policy failures.
+    /// Represents an output port that presents authorisation policy failures from the pipeline.
     /// </summary>
     /// <typeparam name="TPolicyFailure">The type of authorisation policy failure.</typeparam>
     public interface IAuthorisationPolicyFailureOutputPort<TPolicyFailure>

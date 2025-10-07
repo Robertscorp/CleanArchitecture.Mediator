@@ -62,8 +62,7 @@ namespace CleanArchitecture.Mediator
         /// <exception cref="ArgumentNullException"><paramref name="outputPort"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="configureInvocationServiceCollection"/> is null.</exception>
         /// <remarks>
-        /// The services defined in the <see cref="InvocationServiceCollection"/> will only be used when they are directly resolved from the 
-        /// <paramref name="serviceFactory"/> within the pipeline. Any indirect resolutions will resolve using the original service.
+        /// Services defined in <see cref="InvocationServiceCollection"/> are used only when directly resolved from the <paramref name="serviceFactory"/> within the pipeline. Indirect resolutions use the original service.
         /// </remarks>
         public Task InvokeAsync<TOutputPort>(
             IInputPort<TOutputPort> inputPort,

@@ -13,7 +13,7 @@ namespace CleanArchitecture.Mediator
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Presents an authentication failure from the pipeline.
+        /// Presents an authentication failure.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be cancelled.</param>
         Task PresentAuthenticationFailureAsync(CancellationToken cancellationToken);

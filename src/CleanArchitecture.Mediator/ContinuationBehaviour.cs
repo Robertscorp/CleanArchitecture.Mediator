@@ -21,7 +21,7 @@ namespace CleanArchitecture.Mediator
         public static readonly ContinuationBehaviour Continue = new ContinueBehaviour(severity: 0);
 
         /// <summary>
-        /// A continuation that invokes the next pipe in the pipeline. Severity 0.
+        /// An async continuation that invokes the next pipe in the pipeline. Severity 0.
         /// </summary>
         public static readonly Task<ContinuationBehaviour> ContinueAsync = Task.FromResult(Continue);
 
@@ -31,7 +31,7 @@ namespace CleanArchitecture.Mediator
         public static readonly ContinuationBehaviour Return = new ReturnBehaviour(severity: 10);
 
         /// <summary>
-        /// A continuation that does not invoke the next pipe in the pipeline. Severity 10.
+        /// An async continuation that does not invoke the next pipe in the pipeline. Severity 10.
         /// </summary>
         public static readonly Task<ContinuationBehaviour> ReturnAsync = Task.FromResult(Return);
 
@@ -40,7 +40,7 @@ namespace CleanArchitecture.Mediator
         #region - - - - - - Constructors - - - - - -
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="ContinuationBehaviour"/> class with the specified severity.
+        /// Initialises a new <see cref="ContinuationBehaviour"/> with the specified severity.
         /// </summary>
         /// <param name="severity">Determines how severe this <see cref="ContinuationBehaviour"/> is relative to other continuation behaviours.</param>
         protected ContinuationBehaviour(int severity)
@@ -66,21 +66,16 @@ namespace CleanArchitecture.Mediator
         /// Aggregates the specified <paramref name="continuationBehaviours"/> into a single <see cref="ContinuationBehaviour"/>.
         /// </summary>
         /// <param name="continuationBehaviours">A collection of continuation behaviours to be aggregated.</param>
-        /// <returns>The highest <see cref="Severity"/> <see cref="ContinuationBehaviour"/> in the specified <paramref name="continuationBehaviours"/> collection.</returns>
-        /// <remarks>
-        /// If multiple continuation behaviours have the same severity, the first <see cref="ContinuationBehaviour"/> of that severity will be chosen.
-        /// </remarks>
+        /// <returns>The continuation behaviour with the highest <see cref="ContinuationBehaviour.Severity"/> from <paramref name="continuationBehaviours"/>.</returns>
+        /// <remarks>If multiple continuation behaviours share the same severity, the first continuation behaviour of that severity is chosen.</remarks>
         public static ContinuationBehaviour Aggregate(params ContinuationBehaviour[] continuationBehaviours)
             => continuationBehaviours.Aggregate((aggregate, increment) => aggregate.AggregateWith(increment));
 
         /// <summary>
-        /// Aggregates the specified <paramref name="continuationBehaviour"/> with this <see cref="ContinuationBehaviour"/>.
+        /// Aggregates the specified <paramref name="continuationBehaviour"/> with this continuation behaviour.
         /// </summary>
-        /// <param name="continuationBehaviour">A <see cref="ContinuationBehaviour"/> to aggregate with this <see cref="ContinuationBehaviour"/>.</param>
-        /// <returns>
-        /// The highest <see cref="Severity"/> <see cref="ContinuationBehaviour"/> being aggregated.
-        /// If both continuation behaviours have the same severity, this <see cref="ContinuationBehaviour"/> will be returned.
-        /// </returns>
+        ///<param name="continuationBehaviour">The continuation behaviour to aggregate with this instance.</param>
+		/// <returns>The continuation behaviour with the highest <see cref="ContinuationBehaviour.Severity"/>. If severities match, this instance is returned.</returns>
         public ContinuationBehaviour AggregateWith(ContinuationBehaviour continuationBehaviour)
             => continuationBehaviour.Severity > this.Severity ? continuationBehaviour : this;
 
@@ -88,16 +83,16 @@ namespace CleanArchitecture.Mediator
         /// Creates a custom continuation that executes the specified <paramref name="handler"/>. Severity must be specified.
         /// </summary>
         /// <param name="handler">A delegate that defines how the continuation behaves.</param>
-        /// <param name="severity">Determines how severe this <see cref="ContinuationBehaviour"/> is relative to other continuation behaviours.</param>
+        /// <param name="severity">Determines how severe this continuation behaviour is relative to others.</param>
         /// <returns>A continuation that delegates its behaviour to the specified <paramref name="handler"/>.</returns>
         public static ContinuationBehaviour Custom(Func<NextPipeHandleAsync, CancellationToken, Task> handler, int severity)
             => new CustomContinuationBehaviour(handler, severity);
 
         /// <summary>
-        /// Creates a custom continuation that executes the specified <paramref name="handler"/>.
+        /// Creates an async custom continuation that executes the specified <paramref name="handler"/>.
         /// </summary>
         /// <param name="handler">A delegate that defines how the continuation behaves.</param>
-        /// <param name="severity">Determines how severe this <see cref="ContinuationBehaviour"/> is relative to other continuation behaviours.</param>
+        /// <param name="severity">Determines how severe this continuation behaviour is relative to others.</param>
         /// <returns>A continuation that delegates its behaviour to the specified <paramref name="handler"/>.</returns>
         public static Task<ContinuationBehaviour> CustomAsync(Func<NextPipeHandleAsync, CancellationToken, Task> handler, int severity)
             => Task.FromResult(Custom(handler, severity));
