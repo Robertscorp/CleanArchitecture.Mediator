@@ -2,7 +2,7 @@
 {
 
     /// <summary>
-    /// Marks a class as being an input port.
+    /// Represents an input port to the pipeline.
     /// </summary>
     /// <typeparam name="TOutputPort">The type of output port.</typeparam>
     public interface IInputPort<out TOutputPort> { }

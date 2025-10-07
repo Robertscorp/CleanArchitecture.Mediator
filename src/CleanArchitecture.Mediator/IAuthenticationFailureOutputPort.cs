@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// Provides a mechanism for outputting authentication failures.
+    /// Represents an output port that presents authentication failures from the pipeline. 
     /// </summary>
     public interface IAuthenticationFailureOutputPort
     {

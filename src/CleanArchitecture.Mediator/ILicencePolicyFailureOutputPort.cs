@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// Provides a mechanism for outputting licence policy failures.
+    /// Represents an output port that presents licence policy failures from the pipeline.
     /// </summary>
     /// <typeparam name="TPolicyFailure">The type of licence policy failure.</typeparam>
     public interface ILicencePolicyFailureOutputPort<TPolicyFailure>

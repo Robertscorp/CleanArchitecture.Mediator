@@ -4,10 +4,10 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// The factory used to produce a service instance of the specified type.
+    /// Represents the method to get an instance that can be referenced by the specified <paramref name="serviceType"/>.
     /// </summary>
-    /// <param name="serviceType">The type of service to produce.</param>
-    /// <returns>The service instance that was produced.</returns>
+    /// <param name="serviceType">The type of service to get an instance of.</param>
+    /// <returns>An instance that can be referenced by the specified <paramref name="serviceType"/>.</returns>
     public delegate object ServiceFactory(Type serviceType);
 
     /// <summary>
@@ -19,13 +19,14 @@ namespace CleanArchitecture.Mediator
         #region - - - - - - Methods - - - - - -
 
         /// <summary>
-        /// Produces a service instance of the specified type.
+        /// Gets an instance that can be referenced by the <typeparamref name="TService"/> type.
         /// </summary>
-        /// <typeparam name="TService">The type of service to produce.</typeparam>
-        /// <param name="serviceFactory">The factory used to produce the service.</param>
-        /// <returns>The service instance that was produced.</returns>
+        /// <typeparam name="TService">The type of service to get an instance of.</typeparam>
+        /// <param name="serviceFactory">The <see cref="ServiceFactory"/> used to get service instances. Cannot be null.</param>
+        /// <returns>A <typeparamref name="TService"/> instance.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="serviceFactory"/> is null.</exception>
         public static TService GetService<TService>(this ServiceFactory serviceFactory)
-            => (TService)serviceFactory(typeof(TService));
+            => (TService)(serviceFactory ?? throw new ArgumentNullException(nameof(serviceFactory)))(typeof(TService));
 
         #endregion Methods
 

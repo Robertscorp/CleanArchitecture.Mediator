@@ -5,7 +5,7 @@ namespace CleanArchitecture.Mediator
 {
 
     /// <summary>
-    /// Provides a mechanism for outputting input port validation failures.
+    /// Represents an output port that presents input port validation failures from the pipeline.
     /// </summary>
     /// <typeparam name="TValidationFailure">The type of input port validation failure.</typeparam>
     public interface IInputPortValidationFailureOutputPort<TValidationFailure>
