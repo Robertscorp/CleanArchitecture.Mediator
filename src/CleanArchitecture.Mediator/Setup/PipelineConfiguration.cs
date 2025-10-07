@@ -91,7 +91,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// Adds a pipe to the pipeline.
         /// </summary>
         /// <typeparam name="TPipe">The type of pipe to add to the pipeline.</typeparam>
-        /// <param name="registrationConfigurationAction">The action to register services produced by the <see cref="ServiceFactory"/> within <typeparamref name="TPipe"/>.</param>
+        /// <param name="registrationConfigurationAction">The action to register services produced by the <see cref="ServiceFactory"/> within the <typeparamref name="TPipe"/>.</param>
         /// <returns>Itself.</returns>
         public PipelineConfiguration<TPipeline> AddPipe<TPipe>(Action<PackageRegistration> registrationConfigurationAction = null) where TPipe : IPipe
         {
