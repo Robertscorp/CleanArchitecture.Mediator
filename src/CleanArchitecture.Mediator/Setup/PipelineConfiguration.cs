@@ -106,7 +106,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// Adds inline behaviour to the pipeline.
         /// </summary>
         /// <param name="inlineBehaviourAsync">The behaviour of the pipe. The parameters are (inputPort, outputPort, serviceFactory, nextPipeHandleAsync, cancellationToken). Cannot be null.</param>
-        /// <param name="registrationConfigurationAction">The action to register the services produced by the <see cref="ServiceFactory"/> within the specified <paramref name="inlineBehaviourAsync"/>.</param>
+        /// <param name="registrationConfigurationAction">The action to register services produced by the <see cref="ServiceFactory"/> within the specified <paramref name="inlineBehaviourAsync"/>.</param>
         /// <returns>Itself.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="inlineBehaviourAsync"/> is null.</exception>
         public PipelineConfiguration<TPipeline> AddPipe(
@@ -126,7 +126,7 @@ namespace CleanArchitecture.Mediator.Setup
         /// </summary>
         /// <param name="openGenericPipeType">The <see cref="Type"/> of an open generic pipe. Cannot be null.</param>
         /// <param name="closedGenericTypes">The types (excluding input port and output port) required to close the open generic pipe. Cannot be null.</param>
-        /// <param name="registrationConfigurationAction">The action to register the services produced by the <see cref="ServiceFactory"/> within the pipe.</param>
+        /// <param name="registrationConfigurationAction">The action to register services produced by the <see cref="ServiceFactory"/> within the pipe.</param>
         /// <returns>Itself.</returns>
         /// <exception cref="ArgumentException"><paramref name="openGenericPipeType"/> is not an open generic type.</exception>
         /// <exception cref="ArgumentException"><paramref name="openGenericPipeType"/> does not implement <see cref="IPipe{TInputPort, TOutputPort}"/>.</exception>
